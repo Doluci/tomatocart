@@ -5,6 +5,7 @@
  * [Bug] Even a product is deleted, it should still exists in orders  
  * [Bug] Fixed the error "'articles_last_modified' doesn't have a default value" in installation script
  * [Bug] Remove chinese font support for PDF to eliminate the memory limit problem
+ * [Bug] The breadcrumb can't display the subcategory link and the top link in breadcumb has been removed. 
 
 2010/5/15 VERSION 1.0
  * Forgot Password for Administrators
