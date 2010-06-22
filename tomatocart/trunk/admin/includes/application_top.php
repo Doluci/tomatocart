@@ -30,12 +30,12 @@
 
 // include server parameters
   require('../includes/configure.php');
-  
+
 // include tomatocart constants
-  require('../includes/toc_constants.php');  
-    
+  require('../includes/toc_constants.php');
+
 // Define the project version
-  define('PROJECT_VERSION', 'TomatoCart v1.0');
+  define('PROJECT_VERSION', 'TomatoCart v1.0.1');
 
 // set the type of request (secure or not)
   $request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on')) ? 'SSL' : 'NONSSL';
@@ -96,7 +96,7 @@
   include('includes/classes/session.php');
   $osC_Session = new osC_Session_Admin('toCAdminID');
   $osC_Session->start();
-  
+
   require('includes/classes/directory_listing.php');
   require('includes/classes/access.php');
 

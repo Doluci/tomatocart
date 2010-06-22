@@ -64,7 +64,8 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
           var img = action.result.data.categories_image;
           
           if (img) {
-            var html = '<img src ="../images/categories/' + img + '"  style = "margin-left: 170px; width: 70px; height:70px" /><br/><span style = "padding-left: 170px;">/images/categories/' + img + '</span>';
+            var img = '../images/categories/' + img;
+            var html = '<div style = "margin-left: 170px;"><img src="' + img + '" style="border: solid 1px #B5B8C8; height: 100px; width:80px;" />&nbsp;&nbsp;&nbsp;<input type="checkbox" name="delimage" id="delimage" />&nbsp;&nbsp;<?php echo $osC_Language->get('button_delete'); ?></div>';
             this.frmCategories.findById('categories_image_panel').body.update(html);
           }
           

@@ -166,17 +166,17 @@ Ext.extend(Toc.invoices.InvoicesGrid, Ext.grid.GridPanel, {
   },
   
   onCreateCreditSlip: function(record) {
-    var dlg = this.owner.createInvoicesCreditSlipsDialog();
+    var dlg = this.owner.createInvoicesCreditSlipsDialog(record);
     dlg.setTitle('<?php echo $osC_Language->get('create_credit_slip_heading_title'); ?>' + ': ' + record.get('invoices_number'));
     
-    dlg.show(record);
+    dlg.show();
   },
 
   onCreateStoreCredit: function(record) {
-    var dlg = this.owner.createInvoicesStoreCreditsDialog();
+    var dlg = this.owner.createInvoicesStoreCreditsDialog(record);
     dlg.setTitle('<?php echo $osC_Language->get('create_store_credit_heading_title'); ?>' + ': ' + record.get('invoices_number'));
     
-    dlg.show(record);
+    dlg.show();
   },
 
   onSearch: function() {
