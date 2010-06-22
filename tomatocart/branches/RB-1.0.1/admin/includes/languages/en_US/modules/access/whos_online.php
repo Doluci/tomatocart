@@ -8,4 +8,4 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-access_whos_online_title = Who's Online
+access_whos_online_title = Who\'s Online

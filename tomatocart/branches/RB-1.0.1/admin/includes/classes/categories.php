@@ -86,6 +86,25 @@
             break;
           }
         }
+        
+        if($data['delimage'] == 1) {
+          $Qimage = $osC_Database->query('select categories_image from :table_categories where categories_id = :categories_id');
+          $Qimage->bindTable(':table_categories', TABLE_CATEGORIES);
+          $Qimage->bindInt(':categories_id', $category_id);
+          $Qimage->execute();
+
+          if(($Qimage->numberOfRows() === 1) && @unlink('../images/categories/' . $Qimage->value('categories_image'))) {
+            $Qdelete = $osC_Database->query('update :table_categories set categories_image = NULL where categories_id = :categories_id');
+            $Qdelete->bindTable(':table_categories', TABLE_CATEGORIES);
+            $Qdelete->bindInt(':categories_id', $category_id);
+            $Qdelete->setLogging($_SESSION['module'], $category_id);
+            $Qdelete->execute();
+
+            if ( $osC_Database->isError() ) {
+              $error = true;
+            }
+          }  
+        }
 
         if ( $error === false ) {
           $categories_image = new upload($data['image'], realpath('../' . DIR_WS_IMAGES . 'categories'));

@@ -62,12 +62,12 @@ Ext.override(TocDesktop.InvoicesWindow, {
     return dlg;
   },
   
-  createInvoicesCreditSlipsDialog: function() {
+  createInvoicesCreditSlipsDialog: function(record) {
     var desktop = this.app.getDesktop();
     var dlg = desktop.getWindow('invoices_credit_slips-dialog-win');
     
     if(!dlg) {
-      dlg = desktop.createWindow({owner: this}, Toc.invoices.InvoicesCreditSlipsDialog);
+      dlg = desktop.createWindow({owner: this, record: record}, Toc.invoices.InvoicesCreditSlipsDialog);
       
       dlg.on('saveSuccess', function(feedback) {
         this.app.showNotification({title: TocLanguage.msgSuccessTitle, html: feedback});
@@ -77,12 +77,12 @@ Ext.override(TocDesktop.InvoicesWindow, {
     return dlg;
   },
 
-  createInvoicesStoreCreditsDialog: function() {
+  createInvoicesStoreCreditsDialog: function(record) {
     var desktop =  this.app.getDesktop();
     var dlg = desktop.getWindow('invoices_store_credits-dialog-win');
     
     if(!dlg) {
-      dlg = desktop.createWindow({owner: this}, Toc.invoices.InvoicesStoreCreditsDialog);
+      dlg = desktop.createWindow({owner: this, record: record}, Toc.invoices.InvoicesStoreCreditsDialog);
 
       dlg.on('saveSuccess', function(feedback) {
         this.app.showNotification({title: TocLanguage.msgSuccessTitle, html: feedback});
