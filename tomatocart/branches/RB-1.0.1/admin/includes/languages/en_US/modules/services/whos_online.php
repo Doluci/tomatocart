@@ -8,5 +8,5 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-services_whos_online_title = Who's Online
+services_whos_online_title = Who\'s Online
 services_whos_online_description = See who is currently online

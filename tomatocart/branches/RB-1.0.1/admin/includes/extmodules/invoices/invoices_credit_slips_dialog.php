@@ -46,7 +46,8 @@ Toc.invoices.InvoicesCreditSlipsDialog = function (config) {
 }
 Ext.extend(Toc.invoices.InvoicesCreditSlipsDialog, Ext.Window, {
 
-  show: function (record) {
+  show: function () {
+    var record = this.record;
     this.grdProducts.getStore().baseParams['orders_id'] = record.get('orders_id');
     this.frmCreditSlip.form.baseParams['orders_id'] = record.get('orders_id');
     
