@@ -37,7 +37,8 @@ Toc.unit_classes.UnitClassesGrid = function(config) {
       autoLoad: true
   });  
   
-  config.rowActions = new Ext.ux.grid.RowActions({   
+  config.rowActions = new Ext.ux.grid.RowActions({
+    header: '<?php echo $osC_Language->get('table_heading_action'); ?>',
     actions:[
       {iconCls: 'icon-edit-record', qtip: TocLanguage.tipedit},
       {iconCls: 'icon-delete-record', qtip: TocLanguage.tipDelete}],
