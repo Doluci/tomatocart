@@ -35,6 +35,10 @@ Toc.customers_groups.CustomersGroupsGrid = function(config) {
       'customers_groups_name',
       'customers_groups_discount',
     ]),
+    sortInfo: {
+      field: 'customers_groups_name',
+      direction: 'ASC'
+    },
     autoLoad: true
   });  
   

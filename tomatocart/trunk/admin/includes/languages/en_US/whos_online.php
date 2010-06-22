@@ -8,7 +8,7 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
-heading_title = Who's Online
+heading_title = Who\'s Online
 
 action_heading_batch_delete_customer_sessions = Batch Delete Customer Sessions
 

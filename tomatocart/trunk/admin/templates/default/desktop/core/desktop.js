@@ -488,12 +488,15 @@ Ext.Desktop = function(app){
   desktopEl.on('contextmenu', function(e){
     if(e.target.id === desktopEl.id){
       e.stopEvent();
-      if(!this.cmenu.el){
-        this.cmenu.render();
-      }
-      var xy = e.getXY();
-      xy[1] -= this.cmenu.el.getHeight();
-      this.cmenu.showAt(xy);
+      
+      if(app.launchers.contextmenu.length > 0) {
+	      if(!this.cmenu.el){
+	        this.cmenu.render();
+	      }
+	      var xy = e.getXY();
+	      xy[1] -= this.cmenu.el.getHeight();
+	      this.cmenu.showAt(xy);
+	    }
     }
   }, this);
 };

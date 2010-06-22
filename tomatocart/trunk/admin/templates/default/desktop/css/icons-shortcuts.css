@@ -352,3 +352,8 @@
   background-image: url(../../images/icons/48x48/report_web.png);
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/report_web.png', sizingMethod='scale');
 }
+
+.icon-file_manager-shortcut img {
+  background-image: url(../../images/icons/48x48/folder.png);
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/folder.png', sizingMethod='scale');
+}

@@ -324,6 +324,7 @@
     }
     
     function listModules($settings) {
+      global $osC_Language;
 
       $autorun = (explode(",", (substr($settings['autorun'], 1, strlen($settings['autorun'])-2))));
       $contextmenu = explode(",", (substr($settings['contextmenu'], 1, strlen($settings['contextmenu'])-2)));
@@ -364,16 +365,42 @@
             $Aquickstart = self::LoopLauncher($quickstart, $link['module']);
             $Ashortcut = self::LoopLauncher($shortcut, $link['module']);
             $modules[] = array('parent' => $module,
-                              'text'=>htmlentities($secmodule, ENT_QUOTES, 'UTF-8'),
-                              'id'=> $link['module'],
-                              'autorun'=>$Aautorun,
-                              'contextmenu'=>$Acontextmenu,
-                              'quickstart'=>$Aquickstart,
-                              'shortcut'=>$Ashortcut);
+                               'text'=>htmlentities($secmodule, ENT_QUOTES, 'UTF-8'),
+                               'id'=> $link['module'],
+                               'autorun'=>$Aautorun,
+                               'contextmenu'=>$Acontextmenu,
+                               'quickstart'=>$Aquickstart,
+                               'shortcut'=>$Ashortcut);
           }
         }
       }
-    return $modules;
+
+      foreach ( $access as $group => $links ) {
+        $autorun = array();
+        $contextmenu = array();
+        $quickstart = array();
+        $shortcut = array();
+        $module_title = htmlentities(osC_Access::getGroupTitle($group), ENT_QUOTES, 'UTF-8');
+            
+        foreach($modules as $id => $module) {
+          if($module['parent'] == $module_title) {
+            $autorun[] = $module['autorun'];
+            $quickstart[] = $module['quickstart'];
+            $contextmenu[] = $module['contextmenu'];
+            $shortcut[] = $module['shortcut'];
+          }
+        }
+        
+        $modules[] = array('parent' => $module_title,
+                           'text'=> $osC_Language->get('--All--'),
+                           'id'=> '',
+                           'autorun'=> !in_array(false, $autorun),
+                           'contextmenu'=> !in_array(false, $contextmenu),
+                           'quickstart'=> !in_array(false, $quickstart),
+                           'shortcut'=> !in_array(false, $shortcut));
+      }
+      
+      return $modules;
     }
     
     function outputModules() {

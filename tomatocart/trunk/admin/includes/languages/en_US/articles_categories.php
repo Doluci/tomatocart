@@ -34,6 +34,6 @@ introduction_batch_delete_categories = Please verify the removal of the followin
 
 ms_warning_category_name_empty = Warning: The category name for %s is empty. Please fill in a name for this language.
 delete_warning_category_in_use_articles = Error: This category contains <b>%s</b> articles, therefore it can not be deleted.
-ms_error_delete_system_article_category = Error: The system category can't be delete.
+ms_error_delete_system_article_category = Error: The system category can\'t be delete.
 
 batch_delete_error_articles_categories_in_use = Error: The following article categories cannot be removed as they are currently assigned to articles.

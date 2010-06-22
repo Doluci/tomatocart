@@ -154,6 +154,7 @@
                     'sort_order' => $_REQUEST['sort_order'],
                     'image' => $_FILES['image'],  
                     'name' => $_REQUEST['categories_name'],
+                    'delimage' => (isset($_REQUEST['delimage']) && ($_REQUEST['delimage'] == 'on') ? '1' : '0'),
                     'page_title' => $_REQUEST['page_title'],
                     'meta_keywords' => $_REQUEST['meta_keywords'],
                     'meta_description' => $_REQUEST['meta_description']);

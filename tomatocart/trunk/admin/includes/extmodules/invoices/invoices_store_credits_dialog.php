@@ -46,7 +46,8 @@ Toc.invoices.InvoicesStoreCreditsDialog = function (config) {
 }
 Ext.extend(Toc.invoices.InvoicesStoreCreditsDialog, Ext.Window, {
 
-  show: function (record) {
+  show: function () {
+    var record = this.record;
     this.grdProducts.getStore().baseParams['orders_id'] = record.get('orders_id');
     this.frmStoreCredit.form.baseParams['orders_id'] = record.get('orders_id');
     
