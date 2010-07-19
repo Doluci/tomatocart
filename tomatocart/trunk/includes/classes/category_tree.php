@@ -46,7 +46,7 @@
         if ($osC_Cache->read('category_tree-' . $osC_Language->getCode(), 720)) {
           $this->data = $osC_Cache->getCache();
         } else {
-          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id order by c.parent_id, c.sort_order, cd.categories_name');
+          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id and c.categories_status = 1 order by c.parent_id, c.sort_order, cd.categories_name');
           $Qcategories->bindTable(':table_categories', TABLE_CATEGORIES);
           $Qcategories->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
           $Qcategories->bindInt(':language_id', $osC_Language->getID());
