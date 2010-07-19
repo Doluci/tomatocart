@@ -30,7 +30,7 @@ var AjaxShoppingCart = new Class({
   initializeCart: function() {
     this.products = [];
     this.attachAddToCartEvent();
-    
+
     $('ajaxCartCollapse').addEvent('click', function(e) {
       e.stop();
 
@@ -43,10 +43,10 @@ var AjaxShoppingCart = new Class({
       this.expand();
     }.bind(this));
 
-    
+
     this.loadCart();
   },
-  
+
   //attach click event for the add to cart buttons
   attachAddToCartEvent: function() {
     if ( $defined($$('.ajaxAddToCart')) ) {
@@ -60,38 +60,42 @@ var AjaxShoppingCart = new Class({
           var pID = addToCartButton.get('pid');
           this.sendRequest({action: 'add_product', pID: pID}, function(response) {
             var result = JSON.decode(response);
-      
+
             //move image
             if (result.success == true) {
               if ( $defined($('defaultProductImage')) ) {
-                var srcImage = $('defaultProductImage').getElement('img.productImage');
+                if ( $defined($('productImages')) ) {
+                  var srcImage = $('productImages').getElement('#defaultProductImage');
+                }else {
+                  var srcImage = $('defaultProductImage').getElement('img.productImage');
+                }
               }else if ( $defined($('productImage' + pID)) ) {
                 var srcImage = $('productImage' + pID).getElement('img.productImage');
               }
-              
+
               var srcPos = srcImage.getCoordinates();
               var destPos = $('ajaxCartContent').getParent().getCoordinates();
-          
+
               var floatImage = srcImage.clone().setStyles({
-                'position': 'absolute', 
-                'width': srcPos.width * this.options.movedPicSize, 
-                'height': srcPos.height * this.options.movedPicSize, 
-                'left': srcPos.left, 
+                'position': 'absolute',
+                'width': srcPos.width * this.options.movedPicSize,
+                'height': srcPos.height * this.options.movedPicSize,
+                'left': srcPos.left,
                 'top': srcPos.top
               });
-          
+
               floatImage.injectAfter(srcImage).setStyles({position: 'absolute'}).set('morph', {
                 duration: 700,
                 onComplete: function() {
                   floatImage.fade('out');
-          
+
                   this.updateCart(result.content);
-          
+
                   (function() {floatImage.destroy()}).delay(1000);
-          
+
                   addToCartButton.erase('disabled');
                 }.bind(this)
-              }).morph({width: srcPos.width, height: srcPos.height, top: destPos.top + destPos.height / 4, left: destPos.left + destPos.width / 4});
+              }).morph({width: srcPos.width / 2, height: srcPos.height / 2, top: destPos.top + destPos.height / 4, left: destPos.left + destPos.width / 3});
             }
           });
         }.bind(this));
@@ -139,7 +143,7 @@ var AjaxShoppingCart = new Class({
         duration: 600,
         onComplete: function() {
           $('ajaxCartContentShort').addClass('collapsed').removeClass('expanded');
-          
+
           $('ajaxCartContentLong').removeClass('collapsed').addClass('expanded');
           $('ajaxCartContentLong').set('tween', {
             duration: 500,
@@ -193,21 +197,21 @@ var AjaxShoppingCart = new Class({
   removeProducts: function(json) {
     if (this.products.length > 0) {
       //get all the products to be removed
-	    var products = [];
-	
-	    this.products.each(function(id) {
-	      var found = false;
-	      if ($defined(json.products)) {
-	        json.products.each(function(product) {
-	          if (product.id == id) {
-	            found = true;
-	          }
-	        });
-	      }
-	
-	      if (!found) {products.push(id);}
-	    });
-      
+      var products = [];
+
+      this.products.each(function(id) {
+        var found = false;
+        if ($defined(json.products)) {
+          json.products.each(function(product) {
+            if (product.id == id) {
+              found = true;
+            }
+          });
+        }
+
+        if (!found) {products.push(id);}
+      });
+
       //play animation to remove products
       if (products.length > 0) {
         products.each(function(pID, index) {
@@ -234,40 +238,40 @@ var AjaxShoppingCart = new Class({
     if ( $defined(json.products) && json.products.length > 0 ) {
       //remove products
       this.removeProducts(json);
-    
+
       //add products
       json.products.each(function(product) {
-				if ( this.products.indexOf(product.id) == -1 ) {
-				  this.products.push(product.id);
-				  
-					var rowEl = new Element('li', {'id': 'ajaxCartProduct' + product.id});
-					var quantityEl = new Element('span', {'class': 'quantity', 'html': product.quantity});
-			    var productEl = new Element('a', {'href': product.link, 'title': product.title, 'html': product.name});
-					var priceEl = new Element('span', {'class': 'price', 'html': product.price});
-					var deleteEl = new Element('span', {'class': 'removeProduct'});
-					
-					$('ajaxCartContentProducts').grab(rowEl.grab(quantityEl).grab(productEl).grab(priceEl).grab(deleteEl));
-					
-					//delete product
-			    deleteEl.addEvent('click', function(e) {
-			      e.stop();
-			
-				    this.sendRequest({action: 'remove_product', pID: product.id}, function(response) {
-				      var result = JSON.decode(response);
-				      
-					    if (result.success == true) {
-			          this.loadCart();
-					    }
-				    });
-			    }.bind(this));
-					
-				  $('ajaxCartContentProducts').removeClass('collapsed');
-				} else {
-				   $('ajaxCartProduct' + product.id ).getElement('.price').set('text', product.price);
-				   $('ajaxCartProduct' + product.id).getElement('.quantity').set('html', product.quantity);
-				}
+        if ( this.products.indexOf(product.id) == -1 ) {
+          this.products.push(product.id);
+
+          var rowEl = new Element('li', {'id': 'ajaxCartProduct' + product.id});
+          var quantityEl = new Element('span', {'class': 'quantity', 'html': product.quantity});
+          var productEl = new Element('a', {'href': product.link, 'title': product.title, 'html': product.name});
+          var priceEl = new Element('span', {'class': 'price', 'html': product.price});
+          var deleteEl = new Element('span', {'class': 'removeProduct'});
+
+          $('ajaxCartContentProducts').grab(rowEl.grab(quantityEl).grab(productEl).grab(priceEl).grab(deleteEl));
+
+          //delete product
+          deleteEl.addEvent('click', function(e) {
+            e.stop();
+
+            this.sendRequest({action: 'remove_product', pID: product.id}, function(response) {
+              var result = JSON.decode(response);
+
+              if (result.success == true) {
+                this.loadCart();
+              }
+            });
+          }.bind(this));
+
+          $('ajaxCartContentProducts').removeClass('collapsed');
+        } else {
+           $('ajaxCartProduct' + product.id ).getElement('.price').set('text', product.price);
+           $('ajaxCartProduct' + product.id).getElement('.quantity').set('html', product.quantity);
+        }
       }.bind(this));
-      
+
       $('ajaxCartContentNoProducts').removeClass('expand').addClass('collapsed');
     } else {
       $('ajaxCartContentNoProducts').removeClass('collapsed').addClass('expand');
@@ -281,7 +285,7 @@ var AjaxShoppingCart = new Class({
 
     if ($type(json.orderTotals) == 'array') {
       var orderTotalsEl = new Element('ul', {'id': 'ajaxCartOrderTotals'});
-      
+
       var html = '';
       json.orderTotals.each(function(orderTotal) {
         html += '<li><span class="orderTotalText">' + orderTotal.text + '</span><span>' + orderTotal.title + '</span></li>'
