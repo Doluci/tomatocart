@@ -12,7 +12,7 @@
 */
 
   class toC_Json_Ajax_shopping_cart {
-  	static $str_len = 18;
+  	const PRODUCTS_NAME_LENGTH = 18;
   	
     function loadCart() {
       global $osC_ShoppingCart, $osC_Currencies, $toC_Json;
@@ -25,23 +25,26 @@
     function addProduct() {
       global $osC_ShoppingCart, $toC_Json;
       
-      if ( is_numeric($_REQUEST['idProduct']) && osC_Product::checkEntry($_REQUEST['idProduct']) ) {
-        $osC_ShoppingCart->add($_REQUEST['idProduct']);
+      if ( is_numeric($_REQUEST['pID']) && osC_Product::checkEntry($_REQUEST['pID']) ) {
+        $osC_ShoppingCart->add($_REQUEST['pID']);
         
         $content = self::_getShoppingCart();
         
-        echo $toC_Json->encode($content);
-      }    
+        $response = array('success' => true, 'content' => $content);
+      } else {
+        $response = array('success' => false);
+      }
+      
+      echo $toC_Json->encode($response);
     }
     
     function removeProduct() {
       global $toC_Json, $osC_ShoppingCart;
 
-      $products_id = isset($_REQUEST['idProduct']) ? $_POST['idProduct'] : null;
+      $products_id = isset($_REQUEST['pID']) ? $_POST['pID'] : null;
 
       if ( (!empty($products_id)) && osC_Product::checkEntry($products_id) ) {
         $osC_ShoppingCart->remove($products_id);        
-        $osC_ShoppingCart->resetShippingMethod();
                 
         $response = array('success' => true);
       }else {
@@ -59,11 +62,9 @@
       //products
       $products = array();
       foreach($osC_ShoppingCart->getProducts() as $products_id => $data) {
-        if ($data['type'] != PRODUCT_TYPE_SIMPLE) continue;
-        
         $products[] = array('id' => $products_id,
                             'link' => osc_href_link(FILENAME_PRODUCTS, osc_get_product_id($products_id)),
-                            'name' => (substr($data['name'], 0, self::$str_len)) . (strlen($data['name']) > self::$str_len ? '..' : ''),
+                            'name' => (substr($data['name'], 0, self::PRODUCTS_NAME_LENGTH)) . (strlen($data['name']) > self::PRODUCTS_NAME_LENGTH ? '..' : ''),
                             'title' => $data['name'],
                             'quantity' => $data['quantity'] . ' x ',
                             'price' => $osC_Currencies->format($data['price']));                
