@@ -4,7 +4,7 @@
   TomatoCart Open Source Shopping Cart Solutions
   http://www.tomatocart.com
 
-  Copyright (c) 2009 Wuxi Elootec Technology Co., Ltd;  Copyright (c) 2006 osCommerce
+  Copyright (c) 2009 Wuxi Elootec Technology Co., Ltd
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License v2 (1991)
@@ -14,8 +14,8 @@
   class osC_Boxes_shopping_cart extends osC_Modules {
     var $_title,
         $_code = 'shopping_cart',
-        $_author_name = 'osCommerce',
-        $_author_www = 'http://www.oscommerce.com',
+        $_author_name = 'TomatoCart',
+        $_author_www = 'http://www.tomatocart.com',
         $_group = 'boxes';
 
     function osC_Boxes_shopping_cart() {
@@ -25,25 +25,59 @@
     }
 
     function initialize() {
-      global $osC_Language, $osC_ShoppingCart, $osC_Currencies;
+      global $osC_Language, $osC_Template, $osC_Session;
 
       $this->_title_link = osc_href_link(FILENAME_CHECKOUT, null, 'SSL');
-
-      if ($osC_ShoppingCart->hasContents()) {
-        $this->_content = '<table border="0" width="100%" cellspacing="0" cellpadding="0">';
-
-        foreach ($osC_ShoppingCart->getProducts() as $products) {
-          $this->_content .= '  <tr>' .
-                             '    <td align="left" width="20" valign="top">' . $products['quantity'] . '&nbsp;x&nbsp;</td>' .
-                             '    <td valign="top">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products['id']), $products['name']) . '</td>' .
-                             '  </tr>';
-        }
-
-        $this->_content .= '</table>' .
-                           '<p style="text-align: right;padding-right:5px">' . $osC_Language->get('box_shopping_cart_subtotal') . ' ' . $osC_Currencies->format($osC_ShoppingCart->getSubTotal()) . '</p>';
-      } else {
-        $this->_content = $osC_Language->get('box_shopping_cart_empty');
-      }
+      
+      $content = '<div id="ajaxCartContent">' .
+                  '<div id="ajaxCartContentShort" class="collapsed">' .
+                    '<span class="cartTotal"></span>' .  
+                    '<span class="quantity"></span> ' . $osC_Language->get('text_items') .
+                  '</div>' .
+                  '<div id="ajaxCartContentLong" class="expanded">' .
+                    '<ul class="products collapsed" id="ajaxCartContentProducts"></ul>' .
+                    '<p id="ajaxCartContentNoProducts" class="collapsed">' . $osC_Language->get('No products') . '</p>' .
+                    '<div id="ajaxCartButtons">' .
+                      osc_link_object(osc_href_link(FILENAME_CHECKOUT), osc_draw_image_button('button_ajax_cart.png'), 'style="margin-right:30px;"') .
+                      osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'payment'), osc_draw_image_button('button_ajax_cart_checkout.png')) .
+                      '<div style="visibility:hidden">' . 
+                        '<span>clear-bug-div</span>' .
+                      '</div>' .
+                    '</div>' .
+                  '</div>' .
+                 '</div>';
+                      
+      $css = '<style type="text/css">' . "\n" .
+              '#ajaxCartContent {overflow: hidden;}' .
+              '.boxTitle #ajaxCartCollapse, .boxTitle #ajaxCartExpand {cursor:pointer;position:relative;top:3px;}' .
+              '.hidden {display: none;}' .
+              '.expanded {display: block;}' .
+              '.collapsed {display: none;}' .
+              '.strike {text-decoration:line-through;}' .
+              '#ajaxCartContentShort span{ padding: 0 2px;}' .
+              '#ajaxCartButtons {margin-top:10px;}' .
+              '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' .
+              '#ajaxCartOrderTotals span.orderTotalText {float: right}' .
+              '#ajaxCartContentLong ul.products {text-align: left;}' . 
+              '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;}' .
+              '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:8px;}' .
+              '#ajaxCartContentLong ul.products .removeProduct {cursor: pointer;display: block;width: 11px;height: 13px;position: absolute;right: 0;top: 8px;background: url(includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_ajax_cart_delete.gif) no-repeat left top;}' .
+              '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' .
+              '#ajaxCartOrderTotals {padding:5px 0;border-top: 1px dashed #CCCCCC;}' .
+              '#ajaxCartContentLong #ajaxCartOrderTotals li {padding: 2px;font-size: 11px}' .
+              '#ajaxCartContentShort span.cartTotal {float:right; font-weight: bold}' .
+              '#ajaxCartContentProducts dd span {display:block;padding-left:32px;}' .  
+             '</style>' . "\n\n";                                 
+                      
+      $js = $osC_Template->ouputJavascriptFile('includes/javascript/ajax_shopping_cart.js') . "\n\n";
+      
+      $js .= '<script type="text/javascript">
+                window.addEvent("domready",function() {
+                  new AjaxShoppingCart({sessionId : "' . $osC_Session->getID() . '"});
+                });
+              </script>';
+      
+      $this->_content = $css . "\n" . $content . "\n" . $js;
     }
   }
 ?>
