@@ -95,7 +95,7 @@
     cboLanguage.on(
       'select',
       function(){
-        document.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?language=' + cboLanguage.getValue();
+        document.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?admin_language=' + cboLanguage.getValue();
       },
       this
     )
@@ -145,7 +145,7 @@
     function login(){   
       frmlogin.form.submit({
         success: function (form, action) {
-          window.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?language=' + cboLanguage.getValue();
+          window.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?admin_language=' + cboLanguage.getValue();
         },
         failure: function (form, action) {
           if (action.failureType != 'client') {
