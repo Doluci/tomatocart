@@ -90,6 +90,10 @@
 	background-image: url(../../images/icons/16x16/reviews.png) !important;
 }
 
+.icon-ratings-win {
+  background-image: url(../../images/icons/16x16/ratings.png) !important;
+}
+
 .icon-products_expected-win {
 	background-image: url(../../images/icons/16x16/product_expected.png) !important;
 }
@@ -310,6 +314,10 @@
 	background-image: url(../../images/icons/16x16/google_sitemap.png) !important;
 }
 
+.icon-google_adsense-win {
+  background-image: url(../../images/icons/16x16/google_adsense.png) !important;
+}
+
 .icon-images-win {
 	background-image: url(../../images/icons/16x16/image.png) !important;
 }
@@ -402,4 +410,28 @@
 
 .icon-reports_web-subgroup {
 	background-image: url(../../images/icons/16x16/reports_web.png) !important;
+}
+
+.icon-watermark-win {
+  background-image: url(../../images/icons/16x16/watermark.png) !important;
+}
+
+.icon-products_attachments-win {
+  background-image: url(../../images/icons/16x16/attachments.png) !important;
+}
+
+.icon-reviews-subgroup {
+  background-image: url(../../images/icons/16x16/reviews.png) !important;
+}
+
+.icon-department-win {
+  background-image: url(../../images/icons/16x16/department.png) !important;
+}
+
+.icon-polls-win {
+  background-image: url(../../images/icons/16x16/polls.png) !important;
+}
+
+.icon-guest_book-win {
+  background-image: url(../../images/icons/16x16/guestbook.png) !important;
 }
