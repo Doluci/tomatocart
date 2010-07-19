@@ -27,17 +27,26 @@
   include('xsell_products_panel.php');  
   include('attributes_panel.php');
   include('products_dialog.php');
+  include('attachments_panel.php');
+  include('attachments_grid.php');
+  include('attachments_dialog.php');
+  include('attachments_list_dialog.php');
 ?>
 
 Ext.override(TocDesktop.ProductsWindow, {
 
   createWindow : function(){
-    if(this.id == 'products-dialog-win') {
-      win = this.createProductDialog();
-    } else {
-      win = this.createProductsWindow();
-    }    
-    
+    switch(this.id) {
+      case 'products-dialog-win':
+        win = this.createProductDialog();
+        break;
+      case 'products-win':
+        win = this.createProductsWindow();
+        break;
+      case 'products_attachments-win':
+        win = this.createProductsAttachmentsWindow();
+        break;
+    }
     win.show();
   },
 
@@ -68,9 +77,58 @@ Ext.override(TocDesktop.ProductsWindow, {
     var dlg = desktop.getWindow('products-dialog-win');
     
     if (!dlg) {
-      dlg = desktop.createWindow({products_id: productId}, Toc.products.ProductDialog);
+      dlg = desktop.createWindow({products_id: productId, owner: this}, Toc.products.ProductDialog);
     }
         
+    return dlg;
+  },
+  
+  createProductsAttachmentsWindow: function() {
+    var desktop = this.app.getDesktop();
+    var win = desktop.getWindow('products_attachments-win');
+     
+    if (!win) {
+      grd = new Toc.products.AttachmentsGrid({owner: this});
+      
+      win = desktop.createWindow({
+        id: 'products_attachments-win',
+        title: '<?php echo $osC_Language->get('heading_attachments_title'); ?>',
+        width: 800,
+        height: 400,
+        iconCls: 'icon-products_attachments-win',
+        layout: 'fit',
+        items: grd
+      });
+    }
+    
+    return win;
+  },
+  
+  createAttachmentsListDialog: function(productsId) {
+    var desktop = this.app.getDesktop();
+    var dlg = desktop.getWindow('products_attachments_list_dialog-win');
+    
+    if (!dlg) {
+      dlg = desktop.createWindow({productsId: productsId}, Toc.products.AttachmentsListDialog);
+    }
+        
+    return dlg;
+  },
+  
+  createAttachmentsDialog: function() {
+    var desktop = this.app.getDesktop();
+    var dlg = desktop.getWindow('products_attachments_dialog-win');
+    
+    if (!dlg) {
+      dlg = desktop.createWindow({}, Toc.products.AttachmentsDialog);
+      
+      dlg.on('saveSuccess', function (feedback) {
+        this.app.showNotification({
+          title: TocLanguage.msgSuccessTitle,
+          html: feedback
+        });
+      }, this);
+    }
     return dlg;
   },
   
