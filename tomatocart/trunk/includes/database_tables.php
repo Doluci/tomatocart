@@ -73,6 +73,9 @@
   define('TABLE_PIWIK_SITE', DB_TABLE_PREFIX . 'piwik_site');
   define('TABLE_PIWIK_USER', DB_TABLE_PREFIX . 'piwik_user');
   define('TABLE_PRODUCTS', DB_TABLE_PREFIX . 'products');
+  define('TABLE_PRODUCTS_ATTACHMENTS', DB_TABLE_PREFIX . 'products_attachments');
+  define('TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION', DB_TABLE_PREFIX . 'products_attachments_description');
+  define('TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS', DB_TABLE_PREFIX . 'products_attachments_to_products');
   define('TABLE_PRODUCTS_ATTRIBUTES', DB_TABLE_PREFIX . 'products_attributes');
   define('TABLE_PRODUCTS_ATTRIBUTES_GROUPS', DB_TABLE_PREFIX . 'products_attributes_groups');
   define('TABLE_PRODUCTS_ATTRIBUTES_VALUES', DB_TABLE_PREFIX . 'products_attributes_values');
