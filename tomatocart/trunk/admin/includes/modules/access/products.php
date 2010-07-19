@@ -30,7 +30,11 @@
                                 array('iconCls' => 'icon-new-products-win',
                                       'shortcutIconCls' => 'icon-new-products-shortcut',
                                       'title' => $osC_Language->get('access_products_new_title'),
-                                      'identifier' => 'products-dialog-win'));
+                                      'identifier' => 'products-dialog-win'),
+                                array('iconCls' => 'icon-products_attachments-win',
+                                      'shortcutIconCls' => 'icon-products_attachments-shortcut',
+                                      'title' => $osC_Language->get('access_products_attachments_title'),
+                                      'identifier' => 'products_attachments-win'));
     }
   }
 ?>
