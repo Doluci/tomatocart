@@ -10,6 +10,7 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
+  include('includes/classes/products_attachments.php');  
   include('includes/classes/category_tree.php');
   include('includes/classes/products.php');
   include('includes/classes/image.php');
@@ -641,6 +642,11 @@
         $data['categories'] = explode(',', $_REQUEST['categories_id']);
       }
       
+      if (isset($_REQUEST['attachments_ids'])) {
+        $data['attachments'] = explode(',', $_REQUEST['attachments_ids']);
+      }
+      
+      
       if (isset($_REQUEST['localimages']) && !empty($_REQUEST['localimages'])) {
         $localimages = explode(',', $_REQUEST['localimages']);
         $data['localimages'] = $localimages;
@@ -915,6 +921,143 @@
       }
       
       echo $toC_Json->encode($response);
+    }
+    
+    function listProductAttachments() {
+      global $toC_Json, $osC_Database, $osC_Language;
+      
+      $records = array();
+
+      $start = empty($_REQUEST['start']) ? 0 : $_REQUEST['start']; 
+      $limit = empty($_REQUEST['limit']) ? MAX_DISPLAY_SEARCH_RESULTS : $_REQUEST['limit'];
+
+      $Qattachments = $osC_Database->query("select pa.attachments_id, filename, cache_filename, attachments_name, attachments_description from :table_products_attachments pa inner join :table_products_attachments_description pad on pa.attachments_id = pad.attachments_id and pad.languages_id = :language_id");
+      
+      if ( !empty($_REQUEST['attachments_name']) && isset($_REQUEST['attachments_name']) ) {
+        $Qattachments->appendQuery('and attachments_name like :attachments_name');
+        $Qattachments->bindValue(':attachments_name', '%' . $_REQUEST['attachments_name'] . '%');
+      }
+
+      $Qattachments->bindInt(':language_id', $osC_Language->getID());
+      $Qattachments->bindTable(':table_products_attachments', TABLE_PRODUCTS_ATTACHMENTS);
+      $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+      $Qattachments->setExtBatchLimit($start, $limit);
+      $Qattachments->execute();
+      
+      while ($Qattachments->next()) {
+        $records[] = array('attachments_id'             => $Qattachments->valueInt('attachments_id'),
+                           'attachments_name'           => $Qattachments->value('attachments_name'),
+                           'attachments_cache_filename' => $Qattachments->value('cache_filename'),
+                           'attachments_filename'       => $Qattachments->value('filename'),
+                           'attachments_description'    => $Qattachments->value('attachments_description'));
+      }
+      
+      $response = array(EXT_JSON_READER_TOTAL => $Qattachments->getBatchSize(),
+                        EXT_JSON_READER_ROOT  => $records);
+     
+      echo $toC_Json->encode($response);
+    }
+    
+    function loadProductsAttachments() {
+      global $osC_Database, $toC_Json, $osC_Language;
+      
+      $products_id = isset($_REQUEST['products_id']) && !empty($_REQUEST['products_id']) ? $_REQUEST['products_id'] : 0;
+      $records = array();
+
+      $Qattachments = $osC_Database->query('select pa.attachments_id, attachments_name, filename, attachments_description from :table_products_attachments_to_products pa2p inner join :table_products_attachments pa on pa2p.attachments_id = pa.attachments_id inner join :table_products_attachments_description pad on pa2p.attachments_id = pad.attachments_id where pa2p.products_id = :products_id and pad.languages_id = :language_id');
+      $Qattachments->bindTable(':table_products_attachments_to_products', TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS);
+      $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+      $Qattachments->bindTable(':table_products_attachments', TABLE_PRODUCTS_ATTACHMENTS);
+      $Qattachments->bindInt(':products_id', $products_id);
+      $Qattachments->bindInt(':language_id', $osC_Language->getID());
+      $Qattachments->execute();
+      
+      while($Qattachments->next()){
+        $records[] = array('attachments_id'          => $Qattachments->value('attachments_id'),
+                           'attachments_name'        => $Qattachments->value('attachments_name'),
+                           'attachments_file_name'   => $Qattachments->value('filename'),
+                           'attachments_description' => $Qattachments->value('attachments_description'));  
+      }
+     
+      $response = array(EXT_JSON_READER_TOTAL => sizeof($records),
+                        EXT_JSON_READER_ROOT  => $records); 
+                        
+      echo $toC_Json->encode($response);
+    }
+    
+    function saveAttachment() {
+      global $toC_Json, $osC_Language;
+      
+      $data = array('attachments_name' => $_REQUEST['attachments_name'],
+                    'attachments_file'  => $_FILES['attachments_file_name'],
+                    'attachments_description' => $_REQUEST['attachments_description']);
+      
+      if (toC_Product_Attachments_Admin::save($_REQUEST['attachments_id'] ? $_REQUEST['attachments_id']: null, $data)) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }
+      
+      header('Content-Type: text/html');
+      
+      echo $toC_Json->encode($response);
+    }
+    
+    function loadAttachment(){
+      global $toC_Json, $osC_Database;
+      
+      $data = toC_Product_Attachments_Admin::getData($_REQUEST['attachments_id']);
+      
+      $response = array('success' => true, 'data' => $data, 'attachments_file' => 'json.php?cache_filename=' . $data['cache_filename'] . '&file_name=' . $data['filename'] . '&module=products&action=download_attachments');
+      
+      echo $toC_Json->encode($response);
+    }
+    
+    function deleteAttachment() {
+      global $toC_Json, $osC_Language;
+      
+      if (toC_Product_Attachments_Admin::delete($_REQUEST['attachments_id'], $_REQUEST['attachments_name'])) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }
+     
+      echo $toC_Json->encode($response);   
+    }
+    
+    function deleteAttachments() {
+      global $toC_Json, $osC_Language;
+      
+      $error = false;
+      
+      $batchs = explode(',', $_REQUEST['batch']);
+      foreach ($batchs as $batch) {
+        list($attachments_id, $filename) = explode(':' ,$batch);
+        if ( !toC_Product_Attachments_Admin::delete($attachments_id, $filename) ) {
+          $error = true;
+          break;
+        }
+      }
+
+      if ($error === false) {      
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }
+      
+      echo $toC_Json->encode($response);               
+    }
+    
+    function downloadAttachments() {
+      
+      header("Expires: Mon, 26 Nov 1962 00:00:00 GMT");
+      header("Last-Modified: " . gmdate("D,d M Y H:i:s") . " GMT");
+      header("Cache-Control: no-cache, must-revalidate");
+      header("Pragma: no-cache");
+      header("Content-Type: Application/octet-stream");
+      header("Content-disposition: attachment; filename=" . $_REQUEST['file_name']);
+      
+      readfile(DIR_FS_CACHE . 'products_attachments/' . $_REQUEST['cache_filename']);
     }
   }
 ?>
