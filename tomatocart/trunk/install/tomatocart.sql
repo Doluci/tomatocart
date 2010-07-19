@@ -144,6 +144,7 @@ CREATE TABLE toc_categories (
   categories_image varchar(64) default NULL,
   parent_id int(11) NOT NULL default '0',
   sort_order int(3) default NULL,
+  categories_status int(1) default 1,
   date_added datetime default NULL,
   last_modified datetime default NULL,
   PRIMARY KEY  (categories_id),
@@ -161,6 +162,14 @@ CREATE TABLE toc_categories_description (
   categories_meta_description varchar(255) NOT NULL,
   PRIMARY KEY  (categories_id,language_id),
   KEY idx_categories_name (categories_name)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_categories_ratings;
+CREATE TABLE toc_categories_ratings (
+  categories_id int(11) NOT NULL,
+  ratings_id int(11) NOT NULL,
+  PRIMARY KEY  (categories_id,ratings_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -1344,6 +1353,34 @@ CREATE TABLE toc_quantity_unit_classes (
   quantity_unit_class_title varchar(32) NOT NULL,
   PRIMARY KEY  (quantity_unit_class_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_ratings;
+CREATE TABLE toc_ratings (
+  ratings_id int(11) NOT NULL auto_increment,
+  status tinyint(1) NOT NULL,
+  PRIMARY KEY  (ratings_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_ratings_description;
+CREATE TABLE IF NOT EXISTS toc_ratings_description (
+  ratings_id int(11) NOT NULL,
+  languages_id int(11) NOT NULL,
+  ratings_text varchar(64) NOT NULL,
+  PRIMARY KEY  (ratings_id,languages_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_customers_ratings;
+CREATE TABLE IF NOT EXISTS toc_customers_ratings (
+  customers_ratings_id int(11) NOT NULL AUTO_INCREMENT,
+  customers_id int(11) NOT NULL,  
+  reviews_id int(11) NOT NULL,  
+  ratings_id int(11) NOT NULL,
+  ratings_value int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (customers_ratings_id)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS toc_reviews;
