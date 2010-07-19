@@ -8,4 +8,6 @@
 # it under the terms of the GNU General Public License v2 (1991)
 # as published by the Free Software Foundation.
 
+access_reviews_ratings_title = Reviews & Ratings
 access_reviews_title = Reviews
+access_ratings_title = Ratings
