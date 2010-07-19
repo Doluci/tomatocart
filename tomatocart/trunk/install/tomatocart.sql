@@ -1092,6 +1092,33 @@ CREATE TABLE toc_products (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS toc_products_attachments;
+CREATE TABLE toc_products_attachments (
+  attachments_id int(11) NOT NULL auto_increment,
+  filename varchar(128) NOT NULL,
+  cache_filename varchar(128) NOT NULL,
+  PRIMARY KEY  (attachments_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_products_attachments_description;
+CREATE TABLE toc_products_attachments_description (
+  attachments_id int(11) NOT NULL,
+  languages_id int(11) NOT NULL default '1',
+  attachments_name varchar(128) NOT NULL,
+  attachments_description text,
+  PRIMARY KEY  (attachments_id,languages_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_products_attachments_to_products;
+CREATE TABLE toc_products_attachments_to_products (
+  attachments_id int(11) NOT NULL,
+  products_id int(11) NOT NULL,
+  PRIMARY KEY  (attachments_id,products_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS toc_products_attributes;
 CREATE TABLE toc_products_attributes (
   products_id int(11) NOT NULL,
