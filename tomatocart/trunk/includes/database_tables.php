@@ -23,6 +23,7 @@
   define('TABLE_BANNERS_HISTORY', DB_TABLE_PREFIX . 'banners_history');
   define('TABLE_CATEGORIES', DB_TABLE_PREFIX . 'categories');
   define('TABLE_CATEGORIES_DESCRIPTION', DB_TABLE_PREFIX . 'categories_description');
+  define('TABLE_CATEGORIES_RATINGS', DB_TABLE_PREFIX . 'categories_ratings');
   define('TABLE_CONFIGURATION', DB_TABLE_PREFIX . 'configuration');
   define('TABLE_CONFIGURATION_GROUP', DB_TABLE_PREFIX . 'configuration_group');
   define('TABLE_COUNTER', DB_TABLE_PREFIX . 'counter');
@@ -39,6 +40,8 @@
   define('TABLE_CUSTOMERS_CREDITS_HISTORY', DB_TABLE_PREFIX . 'customers_credits_history');
   define('TABLE_CUSTOMERS_GROUPS', DB_TABLE_PREFIX . 'customers_groups');
   define('TABLE_CUSTOMERS_GROUPS_DESCRIPTION', DB_TABLE_PREFIX . 'customers_groups_description');
+  define('TABLE_CUSTOMERS_RATINGS', DB_TABLE_PREFIX . 'customers_ratings');
+  define('TABLE_DEPARTMENT', DB_TABLE_PREFIX . 'department');
   define('TABLE_EMAIL_ACCOUNTS', DB_TABLE_PREFIX . 'email_accounts');
   define('TABLE_EMAIL_FILTERS', DB_TABLE_PREFIX . 'email_filters');
   define('TABLE_EMAIL_FOLDERS', DB_TABLE_PREFIX . 'email_folders');
@@ -49,7 +52,9 @@
   define('TABLE_FAQS_DESCRIPTION', DB_TABLE_PREFIX . 'faqs_description');
   define('TABLE_GEO_ZONES', DB_TABLE_PREFIX . 'geo_zones');
   define('TABLE_GIFT_CERTIFICATES', DB_TABLE_PREFIX . 'gift_certificates');
+  define('TABLE_GUEST_BOOKS', DB_TABLE_PREFIX . 'guest_books');
   define('TABLE_GIFT_CERTIFICATES_REDEEM_HISTORY', DB_TABLE_PREFIX . 'gift_certificates_redeem_history');
+  define('TABLE_GOOGLE_ORDERS', DB_TABLE_PREFIX . 'google_orders');
   define('TABLE_LANGUAGES', DB_TABLE_PREFIX . 'languages');
   define('TABLE_LANGUAGES_DEFINITIONS', DB_TABLE_PREFIX . 'languages_definitions');
   define('TABLE_MANUFACTURERS', DB_TABLE_PREFIX . 'manufacturers');
@@ -94,9 +99,16 @@
   define('TABLE_PRODUCTS_VARIANTS_VALUES', DB_TABLE_PREFIX . 'products_variants_values');
   define('TABLE_PRODUCTS_VARIANTS_VALUES_TO_PRODUCTS_VARIANTS_GROUPS', DB_TABLE_PREFIX . 'products_variants_values_to_products_variants_groups');
   define('TABLE_PRODUCTS_XSELL', DB_TABLE_PREFIX . 'products_xsell');
+  define('TABLE_POLLS', DB_TABLE_PREFIX . 'polls');
+  define('TABLE_POLLS_ANSWERS', DB_TABLE_PREFIX . 'polls_answers');
+  define('TABLE_POLLS_ANSWERS_DESCRIPTION', DB_TABLE_PREFIX . 'polls_answers_description');
+  define('TABLE_POLLS_DESCRIPTION', DB_TABLE_PREFIX . 'polls_description');
+  define('TABLE_POLLS_VOTES', DB_TABLE_PREFIX . 'polls_votes');
   define('TABLE_QUANTITY_DISCOUNT_GROUPS', DB_TABLE_PREFIX . 'quantity_discount_groups');
   define('TABLE_QUANTITY_DISCOUNT_GROUPS_VALUES', DB_TABLE_PREFIX . 'quantity_discount_groups_values');
   define('TABLE_QUANTITY_UNIT_CLASSES', DB_TABLE_PREFIX . 'quantity_unit_classes');
+  define('TABLE_RATINGS', DB_TABLE_PREFIX . 'ratings');
+  define('TABLE_RATINGS_DESCRIPTION', DB_TABLE_PREFIX . 'ratings_description');
   define('TABLE_REVIEWS', DB_TABLE_PREFIX . 'reviews');
   define('TABLE_SEARCH_TERMS', DB_TABLE_PREFIX . 'search_terms');
   define('TABLE_SESSIONS', DB_TABLE_PREFIX . 'sessions');
@@ -114,4 +126,5 @@
   define('TABLE_WISHLISTS_PRODUCTS', DB_TABLE_PREFIX . 'wishlists_products');
   define('TABLE_ZONES', DB_TABLE_PREFIX . 'zones');
   define('TABLE_ZONES_TO_GEO_ZONES', DB_TABLE_PREFIX . 'zones_to_geo_zones');
+  define('TABLE_ORDER_TRACK', DB_TABLE_PREFIX . 'order_track');
 ?>
