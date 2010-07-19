@@ -23,7 +23,7 @@
       $start = empty($_REQUEST['start']) ? 0 : $_REQUEST['start']; 
       $limit = empty($_REQUEST['limit']) ? MAX_DISPLAY_SEARCH_RESULTS : $_REQUEST['limit']; 
       
-      $Qcategories = $osC_Database->query('select c.categories_id, cd.categories_name, c.categories_image, c.parent_id, c.sort_order, c.date_added, c.last_modified from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id');
+      $Qcategories = $osC_Database->query('select c.categories_id, cd.categories_name, c.categories_image, c.parent_id, c.sort_order, c.categories_status, c.date_added, c.last_modified from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id');
       $Qcategories->appendQuery('and c.parent_id = :parent_id');
       
       if ( isset($_REQUEST['categories_id']) && !empty($_REQUEST['categories_id']) ) {
@@ -49,12 +49,36 @@
       while ($Qcategories->next()) {
         $records[] = array('categories_id' => $Qcategories->value('categories_id'),
                            'categories_name' => $Qcategories->value('categories_name'),
+                           'status' => $Qcategories->valueInt('categories_status'),
                            'path' => $osC_CategoryTree->buildBreadcrumb($Qcategories->valueInt('categories_id')),); 
       }
         
       $response = array(EXT_JSON_READER_TOTAL => $Qcategories->getBatchSize(),
                         EXT_JSON_READER_ROOT => $records); 
                         
+      echo $toC_Json->encode($response);
+    }
+    
+    function listRatings() {
+      global $toC_Json, $osC_Language, $osC_Database;
+      
+      $Qratings = $osC_Database->query('select r.ratings_id, rd.ratings_text from :table_ratings r inner join :table_ratings_description rd on rd.ratings_id = r.ratings_id and rd.languages_id = :languages_id and status = 1');
+      $Qratings->bindTable(':table_ratings', TABLE_RATINGS);
+      $Qratings->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+      $Qratings->bindInt(':languages_id', $osC_Language->getID());
+      $Qratings->execute();
+      
+      while ( $Qratings->next() ) {
+        $records[] = array(
+          'ratings_id' => $Qratings->valueInt('ratings_id'),
+          'ratings_text' => $Qratings->value('ratings_text')
+        );
+      }
+        
+      $response = array(EXT_JSON_READER_ROOT => $records);
+                        
+      $Qratings->freeResult();                  
+     
       echo $toC_Json->encode($response);
     }
 
@@ -139,8 +163,9 @@
         $data['meta_keywords['. $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_meta_keywords');
         $data['meta_description[' . $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_meta_description');
       }
+      $Qcategories->freeResult();
       
-      $response = array('success' => true, 'data' => $data); 
+      $response = array('success' => true, 'data' => $data);
       
       echo $toC_Json->encode($response);
     }
@@ -153,11 +178,12 @@
       $data = array('parent_id' => $parent_id, 
                     'sort_order' => $_REQUEST['sort_order'],
                     'image' => $_FILES['image'],  
+                    'categories_status'  => $_REQUEST['categories_status'],
                     'name' => $_REQUEST['categories_name'],
-                    'delimage' => (isset($_REQUEST['delimage']) && ($_REQUEST['delimage'] == 'on') ? '1' : '0'),
                     'page_title' => $_REQUEST['page_title'],
                     'meta_keywords' => $_REQUEST['meta_keywords'],
-                    'meta_description' => $_REQUEST['meta_description']);
+                    'meta_description' => $_REQUEST['meta_description'],
+                    'ratings' => $_REQUEST['ratings']);
       
       if ( (osC_Categories_Admin::save((isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : null), $data))) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
@@ -196,6 +222,18 @@
       $categories_array = $osC_CategoryTree->buildExtJsonTreeArray();
       
       echo $toC_Json->encode($categories_array);                     
+    }
+    
+    function setStatus() {
+      global $toC_Json, $osC_Language;
+      
+      if ( isset($_REQUEST['categories_id']) && osC_Categories_Admin::setStatus($_REQUEST['categories_id'], (isset($_REQUEST['flag']) ? $_REQUEST['flag'] : 1)) ) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }
+  
+      echo $toC_Json->encode($response);
     }
   }
 ?>
