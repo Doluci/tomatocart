@@ -38,14 +38,9 @@
 
       if (is_numeric($_GET[$this->_module])) {
         if (osC_Reviews::exists($_GET[$this->_module])) {
-          $osC_Product = new osC_Product(osC_Reviews::getProductID($_GET[$this->_module]));
+          $id = osC_Reviews::getProductID($_GET[$this->_module]);
 
-          $this->_page_title = $osC_Product->getTitle();
-          $this->_page_contents = 'reviews_info.php';
-
-          if ($osC_Services->isStarted('breadcrumb')) {
-            $breadcrumb->add($osC_Product->getTitle(), osc_href_link(FILENAME_PRODUCTS, $this->_module . '=' . $_GET[$this->_module]));
-          }
+          osc_redirect(osc_href_link(FILENAME_PRODUCTS, $id . '&tab=tabReviews'));
         } else {
           $this->_page_contents = 'reviews_not_found.php';
         }
@@ -70,27 +65,13 @@
 
               $osC_Product = new osC_Product($key);
 
-              $this->_page_title = $osC_Product->getTitle();
-              $this->_page_contents = 'reviews_new.php';
-              $this->addJavascriptPhpFilename('templates/' . $this->getCode() . '/javascript/products/reviews_new.php');
-
-              if ($osC_Services->isStarted('breadcrumb')) {
-                $breadcrumb->add($osC_Product->getTitle(), osc_href_link(FILENAME_PRODUCTS, $this->_module . '&' . $osC_Product->getID()));
-                $breadcrumb->add($osC_Language->get('breadcrumb_reviews_new'), osc_href_link(FILENAME_PRODUCTS, $this->_module . '=new&' . $osC_Product->getID()));
-              }
-
               if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
                 $this->_process($osC_Product->getID());
               }
             } else {
               $osC_Product = new osC_Product($key);
 
-              $this->_page_title = $osC_Product->getTitle();
-              $this->_page_contents = 'product_reviews.php';
-
-              if ($osC_Services->isStarted('breadcrumb')) {
-                $breadcrumb->add($osC_Product->getTitle(), osc_href_link(FILENAME_PRODUCTS, $this->_module . '&' . $osC_Product->getID()));
-              }
+              osc_redirect(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&tab=tabReviews'));
             }
           }
 
@@ -125,11 +106,27 @@
       } else {
         $data['review'] = $_POST['review'];
       }
-
-      if (($_POST['rating'] < 1) || ($_POST['rating'] > 5)) {
-        $messageStack->add('reviews', $osC_Language->get('js_review_rating'));
+      
+      $ratings = array();
+      foreach ($_REQUEST as $key => $value) {
+        if (substr($key, 0, 7) == 'rating_') {
+          $ratings_id = substr($key, 7);
+          $ratings[$ratings_id] = $value;
+        }
+      }
+      $data['rating'] = (count($ratings) > 0) ? $ratings : $_POST['rating'];
+      
+      if ( !is_array($data['rating']) ) {
+        if ( ($data['rating'] < 1) || ($data['rating'] > 5) ) {
+          $messageStack->add('reviews', $osC_Language->get('js_review_rating'));
+        }
       } else {
-        $data['rating'] = $_POST['rating'];
+        foreach ($data['rating'] as $rating) {
+          if ( ($rating < 1) || ($rating > 5) ) {
+            $messageStack->add('reviews', $osC_Language->get('js_review_rating'));
+            break;
+          }
+        }
       }
 
       if ($messageStack->size('reviews') < 1) {
@@ -145,7 +142,7 @@
 
         osC_Reviews::saveEntry($data);
 
-        osc_redirect(osc_href_link(FILENAME_PRODUCTS, 'reviews&' . $id));
+        osc_redirect(osc_href_link(FILENAME_PRODUCTS, $id . "&tab=tabReviews"));
       }
     }
   }
