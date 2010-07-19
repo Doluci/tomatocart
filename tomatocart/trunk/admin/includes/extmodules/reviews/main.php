@@ -13,6 +13,8 @@
 
   echo 'Ext.namespace("Toc.reviews");';
   
+  include('ratings_grid.php');
+  include('ratings_dialog.php');
   include('reviews_grid.php');
   include('reviews_edit_dialog.php');
 ?>
@@ -21,17 +23,23 @@ Ext.override(TocDesktop.ReviewsWindow, {
 
   createWindow: function(){
     var desktop = this.app.getDesktop();
-    var win = desktop.getWindow('reviews-win');
+    var win = desktop.getWindow(this.id);
      
     if(!win){
-      var grd = new Toc.reviews.ReviewsGrid({owner: this});
+      if (this.params.set == 'reviews') {
+        var title = '<?php echo $osC_Language->get('heading_title_reviews'); ?>';
+        var grd = new Toc.reviews.ReviewsGrid({owner: this});
+      } else {
+        var title = '<?php echo $osC_Language->get('heading_title_ratings'); ?>';
+        var grd = new Toc.reviews.RatingsGrid({owner: this});
+      }
       
       win = desktop.createWindow({
-        id: 'reviews-win',
-        title: '<?php echo $osC_Language->get('heading_title'); ?>',
+        id: this.id,
+        title: title,
         width: 800,
         height: 400,
-        iconCls: 'icon-reviews-win',
+        iconCls: this.iconCls,
         layout: 'fit',
         items: grd
       });
@@ -46,6 +54,24 @@ Ext.override(TocDesktop.ReviewsWindow, {
     
     if (!dlg) {
       dlg = desktop.createWindow({}, Toc.reviews.ReviewsEditDialog);
+      
+      dlg.on('saveSuccess', function (feedback) {
+        this.app.showNotification({
+          title: TocLanguage.msgSuccessTitle,
+          html: feedback
+        });
+      }, this);
+    }
+      
+    return dlg;
+  },
+  
+  createRatingsDialog: function() {
+    var desktop = this.app.getDesktop();
+    var dlg = desktop.getWindow('ratings-dialog-win');
+    
+    if (!dlg) {
+      dlg = desktop.createWindow({}, Toc.reviews.RatingsDialog);
       
       dlg.on('saveSuccess', function (feedback) {
         this.app.showNotification({
