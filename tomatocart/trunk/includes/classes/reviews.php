@@ -177,17 +177,91 @@
 
     function saveEntry($data) {
       global $osC_Database, $osC_Language;
-
+      
+      if ( is_array($data['rating']) ) {
+        $total = 0;
+        foreach($data['rating'] as $value) {
+          $total += $value;
+        }
+        
+        $reviews_rating =  $total/ count($data['rating']);
+      } else {
+        $reviews_rating = $data['rating'];
+      }
+      
       $Qreview = $osC_Database->query('insert into :table_reviews (products_id, customers_id, customers_name, reviews_rating, languages_id, reviews_text, reviews_status, date_added) values (:products_id, :customers_id, :customers_name, :reviews_rating, :languages_id, :reviews_text, :reviews_status, now())');
       $Qreview->bindTable(':table_reviews', TABLE_REVIEWS);
       $Qreview->bindInt(':products_id', $data['products_id']);
       $Qreview->bindInt(':customers_id', $data['customer_id']);
       $Qreview->bindValue(':customers_name', $data['customer_name']);
-      $Qreview->bindValue(':reviews_rating', $data['rating']);
+      $Qreview->bindValue(':reviews_rating', $reviews_rating);
       $Qreview->bindInt(':languages_id', $osC_Language->getID());
       $Qreview->bindValue(':reviews_text', $data['review']);
       $Qreview->bindInt(':reviews_status', $data['status']);
       $Qreview->execute();
+      
+      if ( is_array($data['rating']) ) {
+        $reviews_id = $osC_Database->nextID();
+        
+        foreach($data['rating'] as $ratings_id => $value){
+          $Qratings = $osC_Database->query('insert into :table_customers_ratings (ratings_id, customers_id, reviews_id, ratings_value ) values ( :ratings_id, :customers_id, :reviews_id, :ratings_value )');
+          $Qratings->bindTable(':table_customers_ratings', TABLE_CUSTOMERS_RATINGS);
+          $Qratings->bindValue(':ratings_value', $value);
+          $Qratings->bindInt(':reviews_id', $reviews_id);
+          $Qratings->bindInt(':customers_id', $data['customer_id']);
+          $Qratings->bindInt(':ratings_id', $ratings_id);
+          $Qratings->execute();
+        }
+      }
     }
+    
+    function getReviewsCount($id) {
+      global $osC_Database, $osC_Language;
+
+      $Qreview = $osC_Database->query('select count(*) as reviews_count from :table_reviews where products_id = :products_id and languages_id = :languages_id');
+      $Qreview->bindTable(':table_reviews', TABLE_REVIEWS);
+      $Qreview->bindInt(':languages_id', $osC_Language->getID());
+      $Qreview->bindInt(':products_id', $id);
+      $Qreview->execute();
+      
+      return $Qreview->ValueInt('reviews_count');
+    }
+    
+    function getCustomersRatings($reviews_id) {
+      global $osC_Database, $osC_Language;
+
+      $Qratings = $osC_Database->query('select r.ratings_id, rd.ratings_text, r.ratings_value from :table_customers_ratings r inner join :table_ratings_description rd on r.ratings_id = rd.ratings_id where rd.languages_id = :languages_id and r.reviews_id = :reviews_id');
+      $Qratings->bindTable(':table_customers_ratings', TABLE_CUSTOMERS_RATINGS);
+      $Qratings->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+      $Qratings->bindInt(':languages_id', $osC_Language->getID());
+      $Qratings->bindInt(':reviews_id', $reviews_id);
+      $Qratings->execute();
+      
+      $ratings = array();
+      while($Qratings->next()){
+        $ratings[] = array('value' => $Qratings->valueInt('ratings_value'), 'name' => $Qratings->value('ratings_text'));
+      }
+      return $ratings;
+    }
+    
+    function getCategoryRatings($categories_id) {
+      global $osC_Database, $osC_Language;
+      
+      $Qcategory = $osC_Database->query('select cr.ratings_id, rd.ratings_text from :toc_categories_ratings cr inner join :table_ratings_description rd on cr.ratings_id = rd.ratings_id where cr.categories_id = :categories_id and rd.languages_id = :languages_id');
+      $Qcategory->bindTable(':toc_categories_ratings', TABLE_CATEGORIES_RATINGS);
+      $Qcategory->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+      $Qcategory->bindInt(':categories_id', $categories_id);
+      $Qcategory->bindInt(':languages_id', $osC_Language->getID());
+      $Qcategory->execute();
+      
+      $ratings = array();
+      while ( $Qcategory->next() ) {
+        $ratings[$Qcategory->valueInt('ratings_id')] = $Qcategory->value('ratings_text');
+      }
+      $Qcategory->freeResult();
+      
+      return $ratings;
+    }
+    
   }
 ?>
