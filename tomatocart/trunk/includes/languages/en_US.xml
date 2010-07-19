@@ -45,6 +45,11 @@
       <value><![CDATA[Contact Us]]></value>
       <group>general</group>
     </definition>
+     <definition>
+      <key>guest_book</key>
+      <value><![CDATA[Guest Book]]></value>
+      <group>general</group>
+    </definition>       
     <definition>
       <key>my_account</key>
       <value><![CDATA[My Account]]></value>
@@ -90,6 +95,31 @@
       <value><![CDATA[ERROR: bad status setted. Only collapse or expand status of the blockcart module are availabe.]]></value>
       <group>general</group>
     </definition>
+    <definition>
+      <key>guestbook_no_title_error</key>
+      <value><![CDATA[ERROR: The title can not be null.]]></value>
+      <group>general</group>
+    </definition>
+     <definition>
+      <key>guestbook_no_content_error</key>
+      <value><![CDATA[ERROR: The content can not be null.]]></value>
+      <group>general</group>
+    </definition>
+     <definition>
+      <key>guestbook_verify_code_error</key>
+      <value><![CDATA[ERROR: The verify code is not right.]]></value>
+      <group>general</group>
+    </definition>
+     <definition>
+      <key>guestbook_validate_email_error</key>
+      <value><![CDATA[ERROR: The email format is not right.]]></value>
+      <group>general</group>
+    </definition>
+     <definition>
+      <key>guestbook_note_verification_error</key>
+      <value><![CDATA[Enter the code in the Box bellow.]]></value>
+      <group>general</group>
+    </definition>        
     <definition>
       <key>checkout</key>
       <value><![CDATA[Checkout]]></value>
@@ -276,6 +306,21 @@
       <group>general</group>
     </definition>
     <definition>
+      <key>button_write_message</key>
+      <value><![CDATA[Write Message]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>button_read_more</key>
+      <value><![CDATA[Read More]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>button_add</key>
+      <value><![CDATA[Add]]></value>
+      <group>general</group>
+    </definition>    
+    <definition>
       <key>button_clear</key>
       <value><![CDATA[Clear]]></value>
       <group>general</group>
@@ -295,6 +340,11 @@
       <value><![CDATA[Add To Compare]]></value>
       <group>general</group>
     </definition>
+    <definition>
+      <key>print</key>
+      <value><![CDATA[Print]]></value>
+      <group>general</group>
+    </definition>     
     <definition>
       <key>button_change_address</key>
       <value><![CDATA[Change Address]]></value>
@@ -316,6 +366,11 @@
       <group>general</group>
     </definition>
     <definition>
+      <key>submit_reviews</key>
+      <value><![CDATA[Submit Reviews]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
       <key>button_delete</key>
       <value><![CDATA[Delete]]></value>
       <group>general</group>
@@ -325,6 +380,11 @@
       <value><![CDATA[Edit]]></value>
       <group>general</group>
     </definition>
+    <definition>
+      <key>button_reorder</key>
+      <value><![CDATA[Reorder]]></value>
+      <group>general</group>
+    </definition>    
     <definition>
       <key>button_view</key>
       <value><![CDATA[View]]></value>
@@ -368,6 +428,16 @@
     <definition>
       <key>button_write_review</key>
       <value><![CDATA[Write Review]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>button_result</key>
+      <value><![CDATA[Result]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>button_vote</key>
+      <value><![CDATA[Vote]]></value>
       <group>general</group>
     </definition>
     <definition>
@@ -448,6 +518,11 @@
     <definition>
       <key>products_attributes_filter</key>
       <value><![CDATA[Product Attributes]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>section_heading_products_attachments</key>
+      <value><![CDATA[Attachments]]></value>
       <group>general</group>
     </definition>
     <definition>
@@ -1000,6 +1075,11 @@
       <value><![CDATA[My Account]]></value>
       <group>account</group>
     </definition>
+    <definition>
+      <key>info_guest_book_heading</key>
+      <value><![CDATA[Guest Book]]></value>
+      <group>info</group>
+    </definition>       
     <definition>
       <key>information_title</key>
       <value><![CDATA[Information]]></value>
@@ -2179,8 +2259,18 @@ Note: If you did not request this action via our password forgotten page, please
       <group>info</group>
     </definition>
     <definition>
+      <key>contact_department_title</key>
+      <value><![CDATA[Department:]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
       <key>info_privacy_heading</key>
       <value><![CDATA[Privacy Notice]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>contact_telephone_title</key>
+      <value><![CDATA[Telephone:]]></value>
       <group>info</group>
     </definition>
     <definition>
@@ -2208,6 +2298,16 @@ Note: If you did not request this action via our password forgotten page, please
       <value><![CDATA[Put here the required information.]]></value>
       <group>info</group>
     </definition>
+    <definition>
+      <key>contact_code_title</key>
+      <value><![CDATA[Image Verification:]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>contact_code_notice_title</key>
+      <value><![CDATA[Enter the code in the Box bellow:]]></value>
+      <group>info</group>
+    </definition> 
     <definition>
       <key>contact</key>
       <value><![CDATA[Put here the required information.]]></value>
@@ -2376,6 +2476,11 @@ Note: If you did not request this action via our password forgotten page, please
     <definition>
       <key>section_heading_variants</key>
       <value><![CDATA[Product Variants]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>section_heading_reviews</key>
+      <value><![CDATA[Reviews]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -2601,7 +2706,7 @@ Note: If you did not request this action via our password forgotten page, please
     </definition>
     <definition>
       <key>section_heading_products_description</key>
-      <value><![CDATA[Product Description]]></value>
+      <value><![CDATA[Description]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -2655,8 +2760,28 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
+      <key>field_review</key>
+      <value><![CDATA[Review]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>field_review_from</key>
       <value><![CDATA[From:]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_now_review</key>
+      <value><![CDATA[You're reviewing:]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_how_do_you_rating</key>
+      <value><![CDATA[How do you rate this product :]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>login_to_write</key>
+      <value><![CDATA[Please login to write your reviews.]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -3143,12 +3268,27 @@ Your friend, %s, thought that you would be interested in %s from %s.]]></value>
     </definition>
     <definition>
       <key>reviewed_by</key>
-      <value><![CDATA[by %s]]></value>
+      <value><![CDATA[Review by %s]]></value>
       <group>products</group>
     </definition>
     <definition>
       <key>review_rating</key>
       <value><![CDATA[Rating: %s [%s]]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_no_review</key>
+      <value><![CDATA[There are no reviews for this produce.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_posted_on</key>
+      <value><![CDATA[Posted on ]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>field_write_review</key>
+      <value><![CDATA[Write Your Own Reviews]]></value>
       <group>products</group>
     </definition>
     <definition>
