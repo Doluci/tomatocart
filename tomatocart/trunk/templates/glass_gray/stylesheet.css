@@ -47,7 +47,6 @@ H6 {
   font-family: Tahoma, 'Trebuchet MS', Verdana, Arial, sans-serif;
   font-size: 12px;
   font-weight: bold;
-  white-space: nowrap;
   margin: 0;
   padding: 4px 0px 4px 5px;
 }
@@ -553,10 +552,7 @@ A {
 #popupCartContent .content {border: none}
 
 /**product info**/
-#productImages {
-  margin-top: 10px;
-  text-align: center;
-}
+#productImages {margin-top: 10px;text-align: center;width: 240px;border:1px solid #DDDDDD;}
 
 #productInfo .label {font-weight: bold;}
 #productInfo .productPrice {color: #ff0000; font-size: 14px; font-weight: bold; text-align:right}
@@ -851,11 +847,89 @@ SPAN.markProductError {
 #compareProducts tr.even {background: #EEEDED none repeat scroll 0 0 !important;}
 
 /* administrator logout */
-#admin_logout a{
+#admin_logout a {
   color: #FF0000;
 }
 
 .boxReview a {
   display: block;
   height: 45px;
+}
+
+#productInfoTab a {
+  border-top: 1px solid #DDDDDD;
+  border-left: 1px solid #DDDDDD;
+  border-right: 1px solid #DDDDDD;
+  display:block;
+  float:left;
+  font-size:13px;
+  font-weight:bold;
+  margin-right:2px;
+  padding:6px 15px 7px;
+  text-decoration: none;
+  position: relative;
+  top: 1px;
+  *top: 11px;
+}
+
+#productInfoTab a.select {
+  color: #000000;
+  background-color: #F3F3F3;
+}
+
+#productInfoTab a.unselect {
+  cursor: pointer;
+  color: #8C8C8C; 
+  background-color: #EAEAEA;
+  border-bottom: 1px solid #DDDDDD;
+  top: 3px;
+  *top: 13px;
+  padding:5px 15px 5px;
+}
+
+#tabReviews .content {padding: 10px;}
+#tabReviews h3 {margin-top: 15px; font-size: 14px}
+#tabReviews h6 {margin: 10px 0px 5px 0px; font-size: 13px}
+#tabReviews textarea {margin-left: 10px;width: 470px;}
+#tabReviews .submitFormButtons {text-align:right; margin-right: 25px;}
+
+dl.review p{padding-left: 5px}
+
+table.ratingsResult {margin:3px 0px 0px 0px;}
+table.ratingsResult td.name {padding: 3px 8px 3px 5px;}
+table.ratings {border:1px solid #747474;margin: 0px 0px 0px 10px;width: 470px;border-collapse: collapse;}
+table.ratings thead tr {font-weight : bold;background-color: #5C5C5C;color: #EAEAEA;}
+table.ratings td {border: 1px solid #747474;text-align: center;padding: 5px 8px 5px 8px;margin: 0px;}
+
+#tabAttachments dd {
+  padding: 5px 5px 5px 15px;
+}
+#tabAttachments dt {
+  padding: 5px 5px 5px 15px;
+  background: url("images/arrow_black.png") no-repeat left top scroll;
+}
+
+#tabAttachments dt a {
+	font-size: 12px;
+  text-decoration: underline;
+}
+
+.loading { 
+  background: transparent url(images/loading.gif) no-repeat center;
+  height: 30px; 
+}
+
+.voteBar {
+  width:180px;
+  height:10px;
+  margin-top:4px;
+  background:white;
+  float:left;
+  border:1px solid black;
+}
+
+span.error {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
 }
