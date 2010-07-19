@@ -33,9 +33,9 @@
       return $this->_groups;
     }
 
-    function resize($image, $group_id, $type = 'products') {
+    function resize($image, $group_id, $type = 'products', $watermark = true) {
       if (osc_empty(CFG_APP_IMAGEMAGICK_CONVERT) || !file_exists(CFG_APP_IMAGEMAGICK_CONVERT)) {
-        return $this->resizeWithGD($image, $group_id, $type);
+        return $this->resizeWithGD($image, $group_id, $type, $watermark);
       }
 
       if (!file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'])) {
@@ -55,17 +55,34 @@
       return false;
     }
 
-    function resizeWithGD($image, $group_id, $type) {
+    function resizeWithGD($image, $group_id, $type, $watermark = true) {
       if (!file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'])) {
         mkdir(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'], 0777);
       }
-
+      
+      $original_image = DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[1]['code'] . '/' . $image;
+      $dest_image = DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'] . '/' . $image;
+      
       if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[1]['code'] . '/' . $image)) {
-        return osc_gd_resize(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[1]['code'] . '/' . $image,
-                DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'] . '/' . $image,
-                $this->_groups[$group_id]['size_width'],
-                $this->_groups[$group_id]['size_height'],
-                $this->_groups[$group_id]['force_size'] == '1');
+        //watermark
+        if ($watermark == true) {
+          if ( defined('WATERMARK_FILE_NAME') && @file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . WATERMARK_FILE_NAME) ) {
+            $opacity_name = strtoupper('WATERMARK_' . $type . '_' . $group_id . '_OPACITY');
+            $position_name = strtoupper('WATERMARK_' . $type . '_' . $group_id . '_POSITION');
+            
+            if ( defined($opacity_name) && defined($position_name) ) {
+              $original_watermarked_image = DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[1]['code'] . '/' . 'watermark_' . $image;
+              
+              if (!file_exists($original_watermarked_image)) {
+                toc_draw_watermark($original_image, $original_watermarked_image, DIR_FS_CATALOG . DIR_WS_IMAGES . WATERMARK_FILE_NAME, constant($position_name), constant($opacity_name));
+              } 
+              
+              $original_image = $original_watermarked_image;
+            } 
+          }
+        }
+      
+        return osc_gd_resize($original_image, $dest_image, $this->_groups[$group_id]['size_width'], $this->_groups[$group_id]['size_height'], $this->_groups[$group_id]['force_size'] == '1');
       }
     }
 
@@ -115,6 +132,11 @@
 
       foreach ($this->_groups as $group) {
         @unlink(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/' . $group['code'] . '/' . $Qimage->value('image'));
+      }
+      
+      //remove watermark file
+      if (file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/' . $this->_groups[1]['code'] . '/watermark_' . $Qimage->value('image'))) {
+        @unlink(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/' . $this->_groups[1]['code'] . '/watermark_' . $Qimage->value('image'));
       }
 
       $Qdel = $osC_Database->query('delete from :table_products_images where id = :id');
