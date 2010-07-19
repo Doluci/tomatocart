@@ -176,6 +176,34 @@
         }
       }
       
+      if ( $error === false && is_numeric($id) ) {
+        $Qdelete = $osC_Database->query('delete from :table_products_attachments_to_products where products_id = :products_id');
+        $Qdelete->bindTable(':table_products_attachments_to_products', TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS);
+        $Qdelete->bindInt(':products_id', $products_id);
+        $Qdelete->setLogging($_SESSION['module'], $products_id);
+        $Qdelete->execute();
+        
+        if ( $osC_Database->isError() ) {
+          $error = true;
+        }
+      }
+        
+      if ( $error === false && count($data['attachments']) > 0 ) {
+        foreach ($data['attachments'] as $attachments_id) {
+          $Qp2a = $osC_Database->query('insert into :table_products_attachments_to_products (products_id, attachments_id) values (:products_id, :attachments_id)');
+          $Qp2a->bindTable(':table_products_attachments_to_products', TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS);
+          $Qp2a->bindInt(':products_id', $products_id);
+          $Qp2a->bindInt(':attachments_id', $attachments_id);
+          $Qp2a->setLogging($_SESSION['module'], $products_id);
+          $Qp2a->execute();
+  
+          if ( $osC_Database->isError() ) {
+            $error = true;
+            break;
+          }      
+        }
+      } 
+      
       //downloadable products & gift certificates
       if ($data['products_type'] == PRODUCT_TYPE_DOWNLOADABLE) {
         if (is_numeric($id)) {
@@ -700,6 +728,18 @@
           $Qp2c->bindInt(':products_id', $id);
           $Qp2c->setLogging($_SESSION['module'], $id);
           $Qp2c->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+      
+        if ($error === false) {
+          $Qp2a = $osC_Database->query('delete from :table_products_attachments_to_products where products_id = :products_id');
+          $Qp2a->bindTable(':table_products_attachments_to_products', TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS);
+          $Qp2a->bindInt(':products_id', $id);
+          $Qp2a->setLogging($_SESSION['module'], $id);
+          $Qp2a->execute();
 
           if ($osC_Database->isError()) {
             $error = true;
