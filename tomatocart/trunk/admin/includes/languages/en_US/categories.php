@@ -16,9 +16,12 @@ operation_title_search = Search:
 
 section_general = General
 section_meta = Meta Info
+section_ratings = Ratings
 
 table_heading_categories = Categories
+table_heading_status = Status
 table_heading_action = Action
+table_heading_ratings = Rating Name
 
 action_heading_new_category = New Category
 action_heading_batch_delete_categories = Batch Delete Categories
@@ -29,6 +32,9 @@ field_products_extra_fields_group = Products Extra Fields Group:
 field_name = Name:
 field_image = Image:
 field_sort_order = Sort Order:
+field_status = Status:
+status_enabled = Enabled
+status_disabled = Disabled
 
 field_page_title = Page Title:
 field_meta_keywords = Keywords:
