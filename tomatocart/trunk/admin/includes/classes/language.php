@@ -644,6 +644,91 @@
               }
             }
           }
+                
+         if ($error === false) {
+            $Qratings = $osC_Database->query('select ratings_id, ratings_text from :table_ratings_description where languages_id = :languages_id');
+            $Qratings->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+            $Qratings->bindInt(':languages_id', $default_language_id);
+            $Qratings->execute();
+
+            while ($Qratings->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_ratings_description (ratings_id, languages_id, ratings_text) values (:ratings_id, :languages_id, :ratings_text)');
+              $Qinsert->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+              $Qinsert->bindInt(':ratings_id', $Qratings->valueInt('ratings_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':ratings_text', $Qratings->value('ratings_text'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
+
+          if ($error === false) {
+            $Qpolls = $osC_Database->query('select polls_id, polls_title from :table_polls_description where languages_id = :languages_id');
+            $Qpolls->bindTable(':table_polls_description', TABLE_POLLS_DESCRIPTION);
+            $Qpolls->bindInt(':languages_id', $default_language_id);
+            $Qpolls->execute();
+
+            while ($Qpolls->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_polls_description (polls_id, languages_id, polls_title) values (:polls_id, :languages_id, :polls_title)');
+              $Qinsert->bindTable(':table_polls_description', TABLE_POLLS_DESCRIPTION);
+              $Qinsert->bindInt(':polls_id', $Qpolls->valueInt('polls_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':polls_title', $Qpolls->value('polls_title'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
+          
+          if ($error === false) {
+            $Qanswers = $osC_Database->query('select polls_answers_id, answers_title from :table_polls_answers_description where languages_id = :languages_id');
+            $Qanswers->bindTable(':table_polls_answers_description', TABLE_POLLS_ANSWERS_DESCRIPTION);
+            $Qanswers->bindInt(':languages_id', $default_language_id);
+            $Qanswers->execute();
+
+            while ($Qanswers->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_polls_answers_description (polls_answers_id, languages_id, answers_title) values (:polls_answers_id, :languages_id, :answers_title)');
+              $Qinsert->bindTable(':table_polls_answers_description', TABLE_POLLS_ANSWERS_DESCRIPTION);
+              $Qinsert->bindInt(':polls_answers_id', $Qanswers->valueInt('polls_answers_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':answers_title', $Qanswers->value('answers_title'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
+        
+          if ($error === false) {
+            $Qattachments = $osC_Database->query('select attachments_id, attachments_name, attachments_description from :table_products_attachments_description where languages_id = :language_id');
+            $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+            $Qattachments->bindInt(':language_id', $default_language_id);
+            $Qattachments->execute();
+
+            while ($Qattachments->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_products_attachments_description (attachments_id, languages_id, attachments_name, attachments_description) values (:attachments_id, :languages_id, :attachments_name, :attachments_description)');
+              $Qinsert->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+              $Qinsert->bindInt(':attachments_id', $Qattachments->valueInt('attachments_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':attachments_name', $Qattachments->value('attachments_name'));
+              $Qinsert->bindValue(':attachments_description', $Qattachments->value('attachments_description'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
         }
       }
 
@@ -1006,12 +1091,34 @@
             $error = true;
           }
         }
+        
+        if ($error === false) {
+          $Qreturns = $osC_Database->query('delete from :table_orders_transactions_status where language_id = :language_id');
+          $Qreturns->bindTable(':table_orders_transactions_status', TABLE_ORDERS_TRANSACTIONS_STATUS);
+          $Qreturns->bindInt(':language_id', $id);
+          $Qreturns->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
 
         if ($error === false) {
           $Qgroup = $osC_Database->query('delete from :table_products_images_groups where language_id = :language_id');
           $Qgroup->bindTable(':table_products_images_groups', TABLE_PRODUCTS_IMAGES_GROUPS);
           $Qgroup->bindInt(':language_id', $id);
           $Qgroup->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+        
+        if ($error === false) {
+          $Qclasses = $osC_Database->query('delete from :table_quantity_unit_classes where language_id = :language_id');
+          $Qclasses->bindTable(':table_quantity_unit_classes', TABLE_QUANTITY_UNIT_CLASSES);
+          $Qclasses->bindInt(':language_id', $id);
+          $Qclasses->execute();
 
           if ($osC_Database->isError()) {
             $error = true;
@@ -1150,7 +1257,51 @@
             $error = true;
           }
         }
+              
+        if ($error === false) {
+          $Qratings = $osC_Database->query('delete from :table_ratings_description where languages_id = :languages_id');
+          $Qratings->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+          $Qratings->bindInt(':languages_id', $id);
+          $Qratings->execute();
 
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+        
+        if ($error === false) {
+          $Qpolls = $osC_Database->query('delete from :table_polls_description where languages_id = :languages_id');
+          $Qpolls->bindTable(':table_polls_description', TABLE_POLLS_DESCRIPTION);
+          $Qpolls->bindInt(':languages_id', $id);
+          $Qpolls->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+
+        if ($error === false) {
+          $Qanswers = $osC_Database->query('delete from :table_polls_answers_description where languages_id = :languages_id');
+          $Qanswers->bindTable(':table_polls_answers_description', TABLE_POLLS_ANSWERS_DESCRIPTION);
+          $Qanswers->bindInt(':languages_id', $id);
+          $Qanswers->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+
+        if ($error === false) {
+          $Qattachments = $osC_Database->query('delete from :table_products_attachments_description where languages_id = :languages_id');
+          $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+          $Qattachments->bindInt(':languages_id', $id);
+          $Qattachments->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+        
         if ($error === false) {
           $osC_Database->commitTransaction();
 
@@ -1218,6 +1369,32 @@
 
     function isDefined($key) {
       return isset($this->_definitions[$key]);
+    }
+    
+    function set($code = '') {
+      $this->_code = $code;
+
+      if (empty($this->_code)) {
+        if (isset($_SESSION['admin_language'])) {
+          $this->_code = $_SESSION['admin_language'];
+        } elseif (isset($_COOKIE['admin_language'])) {
+          $this->_code = $_COOKIE['admin_language'];
+        } else {
+          $this->_code = $this->getBrowserSetting();
+        }
+      }
+
+      if (empty($this->_code) || ($this->exists($this->_code) === false)) {
+        $this->_code = DEFAULT_LANGUAGE;
+      }
+
+      if (!isset($_COOKIE['admin_language']) || (isset($_COOKIE['admin_language']) && ($_COOKIE['admin_language'] != $this->_code))) {
+        osc_setcookie('admin_language', $this->_code, time()+60*60*24*90);
+      }
+
+      if ((isset($_SESSION['admin_language']) === false) || (isset($_SESSION['admin_language']) && ($_SESSION['admin_language'] != $this->_code))) {
+        $_SESSION['admin_language'] = $this->_code;
+      }
     }
   }
 ?>
