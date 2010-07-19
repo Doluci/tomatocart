@@ -2740,6 +2740,36 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
+      <key>no_review</key>
+      <value><![CDATA[There are no reviews for this product.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>1_star</key>
+      <value><![CDATA[1star]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>2_star</key>
+      <value><![CDATA[2star]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>3_star</key>
+      <value><![CDATA[3star]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>4_star</key>
+      <value><![CDATA[4star]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>5_star</key>
+      <value><![CDATA[5star]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>rating_of_5_stars</key>
       <value><![CDATA[%s of 5 Stars!]]></value>
       <group>products</group>
@@ -2780,11 +2810,24 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
+<<<<<<< .mine
+      <key>introduction_rating</key>
+      <value><![CDATA[Please give your ratings with this product:]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>login_to_write_review</key>
+      <value><![CDATA[Please login to write your reviews.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+=======
       <key>login_to_write</key>
       <value><![CDATA[Please login to write your reviews.]]></value>
       <group>products</group>
     </definition>
     <definition>
+>>>>>>> .r122
       <key>review_lowest_rating_title</key>
       <value><![CDATA[Bad]]></value>
       <group>products</group>
