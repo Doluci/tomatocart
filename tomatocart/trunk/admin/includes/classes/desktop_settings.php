@@ -543,7 +543,7 @@
             $output .= 'text: \'' . $l['name'] . '\',';
             $output .= 'iconCls: \'icon-' . $l['country_iso'] . '-win\',';
             $output .= 'shortcutIconCls: \'icon-' . $l['code'] . '-shortcut\',';
-            $output .= 'handler: function(){window.location = "' . osc_href_link_admin(FILENAME_DEFAULT, 'language=' . $l['code']) . '";},';
+            $output .= 'handler: function(){window.location = "' . osc_href_link_admin(FILENAME_DEFAULT, 'admin_language=' . $l['code']) . '";},';
             $output .= 'scope: this';
             $output .= '}';
           $output .= '}';
