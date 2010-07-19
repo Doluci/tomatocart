@@ -17,8 +17,8 @@
 <div class="boxNew">
   <div class="boxTitle">
     <?php echo osc_link_object($osC_Box->getTitleLink(), $osC_Box->getTitle()); ?>
-    <?php echo osc_draw_image_button('button_ajax_cart_up.png', null, 'id="ajax_cart_collapse"'); ?>
-    <?php echo osc_draw_image_button('button_ajax_cart_down.png', null, 'id="ajax_cart_expand" class="hidden"');?>
+    <?php echo osc_draw_image_button('button_ajax_cart_up.png', null, 'id="ajaxCartCollapse"'); ?>
+    <?php echo osc_draw_image_button('button_ajax_cart_down.png', null, 'id="ajaxCartExpand" class="hidden"');?>
   </div>
 
   <div class="boxContents"><?php echo $osC_Box->getContent(); ?></div>
