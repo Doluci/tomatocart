@@ -10,3 +10,4 @@
 
 access_products_title = Products
 access_products_new_title = New Product
+access_products_attachments_title = Attachments
