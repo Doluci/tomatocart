@@ -23,6 +23,8 @@ Toc.products.ProductDialog = function(config) {
   config.modal = true;
   config.iconCls = 'icon-products-win';
   config.productsId = config.products_id || null;
+  this.owner = config.owner || null;
+  
   config.items = this.buildForm(config.productsId);
   
   config.buttons = [
@@ -53,6 +55,7 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
     this.pnlVariants = new Toc.products.VariantsPanel({productsId: productsId, pnlData: this.pnlData}); 
     this.pnlXsellProducts = new Toc.products.XsellProductsGrid({productsId: productsId});
     this.pnlAttributes = new Toc.products.AttributesPanel({productsId: productsId});
+    this.pnlAttachments = new Toc.products.AttachmentsPanel({productsId: productsId, owner: this.owner});
     
     this.pnlData.on('producttypechange', this.pnlVariants.onProductTypeChange, this.pnlVariants);
     this.pnlVariants.on('variantschange', this.pnlData.onVariantsChange, this.pnlData);
@@ -71,7 +74,8 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
         new Toc.products.ImagesPanel({productsId: productsId}), 
         this.pnlVariants, 
         this.pnlAttributes, 
-        this.pnlXsellProducts
+        this.pnlXsellProducts,
+        this.pnlAttachments
       ]
     }); 
 
@@ -126,13 +130,14 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
       xsell_ids: this.pnlXsellProducts.getXsellProductIds(),
       products_variants: this.pnlVariants.getVariants(),
       products_id: this.productsId,
+      attachments_ids: this.pnlAttachments.getAttachmentsIDs(),
       categories_id: this.pnlCategories.getCategories()
     };
     
     if (this.productsId > 0) {
       params.products_type = this.pnlData.getProductsType();
     }
-
+    
     this.frmProduct.form.submit({
       params: params,
       waitMsg: TocLanguage.formSubmitWaitMsg,
