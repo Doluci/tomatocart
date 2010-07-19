@@ -200,7 +200,7 @@
           <?php
             if (!$osC_Product->hasVariants()) {
               if ($osC_Product->isSimple()) {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajax_add_to_cart" pid="' . osc_get_product_id($osC_Product->getID()) . '"');
+                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" pid="' . osc_get_product_id($osC_Product->getID()) . '"');
               }else {
                 echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;"');
               }  
@@ -215,9 +215,13 @@
           ?>
         </td>
       </tr>
+      <tr>
+        <td colspan="2">
+          <p class="shortDescription"><?php echo $osC_Product->getShortDescription(); ?></p>
+        </td>
+      </tr>
     </table>
     </form>
-    
     <div style="clear: both;"></div>
   </div>
   
