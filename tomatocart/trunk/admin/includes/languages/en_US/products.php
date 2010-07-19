@@ -9,7 +9,9 @@
 # as published by the Free Software Foundation.
 
 heading_title = Products
+heading_attachments_title = Attachments
 heading_title_new_product = New Product
+heading_title_new_attachment = New Attachment
 
 operation_title_search = Search:
 
@@ -25,6 +27,9 @@ table_heading_model = Model
 table_heading_price_net = Net Price
 table_heading_status = Status
 table_heading_frontpage = Front Page
+table_heading_attachments_name = Name
+table_heading_attachments_description = Description
+table_heading_attachments_file = File
 
 action_heading_delete_image = Delete Image
 action_heading_batch_copy_products = Batch Copy Products
@@ -39,6 +44,7 @@ section_categories = Categories
 section_attributes = Attributes
 section_downloadables = Downloadable Product Options
 section_gift_certificates = Gift Certificate Options
+section_attachments = Attachments
 
 subsection_price = Price
 subsection_data = Data
@@ -99,8 +105,14 @@ field_current_categories = Current Categories:
 field_categories = Categories:
 field_copy_method = Copy Method:
 
+field_attachments_name = Name:
+field_attachments_file = File
+field_attachments_description = Description:
+
 none = -- None --
 top_category = -- Top Category --
+search_terms = --Products Name or SKU--
+empty_attachements_name = --Name--
 more_product_information = For more information please visit this products <a href="http://%s" target="_blank">website</a>.
 product_date_added = This product was added to our catalog on %s.
 product_date_available = This product will be available for order on %s.
