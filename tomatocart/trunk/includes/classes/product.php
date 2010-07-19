@@ -59,7 +59,23 @@
           $Qcategory->execute();
 
           $this->_data['category_id'] = $Qcategory->valueInt('categories_id');
-
+          
+          $Qattachments = $osC_Database->query('select attachments_name, pa.attachments_id, filename, cache_filename, attachments_description from :table_products_attachments pa, :table_products_attachments_description pad, :table_products_attachments_to_products pa2p where pa.attachments_id = pad.attachments_id and pa2p.attachments_id = pa.attachments_id and pa2p.products_id = :products_id and pad.languages_id = :language_id');
+          $Qattachments->bindTable(':table_products_attachments', TABLE_PRODUCTS_ATTACHMENTS);
+          $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
+          $Qattachments->bindTable(':table_products_attachments_to_products', TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS);
+          $Qattachments->bindInt(":products_id", $this->_data['id']);
+          $Qattachments->bindInt(":language_id", $osC_Language->getID());
+          $Qattachments->execute();
+          
+          while ($Qattachments->next()) {
+            $this->_data['attachments'][] = array('attachment_name' => $Qattachments->value('attachments_name'),
+                                                  'filename' => $Qattachments->value('filename'),
+                                                  'attachments_id' => $Qattachments->valueInt('attachments_id'),
+                                                  'attachment_file_name' => $Qattachments->value('cache_filename'),
+                                                  'description' => $Qattachments->value('attachments_description'));
+          }
+          
           $this->iniProductVariants();
           
           $Qattributes = $osC_Database->query('select pav.name, pav.module, pav.value as selections, pa.value from :table_products_attributes pa, :table_products_attributes_values pav where pa.products_attributes_values_id = pav.products_attributes_values_id and pa.language_id = pav.language_id and pa.products_id = :products_id and pa.language_id = :language_id');
@@ -337,6 +353,10 @@
       return $this->_data['open_amount_max_value'];
     }    
     
+    function getShortDescription() {
+      return $this->_data['products_short_description'];
+    }
+    
     function getDescription() {
       return $this->_data['description'];
     }
@@ -458,6 +478,21 @@
 
       return $price;
     }
+    
+    function getPriceFormatedShow($with_special = false) {
+      global $osC_Services, $osC_Specials, $osC_Currencies, $osC_Customer;
+
+      $price = '';
+      if (ALLOW_DISPLAY_PRICE_TO_GUESTS == '1') {
+        $price = self::getPriceFormated($with_special);
+      } else {
+	      if ($osC_Customer->isLoggedOn() === true) {
+	        $price = self::getPriceFormated($with_special);
+	      }
+      }
+
+      return $price;
+    }
 
     function getCategoryID() {
       return $this->_data['category_id'];
@@ -547,6 +582,14 @@
       return $this->_data['attributes'];
     }
 
+    function hasAttachments(){
+      return (isset($this->_data['attachments']) && !empty($this->_data['attachments']));
+    }
+    
+    function getAttachments() {
+      return $this->_data['attachments'];
+    }
+    
     function checkEntry($id) {
       global $osC_Database;
 
@@ -713,7 +756,7 @@
     }
 
     function updateStock($orders_id, $orders_products_id, $products_id, $products_quantity){
-      global $osC_Database;
+      global $osC_Database, $osC_Language;
 
       $error = false;
 
@@ -754,6 +797,18 @@
           }
 
           if ( !$osC_Database->isError() ) {
+            
+            if( $attrib_stock_left < 1 && STOCK_EMAIL_ALERT == '1') {
+              $variants_group = $osC_Product->getVariants();
+              foreach($variants_group as $group_id => $group_array) {
+                if($group_array['variants_id'] == $products_variants_id) {
+                  $variants_name = implode(',', array_values($group_array['groups_name']));
+                  break; 
+                }
+              }
+             self::outstockAlert($osC_Product->_data['name'], $attrib_stock_left, 'with the variant of ' . $variants_name);
+            }
+          
             if ((STOCK_ALLOW_CHECKOUT == '-1') && ($attrib_stock_left < 1)) {
               $QstockUpdate = $osC_Database->query('update :table_products_variants set products_status = 0 where products_variants_id = :products_variants_id');
               $QstockUpdate->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
@@ -768,8 +823,10 @@
         }
 
         if ($error === false) {
-          $Qstock = $osC_Database->query('select products_quantity from :table_products where products_id = :products_id');
+          $Qstock = $osC_Database->query('select products_name, products_quantity from :table_products p, :table_products_description pd where p.products_id = pd.products_id and p.products_id = :products_id and pd.language_id = :language_id');
           $Qstock->bindTable(':table_products', TABLE_PRODUCTS);
+          $Qstock->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
+          $Qstock->bindTable(':language_id', $osC_Language->getID());
           $Qstock->bindInt(':products_id', $products_id);
           $Qstock->execute();
 
@@ -785,6 +842,10 @@
             $Qupdate->execute();
 
             if ( !$osC_Database->isError() ) {
+              if( $stock_left < 1 && STOCK_EMAIL_ALERT == '1') {
+                self::outstockAlert($Qstock->value('products_name'), $stock_left);
+              }
+              
               if ((STOCK_ALLOW_CHECKOUT == '-1') && ($stock_left < 1)) {
                 $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id = :products_id');
                 $Qupdate->bindTable(':table_products', TABLE_PRODUCTS);
@@ -825,6 +886,14 @@
       return false;
     }
 
+    function outstockAlert($products_name, $stock, $variants_name = '') {
+      require_once('includes/classes/email_template.php');
+      $email_template = toC_Email_Template::getEmailTemplate('out_of_stock_alerts');
+      $email_template->setData($products_name, $stock, $variants_name);
+      $email_template->buildMessage();
+      $email_template->sendEmail();
+    }
+    
     function restock($orders_id, $orders_products_id, $products_id, $products_quantity){
       global $osC_Database;
 
