@@ -36,6 +36,19 @@
       $data['parent_category_id'] = implode('_',$cPath);
       
       $Qcategories->freeResult();
+      
+      $Qcategories_ratings = $osC_Database->query('select ratings_id from toc_categories_ratings where categories_id = :categories_id');
+      $Qcategories_ratings->bindTable(':toc_categories_ratings', TABLE_CATEGORIES_RATINGS);
+      $Qcategories_ratings->bindInt(':categories_id', $id);
+      $Qcategories_ratings->execute();
+      
+      $ratings = array();
+      while ($Qcategories_ratings->next()) {
+        $ratings[] = $Qcategories_ratings->ValueInt('ratings_id');
+      }
+      $data['ratings'] = $ratings;
+      
+      $Qcategories_ratings->freeResult();
 
       return $data;
     }
@@ -49,15 +62,16 @@
       $osC_Database->startTransaction();
 
       if ( is_numeric($id) ) {
-        $Qcat = $osC_Database->query('update :table_categories set sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
+        $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
         $Qcat->bindInt(':categories_id', $id);
       } else {
-        $Qcat = $osC_Database->query('insert into :table_categories (parent_id, sort_order, date_added) values (:parent_id, :sort_order, now())');
+        $Qcat = $osC_Database->query('insert into :table_categories (parent_id, categories_status, sort_order, date_added) values (:parent_id, :categories_status, :sort_order, now())');
         $Qcat->bindInt(':parent_id', $data['parent_id']);
       }
 
       $Qcat->bindTable(':table_categories', TABLE_CATEGORIES);
       $Qcat->bindInt(':sort_order', $data['sort_order']);
+      $Qcat->bindInt(':categories_status', $data['categories_status']);
       $Qcat->setLogging($_SESSION['module'], $id);
       $Qcat->execute();
       
@@ -87,23 +101,26 @@
           }
         }
         
-        if($data['delimage'] == 1) {
-          $Qimage = $osC_Database->query('select categories_image from :table_categories where categories_id = :categories_id');
-          $Qimage->bindTable(':table_categories', TABLE_CATEGORIES);
-          $Qimage->bindInt(':categories_id', $category_id);
-          $Qimage->execute();
-
-          if(($Qimage->numberOfRows() === 1) && @unlink('../images/categories/' . $Qimage->value('categories_image'))) {
-            $Qdelete = $osC_Database->query('update :table_categories set categories_image = NULL where categories_id = :categories_id');
-            $Qdelete->bindTable(':table_categories', TABLE_CATEGORIES);
-            $Qdelete->bindInt(':categories_id', $category_id);
-            $Qdelete->setLogging($_SESSION['module'], $category_id);
-            $Qdelete->execute();
-
+        $Qdelete = $osC_Database->query('delete from :toc_categories_ratings where categories_id = :categories_id');
+        $Qdelete->bindTable(':toc_categories_ratings', TABLE_CATEGORIES_RATINGS);
+        $Qdelete->bindInt(':categories_id', $category_id);
+        $Qdelete->execute();
+          
+        if ( !empty($data['ratings']) ) {
+          $ratings = explode(',', $data['ratings']);
+          
+          foreach($ratings as $ratings_id){
+            $Qinsert = $osC_Database->query('insert into :toc_categories_ratings (categories_id, ratings_id) values (:categories_id, :ratings_id)');
+            $Qinsert->bindTable(':toc_categories_ratings', TABLE_CATEGORIES_RATINGS);
+            $Qinsert->bindInt(':categories_id', $category_id);
+            $Qinsert->bindInt(':ratings_id', $ratings_id);
+            $Qinsert->execute();
+            
             if ( $osC_Database->isError() ) {
-              $error = true;
+            	$error = true;
+            	break;
             }
-          }  
+          }
         }
 
         if ( $error === false ) {
@@ -161,6 +178,8 @@
 
     function delete($id) {
       global $osC_Database, $osC_CategoryTree;
+      
+      $error = false;
     
       if ( is_numeric($id) ) {
         $osC_CategoryTree->setBreadcrumbUsage(false);
@@ -223,8 +242,24 @@
           $Qc->bindInt(':categories_id', $c_entry['id']);
           $Qc->setLogging($_SESSION['module'], $id);
           $Qc->execute();
+          
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+          
+          if ($error === false) {
+            $Qratings = $osC_Database->query('delete from :table_categories_ratings where categories_id = :categories_id');
+  	        $Qratings->bindTable(':table_categories_ratings', TABLE_CATEGORIES_RATINGS);
+	          $Qratings->bindInt(':categories_id', $id);
+            $Qratings->setLogging($_SESSION['module'], $id);
+	          $Qratings->execute();
 
-          if ( !$osC_Database->isError() ) {
+	          if ($osC_Database->isError()) {
+              $error = true;
+            }
+	        }
+	      
+          if ($error === false) {
             $Qcd = $osC_Database->query('delete from :table_categories_description where categories_id = :categories_id');
             $Qcd->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
             $Qcd->bindInt(':categories_id', $c_entry['id']);
@@ -246,7 +281,6 @@
                 osC_Cache::clear('also_purchased');
                 osC_Cache::clear('sefu-products');
                 osC_Cache::clear('new_products');
-                osC_Cache::clear('feature_products');
 
                 if ( !osc_empty($Qimage->value('categories_image')) ) {
                   $Qcheck = $osC_Database->query('select count(*) as total from :table_categories where categories_image = :categories_image');
@@ -308,6 +342,27 @@
       osC_Cache::clear('also_purchased');
 
       return true;
+    }
+    
+    function setStatus($id, $flag) {
+      global $osC_Database;
+      
+      $Qstatus = $osC_Database->query('update :table_categories set categories_status = :categories_status where categories_id = :categories_id');
+      $Qstatus->bindTable(':table_categories', TABLE_CATEGORIES);
+      $Qstatus->bindInt(":categories_id", $id);
+      $Qstatus->bindValue(":categories_status", $flag);
+      $Qstatus->execute();
+      
+      if( !$osC_Database->isError() ) {
+        osC_Cache::clear('categories');
+        osC_Cache::clear('category_tree');
+        osC_Cache::clear('also_purchased');
+        osC_Cache::clear('sefu-products');
+        osC_Cache::clear('new_products');
+        
+        return true;
+      }
+      return false;
     }
   }
 ?>
