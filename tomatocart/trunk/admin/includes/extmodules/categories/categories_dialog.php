@@ -44,6 +44,7 @@ Toc.categories.CategoriesDialog = function (config) {
   
   Toc.categories.CategoriesDialog.superclass.constructor.call(this, config);
 }
+
 Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
   
   show: function (id, pId) {
@@ -60,12 +61,20 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
           action: 'load_category'
         },
         success: function (form, action) {
+          var ratings = action.result.data.ratings;
+          var records = new Array();
+          this.pnlRatings.getStore().each(function(record) { 
+//          alert(record.id);  
+                            if (ratings.contains(record.id))   
+                                 records.push(record);   
+                        });   
+          this.pnlRatings.getSelectionModel().selectRecords(records, true);
+          
           this.pnlGeneral.cboParentCategories.disable();
           var img = action.result.data.categories_image;
           
           if (img) {
-            var img = '../images/categories/' + img;
-            var html = '<div style = "margin-left: 170px;"><img src="' + img + '" style="border: solid 1px #B5B8C8; height: 100px; width:80px;" />&nbsp;&nbsp;&nbsp;<input type="checkbox" name="delimage" id="delimage" />&nbsp;&nbsp;<?php echo $osC_Language->get('button_delete'); ?></div>';
+            var html = '<img src ="../images/categories/' + img + '"  style = "margin-left: 170px; width: 70px; height:70px" /><br/><span style = "padding-left: 170px;">/images/categories/' + img + '</span>';
             this.frmCategories.findById('categories_image_panel').body.update(html);
           }
           
@@ -90,6 +99,7 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
   buildForm: function () {
     this.pnlGeneral = new Toc.categories.GeneralPanel();
     this.pnlMetaInfo = new Toc.categories.MetaInfoPanel();
+    this.pnlRatings = new Toc.categories.RatingsGridPanel();
     
     tabCategories = new Ext.TabPanel({
       activeTab: 0,
@@ -99,7 +109,8 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
       deferredRender: false,
       items: [
         this.pnlGeneral,
-        this.pnlMetaInfo       
+        this.pnlMetaInfo,
+        this.pnlRatings   
       ]
     });
     
@@ -113,14 +124,15 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
         module: 'categories',
         action: 'save_category'
       },
+      scope: this,
       items: tabCategories
     });
     
     return this.frmCategories; 
   },
   
-  
   submitForm: function () {
+    this.frmCategories.form.baseParams['ratings'] = this.pnlRatings.getSelectionModel().selections.keys;
     this.frmCategories.form.submit({
       waitMsg: TocLanguage.formSubmitWaitMsg,
       success: function (form, action) {

@@ -30,6 +30,7 @@ Toc.categories.CategoriesGrid = function (config) {
     }, [
       'categories_id', 
       'categories_name',
+      'status',
       'path'
     ])
   });
@@ -47,10 +48,19 @@ Toc.categories.CategoriesGrid = function (config) {
   config.rowActions.on('action', this.onRowAction, this);
   config.plugins = config.rowActions;
   
+  var renderActive = function(status) {
+    if(status == 1) {
+      return '<img class="img-button" src="images/icon_status_green.gif" />&nbsp;<img class="img-button btn-status-off" style="cursor: pointer" src="images/icon_status_red_light.gif" />';
+    }else {
+      return '<img class="img-button btn-status-on" style="cursor: pointer" src="images/icon_status_green_light.gif" />&nbsp;<img class="img-button" src= "images/icon_status_red.gif" />';
+    }
+  }; 
+  
   config.sm = new Ext.grid.CheckboxSelectionModel();
   config.cm = new Ext.grid.ColumnModel([
     config.sm,
-    {id: 'products_categories_name', header: '<?php echo $osC_Language->get("table_heading_categories"); ?>', dataIndex: 'categories_name'}, 
+    {id: 'products_categories_name', header: '<?php echo $osC_Language->get("table_heading_categories"); ?>', dataIndex: 'categories_name'},
+    { header: '<?php echo $osC_Language->get('table_heading_status'); ?>', dataIndex: 'status', align: 'center', renderer: renderActive}, 
     config.rowActions
   ]);
   config.autoExpandColumn = 'products_categories_name';
@@ -292,6 +302,62 @@ Ext.extend(Toc.categories.CategoriesGrid, Ext.grid.GridPanel, {
   onGrdRowDbClick: function () {
     var categoriesId = this.getSelectionModel().getSelected().get('categories_id');
     this.mainPanel.getCategoriesTree().setCategoryId(categoriesId);
+  },
+  
+  onClick: function(e, target) {
+    var t = e.getTarget();
+    var v = this.view;
+    var row = v.findRowIndex(t);
+    var action = false;
+  
+    if (row !== false) {
+      var btn = e.getTarget(".img-button");
+      
+      if (btn) {
+        action = btn.className.replace(/img-button btn-/, '').trim();
+      }
+
+      if (action != 'img-button') {
+        var categoriesId = this.getStore().getAt(row).get('categories_id');
+        var module = 'set_status';
+        
+        switch(action) {
+          case 'status-off':
+          case 'status-on':
+            flag = (action == 'status-on') ? 1 : 0;
+            this.onAction(module, categoriesId, flag);
+
+            break;
+        }
+      }
+    }
+  },
+  
+  onAction: function(action, categoriesId, flag) {
+    Ext.Ajax.request({
+      url: Toc.CONF.CONN_URL,
+      params: {
+        module: 'categories',
+        action: action,
+        categories_id: categoriesId,
+        flag: flag
+      },
+      callback: function(options, success, response) {
+        var result = Ext.decode(response.responseText);
+        
+        if (result.success == true) {
+          var store = this.getStore();
+          store.getById(categoriesId).set('status', flag);
+          store.commitChanges();
+          
+          this.owner.app.showNotification({title: TocLanguage.msgSuccessTitle, html: result.feedback});
+        }
+        else {
+          this.owner.app.showNotification({title: TocLanguage.msgSuccessTitle, html: result.feedback});
+        }
+      },
+      scope: this
+    });
   }
 });
  

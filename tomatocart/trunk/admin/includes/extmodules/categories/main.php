@@ -20,7 +20,8 @@
   include('categories_dialog.php');
   include('categories_move_dialog.php');
   include('categories_main_panel.php');
- 
+  include('categories_ratings_grid_panel.php');
+  
 ?>
 
 Ext.override(TocDesktop.CategoriesWindow, {
