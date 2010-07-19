@@ -327,7 +327,91 @@
       }
     }
   }
+  
+/**
+ * Create watermark image
+ *
+ * @param string $original_image origial image
+ * @param string $dest_image dest image
+ * @param string $watermark_image watermark image
+ * @param string $watermark_position watermark position (0: Left/Top; 1:Left/Bottom; 2:Right/Top; 3:Right/Bottom)
+ * @param string $watermark_opacity watermark position
+ */
+  
+  function toc_draw_watermark($original_image, $dest_image, $watermark_image, $watermark_position, $watermark_opacity) {
+    if ( !empty($original_image) && file_exists($original_image) ){
+      $original_image_info = getimagesize($original_image);
+      $original_image_width = $original_image_info[0];
+      $original_image_height = $original_image_info[1];
+    
+      switch ($original_image_info[2]) {
+        case 1: $res_original_img = imagecreatefromgif($original_image); break;
+        case 2: $res_original_img = imagecreatefromjpeg($original_image); break;
+        case 3: $res_original_img = imagecreatefrompng($original_image); break;
+      }
+    }
+    
+    if ( !empty($watermark_image) && file_exists($watermark_image) ) {
+      $watermark_image_info = getimagesize($watermark_image);
+      $watermark_image_width = $watermark_image_info[0];
+      $watermark_image_height = $watermark_image_info[1];
 
+      switch ($watermark_image_info[2]) {
+        case 1: $res_watermark_img = imagecreatefromgif($watermark_image); break;
+        case 2: $res_watermark_img = imagecreatefromjpeg($watermark_image); break;
+        case 3: $res_watermark_img = imagecreatefrompng($watermark_image); break;
+      }
+    }
+    
+    $watermark = imagecreatetruecolor($watermark_image_width, $watermark_image_height);
+    imagealphablending($watermark, false);
+    $col = imagecolorallocate($watermark, 255, 255, 255);
+    imagecolortransparent($watermark, $col);
+    imagefilledrectangle($watermark, 0, 0, $watermark_image_width, $watermark_image_height, $col);
+    imagealphablending($watermark, true);
+    imageSaveAlpha($watermark, true);
+    imagecopyresampled($watermark, $res_watermark_img, 0, 0, 0, 0, $watermark_image_width, $watermark_image_height, imagesx($res_watermark_img), imagesy($res_watermark_img));
+  
+    switch ($watermark_position) {
+      case '0':
+        $posX = 0;
+        $posY = 0;
+        break;
+      case '1':
+        $posX = 0;
+        $posY = $original_image_height - $watermark_image_height;
+        break;
+      case '2':
+        $posX = $original_image_width - $watermark_image_width;
+        $posY = 0;
+        break;
+      case '3':
+        $posX = $original_image_width - $watermark_image_width;
+        $posY = $original_image_height - $watermark_image_height;
+        break;
+    }
+  
+    imagealphablending($res_original_img, true);
+    imageSaveAlpha($res_original_img, true);
+    imagecopymerge($res_original_img, $watermark, $posX, $posY, 0, 0, $watermark_image_width, $watermark_image_height, $watermark_opacity);       
+    
+    switch ($original_image_info[2]) {
+      case 1: imagegif($res_original_img, $dest_image); break;
+      case 2: imagejpeg($res_original_img, $dest_image); break;
+      case 3: imagepng($res_original_img, $dest_image); break;
+    }
+    
+    if (isset($watermark_image_info)) unset($watermark_image_info);
+    if (isset($original_image_info)) unset($original_image_info);
+    if (isset($generate_info)) unset($generate_info);
+    if (isset($watermark)) imagedestroy($watermark);
+
+    imagedestroy($res_original_img);
+    imagedestroy($res_watermark_img);
+    
+    return true;
+  }
+  
   function osc_gd_resize($original_image, $dest_image, $dest_width, $dest_height, $force_size = '0'){
     $img_type = false;
 
@@ -370,16 +454,11 @@
           $height = round($orig_height / $factor);
       }
       
-      $im_p = imageCreateTrueColor($dest_width, $dest_height);
-      imageAntiAlias($im_p,true);
-      imagealphablending($im_p, false);
-      imagesavealpha($im_p,true);
-      $transparent = imagecolorallocatealpha($im_p, 255, 255, 255, 127);
-      for($x=0;$x<$dest_width;$x++) {
-        for($y=0;$y<$dest_height;$y++) {
-          imageSetPixel( $im_p, $x, $y, $transparent);
-        }
-      }
+      $im_p = imagecreatetruecolor($dest_width, $dest_height);
+      imagealphablending($im_p, true);
+      $color = imagecolortransparent($im_p, imagecolorallocatealpha($im_p, 255, 255, 255, 127));
+      imagefill($im_p, 0, 0, $color);
+      imagesavealpha($im_p, true);
 
       $x = 0;
       $y = 0;
@@ -408,6 +487,7 @@
           $im = imagecreatefrompng($original_image);
           break;
       }
+      
       imagecopyresampled($im_p, $im, $x, $y, 0, 0, $width, $height, $orig_width, $orig_height);
 
       switch ($img_type) {
