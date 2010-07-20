@@ -198,18 +198,22 @@ var AjaxShoppingCart = new Class({
       //get all the products to be removed
       var products = [];
       
-      this.products.each(function(id) {
-        var found = false;
-        if ($defined(json.products)) {
-          json.products.each(function(product) {
-            if (product.id == id) {
-              found = true;
-            }
-          });
-        }
-
-        if (!found) {products.push(id);}
-      });
+      if (json.products.length == 0) {
+        products = this.products;
+      }else {
+        this.products.each(function(id) {
+          var found = false;
+          if ($defined(json.products)) {
+            json.products.each(function(product) {
+              if (product.id == id) {
+                found = true;
+              }
+            });
+          }
+  
+          if (!found) {products.push(id);}
+        });
+      }  
 
       //play animation to remove products
       if (products.length > 0) {
@@ -234,10 +238,10 @@ var AjaxShoppingCart = new Class({
 
   //update Products Content
   updateProductsContent: function(json) {
+    //remove products
+    this.removeProducts(json);
+      
     if ( $defined(json.products) && json.products.length > 0 ) {
-      //remove products
-      this.removeProducts(json);
-
       //add products
       json.products.each(function(product) {
         if ( this.products.indexOf(product.id) == -1 ) {
