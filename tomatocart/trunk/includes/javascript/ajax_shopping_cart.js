@@ -17,7 +17,6 @@ var AjaxShoppingCart = new Class({
     sessionName: 'sid',
     sessionId: '',
     jsonUrl: 'json.php',
-    redirect: 'checkout.php',
     movedPicSize: 2
   },
 
@@ -198,7 +197,7 @@ var AjaxShoppingCart = new Class({
     if (this.products.length > 0) {
       //get all the products to be removed
       var products = [];
-
+      
       this.products.each(function(id) {
         var found = false;
         if ($defined(json.products)) {
@@ -214,7 +213,7 @@ var AjaxShoppingCart = new Class({
 
       //play animation to remove products
       if (products.length > 0) {
-        products.each(function(pID, index) {
+        products.each(function(pID) {
           $('ajaxCartProduct' + pID).addClass('strike').set('tween', {
             duration: 1000,
             property: 'opacity',
