@@ -198,6 +198,7 @@ var AjaxShoppingCart = new Class({
       //get all the products to be removed
       var products = [];
       
+      //the last product to be removed
       if (json.products.length == 0) {
         products = this.products;
       }else {
