@@ -59,7 +59,7 @@
               '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' .
               '#ajaxCartOrderTotals span.orderTotalText {float: right}' .
               '#ajaxCartContentLong ul.products {text-align: left;}' . 
-              '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;}' .
+              '#ajaxCartContentLong ul li {padding: 8px 0;font-size: 9px;position: relative;}' .
               '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:8px;}' .
               '#ajaxCartContentLong ul.products .removeProduct {cursor: pointer;display: block;width: 11px;height: 13px;position: absolute;right: 0;top: 8px;background: url(includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_ajax_cart_delete.gif) no-repeat left top;}' .
               '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' .
