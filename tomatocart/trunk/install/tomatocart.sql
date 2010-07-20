@@ -6774,9 +6774,9 @@ INSERT INTO toc_orders_transactions_status VALUES ( '4', '1', 'Inquiry');
 
 INSERT INTO toc_products_images_groups values (1, 1, 'Originals', 'originals', 0, 0, 0);
 INSERT INTO toc_products_images_groups values (2, 1, 'Thumbnails', 'thumbnails', 100, 80, 0);
-INSERT INTO toc_products_images_groups values (3, 1, 'Product Information Page', 'product_info', 188, 150, 0);
-INSERT INTO toc_products_images_groups values (4, 1, 'Large', 'large', 375, 300, 0);
-INSERT INTO toc_products_images_groups values (5, 1, 'Mini', 'mini', 50, 40, 0);
+INSERT INTO toc_products_images_groups values (3, 1, 'Product Information Page', 'product_info', 240, 180, 0);
+INSERT INTO toc_products_images_groups values (4, 1, 'Large', 'large', 360, 240, 0);
+INSERT INTO toc_products_images_groups values (5, 1, 'Mini', 'mini', 55, 45, 0);
 
 INSERT INTO toc_tax_class VALUES (1, 'Taxable Goods', 'The following types of products are included non-food, services, etc', now(), now());
 
