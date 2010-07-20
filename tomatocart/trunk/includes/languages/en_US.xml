@@ -91,6 +91,41 @@
       <group>general</group>
     </definition>
     <definition>
+      <key>error_no_shipping_flat_url</key>
+      <value><![CDATA[Track Information is currently not available. Please contact us for more information or email us at info@tomatocart.com]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>table_heading_carrier</key>
+      <value><![CDATA[Carrier : ]]></value>
+      <group>general</group>
+    </definition>  
+    <definition>
+      <key>table_heading_track_number</key>
+      <value><![CDATA[Track Number : ]]></value>
+      <group>general</group>
+    </definition>  
+    <definition>
+      <key>table_heading_track</key>
+      <value><![CDATA[Track : ]]></value>
+      <group>general</group>
+    </definition>  
+    <definition>
+      <key>table_heading_error</key>
+      <value><![CDATA[Error : ]]></value>
+      <group>general</group>
+    </definition>  
+    <definition>
+      <key>button_track_your_order</key>
+      <value><![CDATA[Track your order]]></value>
+      <group>general</group>
+    </definition>  
+    <definition>
+      <key>heading_title_order_track_infomation</key>
+      <value><![CDATA[Track Infomation]]></value>
+      <group>general</group>
+    </definition>           
+    <definition>
       <key>save_cart_status_error</key>
       <value><![CDATA[ERROR: bad status setted. Only collapse or expand status of the blockcart module are availabe.]]></value>
       <group>general</group>
@@ -133,6 +168,16 @@
     <definition>
       <key>breadcrumb_shop</key>
       <value><![CDATA[Online Shop]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>bookmark</key>
+      <value><![CDATA[Bookmark]]></value>
+      <group>general</group>
+    </definition>     
+    <definition>
+      <key>text_items</key>
+      <value><![CDATA[item(s)]]></value>
       <group>general</group>
     </definition>
     <definition>
@@ -2663,7 +2708,6 @@ Note: If you did not request this action via our password forgotten page, please
       <value><![CDATA[Product Description:]]></value>
       <group>products</group>
     </definition>
-        
     <definition>
       <key>error_sender_name_empty</key>
       <value><![CDATA[Please specify the send name.]]></value>
@@ -2735,13 +2779,33 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
+      <key>login_to_write_review</key>
+      <value><![CDATA[Please <a href="%s"><b>click here</b></a> to login to your account to write review.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>average_rating</key>
       <value><![CDATA[Average Rating:]]></value>
       <group>products</group>
     </definition>
     <definition>
+      <key>login_to_write_review</key>
+      <value><![CDATA[Please login to write review.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>no_review</key>
       <value><![CDATA[There are no reviews for this product.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>heading_write_review</key>
+      <value><![CDATA[WRITE REVIEWS]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>introduction_rating</key>
+      <value><![CDATA[How do you rate this product?]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -2800,34 +2864,16 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
-      <key>field_now_review</key>
-      <value><![CDATA[You're reviewing:]]></value>
-      <group>products</group>
-    </definition>
-    <definition>
-      <key>field_how_do_you_rating</key>
-      <value><![CDATA[How do you rate this product :]]></value>
-      <group>products</group>
-    </definition>
-    <definition>
-<<<<<<< .mine
       <key>introduction_rating</key>
       <value><![CDATA[Please give your ratings with this product:]]></value>
       <group>products</group>
     </definition>
     <definition>
-      <key>login_to_write_review</key>
-      <value><![CDATA[Please login to write your reviews.]]></value>
-      <group>products</group>
-    </definition>
-    <definition>
-=======
       <key>login_to_write</key>
       <value><![CDATA[Please login to write your reviews.]]></value>
       <group>products</group>
     </definition>
     <definition>
->>>>>>> .r122
       <key>review_lowest_rating_title</key>
       <value><![CDATA[Bad]]></value>
       <group>products</group>
@@ -3320,8 +3366,8 @@ Your friend, %s, thought that you would be interested in %s from %s.]]></value>
       <group>products</group>
     </definition>
     <definition>
-      <key>field_no_review</key>
-      <value><![CDATA[There are no reviews for this produce.]]></value>
+      <key>no_review</key>
+      <value><![CDATA[There are no reviews for this product.]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -3330,7 +3376,7 @@ Your friend, %s, thought that you would be interested in %s from %s.]]></value>
       <group>products</group>
     </definition>
     <definition>
-      <key>field_write_review</key>
+      <key>heading_write_review</key>
       <value><![CDATA[Write Your Own Reviews]]></value>
       <group>products</group>
     </definition>
