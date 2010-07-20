@@ -178,7 +178,7 @@ CREATE TABLE toc_configuration (
   configuration_id int(11) NOT NULL auto_increment,
   configuration_title varchar(64) NOT NULL,
   configuration_key varchar(64) NOT NULL,
-  configuration_value varchar(255) NOT NULL,
+  configuration_value varchar(16383) NOT NULL,
   configuration_description varchar(255) NOT NULL,
   configuration_group_id int(11) NOT NULL,
   sort_order int(5) default NULL,
@@ -375,10 +375,20 @@ CREATE TABLE toc_customers_groups_description (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS toc_department;
+CREATE TABLE toc_department (
+  id int(11) NOT NULL auto_increment,
+  title varchar(32) character set utf8 collate utf8_bin NOT NULL,
+  email_address varchar(96) NOT NULL,
+  description text NOT NULL,
+  PRIMARY KEY  (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS toc_email_accounts;
 CREATE TABLE toc_email_accounts (
   accounts_id int(11) NOT NULL auto_increment,
-  user_id int(11) NOT NULL,  
+  user_id int(11) NOT NULL,
   accounts_name varchar(100) NOT NULL,
   accounts_email varchar(100) NOT NULL,
   signature text,
@@ -404,7 +414,7 @@ CREATE TABLE toc_email_accounts (
   smtp_password varchar(50) default NULL,
   PRIMARY KEY  (accounts_id),
   KEY user_id (user_id)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS toc_email_folders;
@@ -412,7 +422,7 @@ CREATE TABLE toc_email_folders (
   folders_id int(11) NOT NULL auto_increment,
   accounts_id int(11) NOT NULL,
   folders_name varchar(100) default NULL,
-  folders_flag int(4) NOT NULL default '0',  
+  folders_flag int(4) NOT NULL default '0',
   subscribed tinyint(1) NOT NULL default '0',
   parent_id int(11) NOT NULL default '0',
   delimiter char(1) NOT NULL default '',
@@ -427,19 +437,19 @@ CREATE TABLE toc_email_folders (
 DROP TABLE IF EXISTS toc_email_messages;
 CREATE TABLE toc_email_messages (
   id int(11) NOT NULL auto_increment,
-  accounts_id int(11) NOT NULL,  
+  accounts_id int(11) NOT NULL,
   folders_id int(11) NOT NULL,
   uid varchar(255) NOT NULL,
-  messages_id varchar(255) NOT NULL,  
+  messages_id varchar(255) NOT NULL,
   subject varchar(100) default NULL,
   from_address varchar(100) default NULL,
   to_address varchar(100) default NULL,
   reply_to varchar(100) default NULL,
-  udate int(11) NOT NULL,  
+  udate int(11) NOT NULL,
   size int(11) NOT NULL,
   attachments tinyint(1) NOT NULL,
   priority tinyint(1) NOT NULL,
-  new tinyint(1) NOT NULL,  
+  new tinyint(1) NOT NULL,
   content_type varchar(100) NOT NULL,
   content_transfer_encoding varchar(100) NOT NULL,
   fetch_timestamp int(11) NOT NULL,
@@ -529,6 +539,27 @@ CREATE TABLE toc_gift_certificates_redeem_history (
   redeem_ip_address varchar(15) NOT NULL,
   PRIMARY KEY  (gift_certificates_redeem_history_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_google_orders;
+CREATE TABLE toc_google_orders (
+  orders_id int(10) NOT NULL ,
+  google_order_number varchar(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_guest_books;
+CREATE TABLE IF NOT EXISTS toc_guest_books (
+  guest_books_id int(11) NOT NULL AUTO_INCREMENT,
+  title varchar(255) NOT NULL,
+  email varchar(255) NOT NULL,
+  store_url varchar(255) NOT NULL,
+  guest_books_status tinyint(1) NOT NULL,
+  languages_id int(11) NOT NULL,
+  content text NOT NULL,
+  date_added datetime DEFAULT NULL,
+  PRIMARY KEY (guest_books_id)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 
 DROP TABLE IF EXISTS toc_languages;
@@ -1073,6 +1104,57 @@ CREATE TABLE toc_piwik_user_language (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS toc_polls;
+CREATE TABLE IF NOT EXISTS toc_polls (
+  polls_id int(11) NOT NULL auto_increment,
+  polls_type tinyint(1) NOT NULL,
+  polls_status tinyint(1) NOT NULL,
+  votes_count int(11) NOT NULL default '0',
+  date_added datetime NOT NULL,
+  PRIMARY KEY  (polls_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_polls_answers;
+CREATE TABLE IF NOT EXISTS toc_polls_answers (
+  polls_answers_id int(11) NOT NULL auto_increment,
+  polls_id int(10) NOT NULL,
+  votes_count int(10) NOT NULL default '0',
+  sort_order int(11) NOT NULL,
+  PRIMARY KEY  (polls_answers_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_polls_answers_description;
+CREATE TABLE IF NOT EXISTS toc_polls_answers_description (
+  polls_answers_id int(11) NOT NULL,
+  languages_id int(11) NOT NULL,
+  answers_title varchar(255) NOT NULL,
+  PRIMARY KEY  (polls_answers_id,languages_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_polls_description;
+CREATE TABLE IF NOT EXISTS toc_polls_description (
+  polls_id int(11) NOT NULL,
+  polls_title varchar(255) NOT NULL,
+  languages_id int(11) NOT NULL,
+  PRIMARY KEY  (polls_id,languages_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_polls_votes;
+CREATE TABLE IF NOT EXISTS toc_polls_votes (
+  polls_votes_id int(11) NOT NULL auto_increment,
+  polls_id int(11) NOT NULL,
+  polls_answers_id int(11) NOT NULL,
+  customers_id int(11) default NULL,
+  date_voted datetime NOT NULL,
+  customers_ip_address varchar(32) NOT NULL,
+  PRIMARY KEY  (polls_votes_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS toc_products;
 CREATE TABLE toc_products (
   products_id int(11) NOT NULL auto_increment,
@@ -1206,7 +1288,7 @@ DROP TABLE IF EXISTS toc_products_frontpage;
 CREATE TABLE toc_products_frontpage (
   products_id int(11) NOT NULL,
   sort_order int(3) default NULL,
-  PRIMARY KEY ( products_id ) 
+  PRIMARY KEY ( products_id )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -1600,6 +1682,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Prices with Tax', 'DISPLAY_PRICE_WITH_TAX', '1', 'Display prices with tax included (true) or add the tax at the end (false)', '1', '21', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Invoice Start Number', 'INVOICE_START_NUMBER', '10000', 'Invoices would be numbered according to the starting number + increment value per Step 1.', '1', '22', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Maintenance mode', 'MAINTENANCE_MODE', '-1', 'Maintenance Mode', '1', '23', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Contact Us Captcha',  'CONTACT_US_CAPTCHA', '1', 'contact us captcha', '1', '24', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1)', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Credit Card Owner Name', 'CC_OWNER_MIN_LENGTH', '3', 'Minimum length of credit card owner name', '2', '12', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Credit Card Number', 'CC_NUMBER_MIN_LENGTH', '10', 'Minimum length of credit card number', '2', '13', now());
@@ -1663,6 +1746,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow Checkout', 'STOCK_ALLOW_CHECKOUT', '1', 'Allow customer to checkout even if there is insufficient stock', '9', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Mark product out of stock', 'STOCK_MARK_PRODUCT_OUT_OF_STOCK', '***', 'Display something on screen so customer can see which product has insufficient stock', '9', '4', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Stock Re-order level', 'STOCK_REORDER_LEVEL', '5', 'Define when stock needs to be re-ordered', '9', '5', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Out of stock email alerts', 'STOCK_EMAIL_ALERT', '1', 'Define send a email to administrator  if out of stock', '9', '6', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Quantity', 'PRODUCT_INFO_QUANTITY', '1', 'Do you want to display the Product Quantity?', '10', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Minimum Order Quantity','PRODUCT_INFO_MOQ', '-1', 'Do you want to display the Product Minimum Order Quantity?', '10', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
@@ -1671,6 +1755,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow gift certificate return', 'ALLOW_GIFT_CERTIFICATE_RETURN', '-1', 'Do you want to allow customer return gift certificates?', '11', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow downloadable return', 'ALLOW_DOWNLOADABLE_RETURN', '-1', 'Do you want to allow customer return downloadable products?', '11', '4', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow return request', 'ALLOW_RETURN_REQUEST', '1', 'Do you want to allow customer return product?', '11', '5', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow Reorder', 'ALLOW_RECORDER', '-1', 'Do you want to allow customer to reorder?', '11', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Download by redirect', 'DOWNLOAD_BY_REDIRECT', '-1', 'Use browser redirection for download. Disable on non-Unix systems.', '11', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('E-Mail Transport Method', 'EMAIL_TRANSPORT', 'sendmail', 'Defines if this server uses a local connection to sendmail or uses an SMTP connection via TCP/IP. Servers running on Windows and MacOS should change this setting to SMTP.', '12', '1', 'osc_cfg_set_boolean_value(array(\'sendmail\', \'smtp\'))', now());
@@ -1696,6 +1781,8 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('cURL', 'CFG_APP_CURL', '', 'The program location to cURL.', '18', '5', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('ImageMagick "convert"', 'CFG_APP_IMAGEMAGICK_CONVERT', '', 'The program location to ImageMagicks "convert" to use when manipulating images.', '18', '6', now());
 
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Disallow more than one vote from the same IP address', 'DISALLOW_MORE_THAN_ONE_VOTE', '1', 'Disallow more than one vote from the same IP address', '19', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+
 INSERT INTO toc_configuration_group VALUES ('1', 'My Store', 'General information about my store', '1', '1');
 INSERT INTO toc_configuration_group VALUES ('2', 'Minimum Values', 'The minimum values for functions / data', '2', '1');
 INSERT INTO toc_configuration_group VALUES ('3', 'Maximum Values', 'The maximum values for functions / data', '3', '1');
@@ -1711,6 +1798,7 @@ INSERT INTO toc_configuration_group VALUES ('12', 'E-Mail Options', 'General set
 INSERT INTO toc_configuration_group VALUES ('16', 'Regulations', 'Regulation options', '16', '1');
 INSERT INTO toc_configuration_group VALUES ('17', 'Credit Cards', 'Credit card options', '17', '1');
 INSERT INTO toc_configuration_group VALUES ('18', 'Program Locations', 'Locations to certain programs on the server.', '18', '1');
+INSERT INTO toc_configuration_group VALUES ('19', 'Store Front', 'Store Front configuration', '19', '1');
 
 INSERT INTO toc_countries VALUES (1,'Afghanistan','AF','AFG','');
 
@@ -6810,7 +6898,8 @@ INSERT INTO toc_email_templates (email_templates_id, email_templates_name, email
 (13, 'admin_create_order_credit_slip', 1),
 (14, 'admin_create_order_store_credit', 1),
 (15, 'admin_create_purchase_order', 1),
-(16, 'admin_password_forgotten', 1);
+(16, 'admin_password_forgotten', 1),
+(17, 'out_of_stock_alerts', 1);
 
 INSERT INTO toc_email_templates_description (email_templates_id, language_id, email_title, email_content) VALUES
 (1, 1, 'Welcome to %%store_name%%', '<p>%%greeting_text%%</p><br /><br /><p>We welcome you to %%store_name%%!</p><br /><br /><p>You can now take part in the various services we have offer for you. Some of these services include:</p><br /><br /><ul><br /><li>Permanent Cart - Any products added to your online cart remain there until you remove them, or check them out.<br /><li>Address Book - We can now deliver your products to another address other than yours! This is perfect to send birthday gifts direct to the birthday-person themselves.<br /><li>Order History - View your history of purchases that you have made with us.<br /><li>Products Reviews - Share your opinions on products with our other customers.<br /></ul><br /><p>For help with any of our online services, please email the store-owner: %%store_owner_email_address%%.</p><br /><br />Note: This email address was given to us by one of our customers. If you did not signup to be a member, please send an email to the store owner.'),
@@ -6827,7 +6916,8 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 (12, 1, 'The download link for %%downloadable_products%% is actived', 'Dear %%customer_name%%,<br /><br />The download link for the products you purchased from store %%store_name%%: <br /><br />%%downloadable_products%%<br /><br />is actived.<br /><br />Please go to the orders area of "My Account" and download the products.<br /><br />%%download_link%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (13, 1, 'A new credit slip is created for returned products', 'Dear %%customer_name%%,<br /><br />A new credit slip is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The slip number is %%slip_number%% and the total amount is %%total_amount%%. You can print out the credit slip in the "My Acount" area. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (14, 1, 'New store credit is created for returned products', 'Dear %%customer_name%%,<br /><br />New store credit is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The total amount is %%total_amount%% and the store credit is made to your billing account so that it can be used for future purchases. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
-(15, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%');
+(15, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
+(17, 1, 'Product out of Stock', 'TomatoCart<br>---------------------------------------------------<br>%%products_name%% %%products_variants%% is out of stock.<br>---------------------------------------------------<br>Remaining stock: %%products_quantity%%. You are advised to turn <br>to the Products section in the admin panel to replenish the inventory.');
 
 # Articles Categories
 INSERT INTO toc_articles_categories (articles_categories_id, articles_categories_status, articles_categories_order) VALUES (1, 1, 1);
@@ -6846,7 +6936,7 @@ INSERT INTO toc_articles_description (articles_id, language_id, articles_name, a
 (2, 1, 'Shipping & Returns', 'Put here the required information.', '', ''),
 (3, 1, 'Privacy Notice', 'Put here the required information.', '', ''),
 (4, 1, 'Conditions of Use', 'Put here the required information.', '', ''),
-(5, 1, 'Imprint', 'Put here the required information.', '', ''); 
+(5, 1, 'Imprint', 'Put here the required information.', '', '');
 
 
 #piwik
@@ -6884,3 +6974,4 @@ INSERT INTO toc_piwik_option (option_name, option_value, autoload) VALUES
 
 INSERT INTO toc_piwik_user (login, password, alias, email, token_auth, date_registered) VALUES
 ('anonymous', '', 'anonymous', 'anonymous@example.org', 'anonymous', now());
+
