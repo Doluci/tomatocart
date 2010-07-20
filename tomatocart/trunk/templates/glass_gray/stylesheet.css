@@ -348,6 +348,11 @@ A {
 	overflow: hidden;
 }
 
+#bookmark {
+	background: url() !important;
+	padding-left: 0 !important;
+}
+
 #quickSearch {
 	display: block;
 	float: left;
@@ -560,6 +565,7 @@ A {
 #productInfo #quantity {width: 30px;margin: 0 10px;}
 #productInfo a {text-decoration:underline;}
 #productInfo td {color: #616060; padding: 2px}
+#productInfo p.shortDescription {border-top: 1px dashed #999;padding-top: 10px; color: #777;}
 
 .productVariantsTable, .productDiscountsTable {
   background-color: #f3f3f3;
