@@ -553,7 +553,7 @@ CREATE TABLE IF NOT EXISTS toc_guest_books (
   guest_books_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL,
   email varchar(255) NOT NULL,
-  store_url varchar(255) NOT NULL,
+  url varchar(255) NOT NULL,
   guest_books_status tinyint(1) NOT NULL,
   languages_id int(11) NOT NULL,
   content text NOT NULL,
