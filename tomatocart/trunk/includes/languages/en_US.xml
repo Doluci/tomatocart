@@ -131,27 +131,32 @@
       <group>general</group>
     </definition>
     <definition>
-      <key>guestbook_no_title_error</key>
-      <value><![CDATA[ERROR: The title can not be null.]]></value>
+      <key>field_guestbook_title_error</key>
+      <value><![CDATA[ERROR: Please specify the message title.]]></value>
       <group>general</group>
     </definition>
      <definition>
-      <key>guestbook_no_content_error</key>
-      <value><![CDATA[ERROR: The content can not be null.]]></value>
+      <key>field_guestbook_email_error</key>
+      <value><![CDATA[ERROR: Please specify the correct email address.]]></value>
       <group>general</group>
     </definition>
      <definition>
-      <key>guestbook_verify_code_error</key>
-      <value><![CDATA[ERROR: The verify code is not right.]]></value>
+      <key>field_guestbook_content_error</key>
+      <value><![CDATA[ERROR: Please specify the content.]]></value>
       <group>general</group>
     </definition>
      <definition>
-      <key>guestbook_validate_email_error</key>
-      <value><![CDATA[ERROR: The email format is not right.]]></value>
+      <key>field_guestbook_verify_code_error</key>
+      <value><![CDATA[ERROR: Please specify the correct verify code.]]></value>
       <group>general</group>
     </definition>
      <definition>
-      <key>guestbook_note_verification_error</key>
+      <key>success_guestbook_saved</key>
+      <value><![CDATA[The message has been successfully saved.]]></value>
+      <group>general</group>
+    </definition>
+     <definition>
+      <key>verification_info_note</key>
       <value><![CDATA[Enter the code in the Box bellow.]]></value>
       <group>general</group>
     </definition>        
@@ -1121,10 +1126,45 @@
       <group>account</group>
     </definition>
     <definition>
-      <key>info_guest_book_heading</key>
+      <key>guestbook_heading</key>
       <value><![CDATA[Guest Book]]></value>
       <group>info</group>
-    </definition>       
+    </definition>
+    <definition>
+      <key>breadcrumb_guestbook</key>
+      <value><![CDATA[Guest Book]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>guestbook_new_heading</key>
+      <value><![CDATA[New Message]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>field_title</key>
+      <value><![CDATA[Title:]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>field_email</key>
+      <value><![CDATA[Email:]]></value>
+      <group>info</group>
+    </definition>   
+    <definition>
+      <key>field_url</key>
+      <value><![CDATA[URL:]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>field_content</key>
+      <value><![CDATA[Content:]]></value>
+      <group>info</group>
+    </definition>
+    <definition>
+      <key>field_image_verification</key>
+      <value><![CDATA[Image Verification:]]></value>
+      <group>info</group>
+    </definition>  
     <definition>
       <key>information_title</key>
       <value><![CDATA[Information]]></value>
