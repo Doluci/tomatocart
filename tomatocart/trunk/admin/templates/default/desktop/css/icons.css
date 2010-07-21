@@ -314,10 +314,6 @@
 	background-image: url(../../images/icons/16x16/google_sitemap.png) !important;
 }
 
-.icon-google_adsense-win {
-  background-image: url(../../images/icons/16x16/google_adsense.png) !important;
-}
-
 .icon-images-win {
 	background-image: url(../../images/icons/16x16/image.png) !important;
 }
@@ -424,6 +420,14 @@
   background-image: url(../../images/icons/16x16/reviews.png) !important;
 }
 
+.icon-department-win {
+  background-image: url(../../images/icons/16x16/department.png) !important;
+}
+
 .icon-polls-win {
   background-image: url(../../images/icons/16x16/polls.png) !important;
+}
+
+.icon-guest_book-win {
+  background-image: url(../../images/icons/16x16/guestbook.png) !important;
 }
