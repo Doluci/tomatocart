@@ -12,27 +12,27 @@
 */
 
 class toC_Captcha {
-	protected $_code;
-	protected $_width  = 30;
-	protected $_height = 150;
+  protected $_code;
+  protected $_width  = 30;
+  protected $_height = 150;
 
-	function toC_Captcha() { 
-		$this->_code = osc_create_random_string(6); 
-	}
-	
-	function setWidth ($width) {
-	  $this->_width = $width;
-	}
-	
-	function setHeight($height) {
-	  $this->_height = $height;
-	}
+  function toC_Captcha() { 
+    $this->_code = osc_create_random_string(6); 
+  }
+  
+  function setWidth ($width) {
+    $this->_width = $width;
+  }
+  
+  function setHeight($height) {
+    $this->_height = $height;
+  }
 
-	function getCode(){
-		return $this->_code;
-	}
+  function getCode(){
+    return $this->_code;
+  }
 
-	function genCaptcha() {
+  function genCaptcha() {
     $image = imagecreatetruecolor($this->_height, $this->_width);
 
     $_width = imagesx($image); 
@@ -60,7 +60,7 @@ class toC_Captcha {
     header('Content-type: image/jpeg');
     
     imagejpeg($image);
-    imagedestroy($image);		
-	}
+    imagedestroy($image);    
+  }
 }
 ?>
