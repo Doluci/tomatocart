@@ -326,10 +326,6 @@
   background-image: url(../../images/icons/48x48/google_sitemap.png);
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/google_sitemap.png', sizingMethod='scale');
 }
-.icon-google_adsense-shortcut img {
-  background-image: url(../../images/icons/48x48/google_adsense.png);
-  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/google_adsense.png', sizingMethod='scale');
-}
 .icon-import_export-shortcut img {
   background-image: url(../../images/icons/48x48/import_export.png);
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/import_export.png', sizingMethod='scale');
@@ -377,6 +373,20 @@
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/attachments.png', sizingMethod='scale');
 }
 
+.icon-products_attachments-shortcut img {
+  background-image: url(../../images/icons/48x48/attachments.png);
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/attachments.png', sizingMethod='scale');
+}
+
+.icon-department-shortcut img {
+  background-image: url(../../images/icons/48x48/department.png);
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/department.png', sizingMethod='scale');
+}
+
+.icon-guest_book-shortcut img {
+  background-image: url(../../images/icons/48x48/guestbook.png);
+  filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/guestbook.png', sizingMethod='scale');
+}
 
 .icon-polls-shortcut img {
   background-image: url(../../images/icons/48x48/polls.png);
