@@ -18,11 +18,10 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $osC_Language->getCharacterSet(); ?>" />
-
+<meta http-equiv="x-ua-compatible" content="ie=7" />
 <link rel="shortcut icon" href="templates/<?php echo $osC_Template->getCode(); ?>/images/tomatocart.ico" type="image/x-icon" />
 
 <title><?php echo STORE_NAME . ($osC_Template->hasPageTitle() ? ': ' . $osC_Template->getPageTitle() : ''); ?></title>
-
 <base href="<?php echo osc_href_link(null, null, 'AUTO', false); ?>" />
 
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.css" />
@@ -68,9 +67,11 @@
         <?php echo osc_link_object(osc_href_link(FILENAME_DEFAULT, 'maintenance=logoff', 'SSL'), $osC_Language->get('admin_logout')); ?>
       </li>
     <?php } ?>
+      <li id="bookmark"></li>    
       <li class="cart">
-        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<span id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . $osC_ShoppingCart->numberOfItems() . ' item(s)</span>') ; ?>
+        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<span id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . $osC_ShoppingCart->numberOfItems() . ' ' . $osC_Language->get('text_items')  . '</span>') ; ?>
       </li>
+
     </ul>
     <?php
       echo osc_link_object(osc_href_link(FILENAME_DEFAULT), osc_image($osC_Template->getLogo(), STORE_NAME), 'id="siteLogo"');
@@ -362,6 +363,7 @@
              '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('cart_contents')) . '<span>|<span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span>|<span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span>|<span></li>'.
+             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), $osC_Language->get('Guest Book')) . '<span>|<span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'rss'), osc_image(DIR_WS_IMAGES . 'rss16x16.png') . '<span>RSS</span>') . '</li>';
       ?>
     </ul>
@@ -384,7 +386,8 @@
 <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.Request.js"></script>
 <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Observer.js"></script>
 <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode();?>/javascript/auto_completer/auto_completer.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode();?>/javascript/popup_cart/popup_cart.js"></script>    
+<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode();?>/javascript/popup_cart/popup_cart.js"></script>
+<script type="text/javascript" src="includes/javascript/bookmark.js"></script>
 
 <script type="text/javascript">
   window.addEvent('domready', function() {
@@ -401,6 +404,11 @@
       width: 300
     });
   });
+  new TocBookmark({
+  	bookmark: 'bookmark',
+  	text: '<?php echo $osC_Language->get('bookmark'); ?>',
+    img: '<?php echo 'images/bookmark.png'; ?>'
+  });  
 </script>
 
 
