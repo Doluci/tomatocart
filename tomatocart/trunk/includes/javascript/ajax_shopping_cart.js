@@ -181,6 +181,9 @@ var AjaxShoppingCart = new Class({
   },
 
   updateCart: function(json) {
+  	//popup shopping cart view
+    $('popupCartItems').set('text', json.numberOfItems);
+    
     //shopping cart short view
     $('ajaxCartContentShort').getElement('.quantity').set('html', json.numberOfItems);
     $('ajaxCartContentShort').getElement('.cartTotal').set('html', json.total);
