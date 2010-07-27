@@ -69,7 +69,7 @@
     <?php } ?>
       <li id="bookmark"></li>    
       <li class="cart">
-        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<span id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . $osC_ShoppingCart->numberOfItems() . ' ' . $osC_Language->get('text_items')  . '</span>') ; ?>
+        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<div id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . '<span id="popupCartItems">' . $osC_ShoppingCart->numberOfItems() . '</span>' . '<span>' . $osC_Language->get('text_items') . '</span></div>') ; ?>
       </li>
 
     </ul>
