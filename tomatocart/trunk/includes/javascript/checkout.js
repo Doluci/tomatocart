@@ -45,13 +45,41 @@ var Checkout = new Class({
       onSuccess: fnSuccess.bind(this)
     }).send();
   },
-
+  
   initialize: function(options) {
     this.isTotalZero = options.isTotalZero;
     
     this.paymentParams = {};
     this.setOptions(options);
     this.iniCheckoutForms();
+    
+    if ($defined(this.options.view)) {
+      this.loadPreviousForms(this.options.view);
+      this.gotoPanel(this.options.view);
+    }
+  },
+  
+  loadPreviousForms: function(view) {
+    var stepsHash = new Hash(this.steps);
+    var step = stepsHash.get(view);
+    
+    stepsHash.each(function(value, key) {
+      if (value <= step && value >1) {
+        this.loadForm(key.capitalize());
+      }
+    }, this);
+  },
+  
+  loadForm: function(form) {
+    var params = {action: 'load' + form};   
+    this.sendRequest(params, function(response) {
+      var result = JSON.decode(response);
+    
+      if (result.success == true) {
+        var script = 'this.load' + form + '(result.form);'; 
+        eval(script);
+      } 
+    }.bind(this));
   },
   
   iniCheckoutForms: function() {
@@ -59,10 +87,11 @@ var Checkout = new Class({
       this.loadCheckoutMethodForm();
     } else {
       this.loadBillingInformationForm();
+      this.gotoPanel('billingInformationForm');
     }
     
     $$('.formHeader').each( function(form_header, i) {
-      form_header.addEvent('click', function(e){
+      form_header.addEvent('click', function(e) {
         var formName = form_header.getParent().id;
         
         if (this.shipToBillingAddress == true) {
@@ -100,14 +129,16 @@ var Checkout = new Class({
   loadCheckoutMethodForm: function() {
     var params = {action: 'load_checkout_method_form'};
     
-    this.sendRequest(params, function(response){
+    this.sendRequest(params, function(response) {
       var result = JSON.decode(response);
       
       if (result.success == true) {
+        
         $('checkoutMethodForm').getElement('div').set('html', result.form);
         
         $('btnNewCustomer').addEvent('click', function(e) {
           this.loadBillingInformationForm();
+          this.gotoPanel('billingInformationForm');
         }.bind(this));
       }
     });
@@ -121,7 +152,6 @@ var Checkout = new Class({
       
       if (result.success == true) {
         $('billingInformationForm').getElement('div').set('html', result.form);
-        this.gotoPanel('billingInformationForm');
         
         //create new billing address
         if ($defined($('create_billing_address'))) {
@@ -141,6 +171,7 @@ var Checkout = new Class({
         
         //save billing information
         $('btnSaveBillingInformation').addEvent('click', function(e) {
+          this.showNotify($('btnSaveBillingInformation'));
           this.btnSaveBillingInformationClick();          
         }.bind(this));
       }
@@ -202,6 +233,8 @@ var Checkout = new Class({
       var result = JSON.decode(response);
       
       if (result.success == true) {
+        this.hideNotify($('btnSaveBillingInformation'));
+        
         //if isVirtualCart skip shipping form and shipping method
         if (isVirtualCart == true) {
           $('paymentInformationForm').getElement('div').set('html', result.form);
@@ -216,6 +249,8 @@ var Checkout = new Class({
           
           //btnSaveBillingInformation
           $('btnSavePaymentMethod').addEvent('click', function(e) {
+            this.showNotify($('btnSavePaymentMethod'));
+            
             if (this.isTotalZero == false) {
               var result = check_form();
               
@@ -229,44 +264,43 @@ var Checkout = new Class({
         } else {
           //if ship to this address          
           if ($('ship_to_this_address').checked == true) {
-            $('shippingMethodForm').getElement('div').set('html', result.form);
-            this.gotoPanel('shippingMethodForm');
-            
-            //save shipping method
-            $('btnSaveShippingMethod').addEvent('click', function(e) {
-              this.btnSaveShippingMethodClick();          
-            }.bind(this));                
+            this.loadShippingMethodForm(result.form);
           } else {
-            $('shippingInformationForm').getElement('div').set('html', result.form);
+            this.loadShippingInformationForm(result.form);
             this.gotoPanel('shippingInformationForm');
-            
-            //create new shipping address
-            if ($defined($('create_shipping_address'))) {
-              $('create_shipping_address').addEvent('click', function(e) {
-                if ($('create_shipping_address').checked == true) {
-                  $('shippingAddressDetails').setStyle('display', '');
-                  
-                } else {
-                  $('shippingAddressDetails').setStyle('display', 'none');
-                }
-              });
-            }
-            
-            //shipping country change
-            $('shipping_country').addEvent('change', function(e) {
-              this.countryChange('shipping');
-            }.bind(this));
-            
-            //save shipping information
-            $('btnSaveShippingInformation').addEvent('click', function(e) {
-              this.btnSaveShippingInformationClick();          
-            }.bind(this)); 
           }
         }
       } else {
         alert(result.errors.join('\n'));
       }
     });
+  },
+  
+  loadShippingInformationForm: function(form) {
+    $('shippingInformationForm').getElement('div').set('html', form);
+    
+    //create new shipping address
+    if ($defined($('create_shipping_address'))) {
+      $('create_shipping_address').addEvent('click', function(e) {
+        if ($('create_shipping_address').checked == true) {
+          $('shippingAddressDetails').setStyle('display', '');
+          
+        } else {
+          $('shippingAddressDetails').setStyle('display', 'none');
+        }
+      });
+    }
+    
+    //shipping country change
+    $('shipping_country').addEvent('change', function(e) {
+      this.countryChange('shipping');
+    }.bind(this));
+    
+    //save shipping information
+    $('btnSaveShippingInformation').addEvent('click', function(e) {
+      this.showNotify($('btnSaveShippingInformation'));
+      this.btnSaveShippingInformationClick();          
+    }.bind(this)); 
   },
   
   btnSaveShippingInformationClick: function() {
@@ -310,18 +344,24 @@ var Checkout = new Class({
       var result = JSON.decode(response);
     
       if (result.success == true) {
-        $('shippingMethodForm').getElement('div').set('html', result.form);
+        this.hideNotify($('btnSaveShippingInformation'));
+        this.loadShippingMethodForm(result.form);
         this.gotoPanel('shippingMethodForm');
-        
-        //btnSaveBillingInformation
-        $('btnSaveShippingMethod').addEvent('click', function(e) {
-          this.btnSaveShippingMethodClick();          
-        }.bind(this));         
       } else {
         alert(result.errors.join('\n'));
       }
     });
   },  
+  
+  loadShippingMethodForm: function(form) {
+    $('shippingMethodForm').getElement('div').set('html', form);
+    
+    //btnSaveBillingInformation
+    $('btnSaveShippingMethod').addEvent('click', function(e) {
+      this.showNotify($('btnSaveShippingMethod'));
+      this.btnSaveShippingMethodClick();          
+    }.bind(this));
+  },
   
   btnSaveShippingMethodClick: function() {
     var shipping_methods = document.getElementsByName("shipping_mod_sel"); 
@@ -346,32 +386,39 @@ var Checkout = new Class({
       this.sendRequest(params, function(response) {
         var result = JSON.decode(response);
         
-        $('paymentInformationForm').getElement('div').set('html', result.form);        
+        this.hideNotify($('btnSaveShippingMethod'));
+        this.loadPaymentInformationForm(result);
         this.gotoPanel('paymentInformationForm');
-        
-        eval(result.javascript);
-        
-        if($defined($('payment_method_store_credit'))) {
-          $('payment_method_store_credit').addEvent('click', this.onChkUseStoreCreditChecked.bind(this));
-        }  
-        
-        //btnSavePaymentMethod
-        $('btnSavePaymentMethod').addEvent('click', function(e) {
-          if (this.isTotalZero == false) {
-            var result = check_form();
-            
-            if (result == true) {
-              this.btnSavePaymentMethodCllick();
-            }
-          } else {
-            this.btnSavePaymentMethodCllick();
-          }
-          
-        }.bind(this));      
       });       
     } else {
       alert('Please select a shipping method!');
     }
+  },
+  
+  loadPaymentInformationForm: function(json) {
+    $('paymentInformationForm').getElement('div').set('html', json.form);        
+    
+    eval(json.javascript);
+    
+    if($defined($('payment_method_store_credit'))) {
+      $('payment_method_store_credit').addEvent('click', this.onChkUseStoreCreditChecked.bind(this));
+    }  
+    
+    //btnSavePaymentMethod
+    $('btnSavePaymentMethod').addEvent('click', function(e) {
+      this.showNotify($('btnSavePaymentMethod'));
+      
+      if (this.isTotalZero == false) {
+        var result = check_form();
+        
+        if (result == true) {
+          this.btnSavePaymentMethodCllick();
+        }
+      } else {
+        this.btnSavePaymentMethodCllick();
+      }
+      
+    }.bind(this));  
   },
   
   onChkUseStoreCreditChecked: function() {
@@ -455,16 +502,23 @@ var Checkout = new Class({
       var result = JSON.decode(response);
       
       if (result.success == true) {
-        this.loadOrderInformationForm(result.form);
+        this.hideNotify($('btnSavePaymentMethod'));
+        this.loadOrderConfirmationForm(result.form);
+        this.gotoPanel('orderConfirmationForm');
       } else {
         alert(result.errors);
       } 
     });
   },
   
-  loadOrderInformationForm: function(form) {
+  loadOrderConfirmationForm: function(form) {
     $('orderConfirmationForm').getElement('div').set('html', form);
-    this.gotoPanel('orderConfirmationForm');
+    
+    if ( $defined($('btnConfirmOrder')) ) {
+      $('btnConfirmOrder').addEvent('click', function(e) {
+         this.showNotify($('btnConfirmOrder'));
+      }.bind(this));
+    }
     
     if ($defined($('btnRedeemCoupon'))) {
       $('btnRedeemCoupon').addEvent('click', function(e) {
@@ -502,7 +556,8 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderInformationForm(result.form);
+        this.loadOrderConfirmationForm(result.form);
+        this.gotoPanel('orderConfirmationForm');
         
         this.isTotalZero = result.isTotalZero;
       } else {
@@ -521,7 +576,8 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderInformationForm(result.form);
+        this.loadOrderConfirmationForm(result.form);
+        this.gotoPanel('orderConfirmationForm');
         
         if (result.go_to_payment_form == true) {
           $('payment_methods').setStyle('display', '');
@@ -544,7 +600,8 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderInformationForm(result.form);
+        this.loadOrderConfirmationForm(result.form);
+        this.gotoPanel('orderConfirmationForm');
         
         this.isTotalZero = result.isTotalZero;
       } else {
@@ -564,7 +621,8 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderInformationForm(result.form);
+        this.loadOrderConfirmationForm(result.form);
+        this.gotoPanel('orderConfirmationForm');
         
         if (result.go_to_payment_form == true) {
           $('payment_methods').setStyle('display', '');
@@ -612,6 +670,14 @@ var Checkout = new Class({
         span.set('html', '-');
       }
     });
+  },
+  
+  showNotify: function(image) {
+    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/en_us/ajax-loader.gif');
+  },
+  
+  hideNotify: function(image) {
+    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/en_us/button_continue.gif');
   }
 });
 
