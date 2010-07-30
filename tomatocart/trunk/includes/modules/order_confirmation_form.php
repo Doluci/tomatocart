@@ -137,58 +137,6 @@
 </div>
 
 <?php
-  if ($osC_Payment->hasActive()) {
-    if ($confirmation = $osC_Payment->confirmation()) {
-?>
-
-<div class="moduleBox">
-  <h6><?php echo $osC_Language->get('order_payment_information_title'); ?></h6>
-
-  <div class="content">
-    <p><?php echo $confirmation['title']; ?></p>
-
-<?php
-      if (isset($confirmation['fields'])) {
-?>
-
-    <table border="0" cellspacing="0" cellpadding="2">
-
-<?php
-        for ($i=0, $n=sizeof($confirmation['fields']); $i<$n; $i++) {
-?>
-
-      <tr>
-        <td width="10">&nbsp;</td>
-        <td><?php echo $confirmation['fields'][$i]['title']; ?></td>
-        <td width="10">&nbsp;</td>
-        <td><?php echo $confirmation['fields'][$i]['field']; ?></td>
-      </tr>
-
-<?php
-        }
-?>
-
-    </table>
-
-<?php
-      }
-
-      if (isset($confirmation['text'])) {
-?>
-
-    <p><?php echo $confirmation['text']; ?></p>
-
-<?php
-      }
-?>
-
-  </div>
-</div>
-
-<?php
-    }
-  }
-
   if (isset($_SESSION['comments']) && !empty($_SESSION['comments'])) {
 ?>
 
@@ -265,7 +213,7 @@
 <?php
   }
 ?>
-<div class="submitFormButtons" style="text-align: right;">
+<div class="submitFormButtons">
 
 <?php
   if ($osC_Payment->hasActionURL()) {
@@ -277,10 +225,62 @@
   echo '<form name="checkout_confirmation" action="' . $form_action_url . '" method="post">';
 
   if ($osC_Payment->hasActive()) {
+    if ($confirmation = $osC_Payment->confirmation()) {
+?>
+
+<div class="moduleBox">
+  <h6><?php echo $osC_Language->get('order_payment_information_title'); ?></h6>
+
+  <div class="content">
+    <p><?php echo $confirmation['title']; ?></p>
+
+<?php
+      if (isset($confirmation['fields'])) {
+?>
+
+    <table border="0" cellspacing="3" cellpadding="2">
+
+<?php
+        for ($i=0, $n=sizeof($confirmation['fields']); $i<$n; $i++) {
+?>
+
+      <tr>
+        <td width="10">&nbsp;</td>
+        <td><?php echo $confirmation['fields'][$i]['title']; ?></td>
+        <td width="10">&nbsp;</td>
+        <td><?php echo $confirmation['fields'][$i]['field']; ?></td>
+      </tr>
+
+<?php
+        }
+?>
+
+    </table>
+
+<?php
+      }
+
+      if (isset($confirmation['text'])) {
+?>
+
+    <p><?php echo $confirmation['text']; ?></p>
+
+<?php
+      }
+?>
+
+  </div>
+</div>
+
+<?php
+    }
+  }
+  
+  if ($osC_Payment->hasActive()) {
     echo $osC_Payment->process_button();
   }
 
-  echo osc_draw_image_submit_button('button_confirm_order.gif', $osC_Language->get('button_confirm_order')) . '</form>';
+  echo '<div style="text-align:right;">' . osc_draw_image_submit_button('button_confirm_order.gif', $osC_Language->get('button_confirm_order'), 'id="btnConfirmOrder"') . '</form></div>';
 ?>
 
 </div>
