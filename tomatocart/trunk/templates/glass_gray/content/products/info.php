@@ -261,7 +261,7 @@
           <div class="content"><?php echo $osC_Product->getDescription(); ?></div>
         </div>
       </div>
-    <?  } ?>
+    <?php  } ?>
     
     <div id="tabReviews">
       <div class="moduleBox">
@@ -398,7 +398,7 @@
                <td class="label" valign="top"><?php echo $attribute['name']; ?>:</td>
                <td><?php echo $attribute['value']; ?></td>
             </tr>
-        <? } ?>
+        <?php } ?>
           </div>
         </div>
       </div>
@@ -445,10 +445,15 @@ window.addEvent('domready', function(){
   var miniImages = $$(".mini");
   if (miniImages.length > 0) {
     miniImages.each(function(img) {
-      img.addEvent('mouseover', function(e) {
-        $('product_image').src = this.get("product-info-img");
-        $('product_image').set('large-img', this.get("large-img"));
-        zoomer.big.src = this.get("large-img"); 
+      img.addEvent('mouseenter', function(e) {
+        new Fx.Tween($('product_image'), {
+           duration: 500,
+           property: 'opacity'
+        }).start(0).chain(function() {
+          $$('.zoomer-wrapper-big').getElement('img').set('src', this.get("large-img"));
+          $('product_image').src =  this.get("product-info-img");
+          $('product_image').fade('in');
+        }.bind(this));
       });
     }, this);
   }
