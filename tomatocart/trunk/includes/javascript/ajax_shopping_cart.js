@@ -17,6 +17,7 @@ var AjaxShoppingCart = new Class({
     sessionName: 'sid',
     sessionId: '',
     jsonUrl: 'json.php',
+    redirect: 'checkout.php',
     movedPicSize: 2
   },
 
@@ -57,7 +58,13 @@ var AjaxShoppingCart = new Class({
 
           //send request
           var pID = addToCartButton.get('pid');
-          this.sendRequest({action: 'add_product', pID: pID}, function(response) {
+          
+          var params = {action: 'add_product', pID: pID};
+          if ( $defined($('quantity')) ) {
+            params.pQty = $('quantity').get('value');  
+          }
+          
+          this.sendRequest(params, function(response) {
             var result = JSON.decode(response);
 
             //move image
@@ -94,7 +101,7 @@ var AjaxShoppingCart = new Class({
 
                   addToCartButton.erase('disabled');
                 }.bind(this)
-              }).morph({width: srcPos.width / 2, height: srcPos.height / 2, top: destPos.top + destPos.height / 4, left: destPos.left + destPos.width / 3});
+              }).morph({width: srcPos.width / 2, height: srcPos.height / 2, top: destPos.top + destPos.height / 4, left: destPos.left + destPos.width / 4});
             }
           });
         }.bind(this));
@@ -181,7 +188,7 @@ var AjaxShoppingCart = new Class({
   },
 
   updateCart: function(json) {
-  	//popup shopping cart view
+    //popup shopping cart view
     $('popupCartItems').set('text', json.numberOfItems);
     
     //shopping cart short view
@@ -200,28 +207,23 @@ var AjaxShoppingCart = new Class({
     if (this.products.length > 0) {
       //get all the products to be removed
       var products = [];
-      
-      //the last product to be removed
-      if (json.products.length == 0) {
-        products = this.products;
-      }else {
-        this.products.each(function(id) {
-          var found = false;
-          if ($defined(json.products)) {
-            json.products.each(function(product) {
-              if (product.id == id) {
-                found = true;
-              }
-            });
-          }
-  
-          if (!found) {products.push(id);}
-        });
-      }  
+
+      this.products.each(function(id) {
+        var found = false;
+        if ($defined(json.products)) {
+          json.products.each(function(product) {
+            if (product.id == id) {
+              found = true;
+            }
+          });
+        }
+
+        if (!found) {products.push(id);}
+      });
 
       //play animation to remove products
       if (products.length > 0) {
-        products.each(function(pID) {
+        products.each(function(pID, index) {
           $('ajaxCartProduct' + pID).addClass('strike').set('tween', {
             duration: 1000,
             property: 'opacity',
@@ -242,10 +244,10 @@ var AjaxShoppingCart = new Class({
 
   //update Products Content
   updateProductsContent: function(json) {
-    //remove products
-    this.removeProducts(json);
-      
     if ( $defined(json.products) && json.products.length > 0 ) {
+      //remove products
+      this.removeProducts(json);
+
       //add products
       json.products.each(function(product) {
         if ( this.products.indexOf(product.id) == -1 ) {
