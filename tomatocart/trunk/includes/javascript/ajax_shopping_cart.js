@@ -232,8 +232,8 @@ var AjaxShoppingCart = new Class({
               this.products.erase(pID);
 
               if (this.products.length == 0) {
-                $('ajaxCartContentNoProducts').removeClass('collapsed').addClass('expanded').setStyle('opacity', 100).slide('in');
-                $('ajaxCartContentProducts').addClass('collapsed');
+                $('ajaxCartContentNoProducts').removeClass('collapsed').addClass('expanded').slide('in');
+                $('ajaxCartContentProducts').removeClass('expanded').addClass('collapsed');
               }
             }.bind(this)
           }).tween(100, 0);
@@ -244,46 +244,48 @@ var AjaxShoppingCart = new Class({
 
   //update Products Content
   updateProductsContent: function(json) {
-    if ( $defined(json.products) && json.products.length > 0 ) {
-      //remove products
-      this.removeProducts(json);
-
-      //add products
-      json.products.each(function(product) {
-        if ( this.products.indexOf(product.id) == -1 ) {
-          this.products.push(product.id);
-
-          var rowEl = new Element('li', {'id': 'ajaxCartProduct' + product.id});
-          var quantityEl = new Element('span', {'class': 'quantity', 'html': product.quantity});
-          var productEl = new Element('a', {'href': product.link, 'title': product.title, 'html': product.name});
-          var priceEl = new Element('span', {'class': 'price', 'html': product.price});
-          var deleteEl = new Element('span', {'class': 'removeProduct'});
-
-          $('ajaxCartContentProducts').grab(rowEl.grab(quantityEl).grab(productEl).grab(priceEl).grab(deleteEl));
-
-          //delete product
-          deleteEl.addEvent('click', function(e) {
-            e.stop();
-
-            this.sendRequest({action: 'remove_product', pID: product.id}, function(response) {
-              var result = JSON.decode(response);
-
-              if (result.success == true) {
-                this.loadCart();
-              }
-            });
-          }.bind(this));
-
-          $('ajaxCartContentProducts').removeClass('collapsed');
-        } else {
-           $('ajaxCartProduct' + product.id ).getElement('.price').set('text', product.price);
-           $('ajaxCartProduct' + product.id).getElement('.quantity').set('html', product.quantity);
-        }
-      }.bind(this));
-
-      $('ajaxCartContentNoProducts').removeClass('expand').addClass('collapsed');
-    } else {
-      $('ajaxCartContentNoProducts').removeClass('collapsed').addClass('expand');
+    //remove products
+    if ($defined(json.products)) {
+     this.removeProducts(json);
+       
+      if (json.products.length > 0 ) {
+        $('ajaxCartContentNoProducts').removeClass('expanded').addClass('collapsed').slide('out');
+        
+        //add products
+        json.products.each(function(product) {
+          if ( this.products.indexOf(product.id) == -1 ) {
+            this.products.push(product.id);
+  
+            var rowEl = new Element('li', {'id': 'ajaxCartProduct' + product.id});
+            var quantityEl = new Element('span', {'class': 'quantity', 'html': product.quantity});
+            var productEl = new Element('a', {'href': product.link, 'title': product.title, 'html': product.name});
+            var priceEl = new Element('span', {'class': 'price', 'html': product.price});
+            var deleteEl = new Element('span', {'class': 'removeProduct'});
+  
+            $('ajaxCartContentProducts').grab(rowEl.grab(quantityEl).grab(productEl).grab(priceEl).grab(deleteEl));
+  
+            //delete product
+            deleteEl.addEvent('click', function(e) {
+              e.stop();
+  
+              this.sendRequest({action: 'remove_product', pID: product.id}, function(response) {
+                var result = JSON.decode(response);
+  
+                if (result.success == true) {
+                  this.loadCart();
+                }
+              });
+            }.bind(this));
+  
+            $('ajaxCartContentProducts').removeClass('collapsed');
+          } else {
+             $('ajaxCartProduct' + product.id ).getElement('.price').set('text', product.price);
+             $('ajaxCartProduct' + product.id).getElement('.quantity').set('html', product.quantity);
+          }
+        }.bind(this));
+      }else {
+        $('ajaxCartContentNoProducts').removeClass('collapsed').addClass('expanded').slide('in');
+      }
     }
   },
 
