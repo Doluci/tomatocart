@@ -28,7 +28,7 @@
 
     function initialize() {
       global $osC_Services, $osC_RecentlyVisited, $osC_Language, $osC_Image;
-
+      
       if ($osC_Services->isStarted('recently_visited') && $osC_RecentlyVisited->hasHistory()) {
         $this->_content = '<table border="0" width="100%" cellspacing="3" cellpadding="2">' .
                           '  <tr>';

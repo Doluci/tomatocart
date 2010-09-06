@@ -16,10 +16,10 @@
       global $osC_Database;
       
       if ($type == 'products') {
-        $Qimages = $osC_Database->query('select image from :table_products_images where image is NOT NULL');
+        $Qimages = $osC_Database->query('select image from :table_products_images');
         $Qimages->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
       } else {
-        $Qimages = $osC_Database->query('select articles_image as image from :table_articles where articles_image is NOT NULL');
+        $Qimages = $osC_Database->query('select articles_image as image from :table_articles');
         $Qimages->bindTable(':table_articles', TABLE_ARTICLES);
       }
       

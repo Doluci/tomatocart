@@ -87,6 +87,23 @@
             }
           }
           
+          if ( isset($product['customizations']) && !empty($product['customizations']) ) {
+            $product_info .= '<p>';
+              foreach ($product['customizations'] as $key => $customization) {
+                $product_info .= '<div style="float: left">' . $customization['qty'] . ' x ' . '</div>';
+                $product_info .= '<div style="margin-left: 25px">';
+                  foreach ($customization['fields'] as $orders_products_customizations_values_id => $field) {
+                    if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT) {
+                      $product_info .= $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+                    } else {
+                      $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '">' . $field['customization_value'] . '</a>' . '<br />';
+                    }
+                  }
+                $product_info .= '</div>';
+              }
+            $product_info .= '</p>';
+          }
+          
           $products_table .= '<tr><td>' . $product_info . '</td><td width="60" valign="top" align="right">' . $osC_Currencies->displayPriceWithTaxRate($product['final_price'], $product['tax'], 1, $osC_Order->getCurrency(), $osC_Order->getCurrencyValue()) . '</td></tr>';
         }
         $products_table .= '</table>';
@@ -104,13 +121,18 @@
           $action[] = array('class' => 'icon-view-record', 'qtip' => $osC_Language->get('tip_view_order'));
           $action[] = array('class' => 'icon-invoice-record', 'qtip' => $osC_Language->get('tip_create_invoice'));                    
           $action[] = array('class' => 'icon-edit-record', 'qtip' => $osC_Language->get('tip_edit_order'));
+
+          if(ALLOW_RECORDER == 1) {
+            $action[] = array('class' => 'icon-reorder-record', 'qtip' => $osC_Language->get('tip_reorder'));
+          }
+
           $action[] = array('class' => 'icon-delete-record', 'qtip' => $osC_Language->get('tip_delete_order'));
         } else {
           $action[] = array('class' => 'icon-order-pdf-record', 'qtip' => $osC_Language->get('tip_print_order'));
           $action[] = array('class' => 'icon-view-record', 'qtip' => $osC_Language->get('tip_view_order'));          
           $action[] = array('class' => 'icon-invoice-gray-record', 'qtip' => $osC_Language->get('tip_create_invoice'));
         }
-            
+        
         $records[] = array('orders_id' => $Qorders->valueInt('orders_id'),
                            'invoice' => (empty($invoice_number) ? '' : osc_image('images/invoices.png', $osC_Language->get('tip_invoice_number') . $invoice_number)),
                            'customers_name' => $Qorders->valueProtected('customers_name'),
@@ -390,6 +412,23 @@
             $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $variants['groups_name'] . ': ' . $variants['values_name'] . '</i></nobr>';
           }
         }
+
+        if ( isset($product['customizations']) && !empty($product['customizations']) ) {
+          $product_info .= '<p>';
+            foreach ($product['customizations'] as $key => $customization) {
+              $product_info .= '<div style="float: left">' . $customization['qty'] . ' x ' . '</div>';
+              $product_info .= '<div style="margin-left: 25px">';
+                foreach ($customization['fields'] as $orders_products_customizations_values_id => $field) {
+                  if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT) {
+                    $product_info .= $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+                  } else {
+                    $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '">' . $field['customization_value'] . '</a>' . '<br />';
+                  }
+                }
+              $product_info .= '</div>';
+            }
+          $product_info .= '</p>';
+        }
         
         if ( $product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
           $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('senders_name') . ': ' . $product['senders_name'] . '</i></nobr>';
@@ -406,6 +445,7 @@
           
           $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('messages') . ': ' . $product['messages'] . '</i></nobr>';
         }        
+        
         
         $records[] = array('products' => $product_info, 
                            'return_quantity' => ($product['return_quantity'] > 0) ? $product['return_quantity'] : '',
@@ -480,6 +520,23 @@
             $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $variants['groups_name'] . ': ' . $variants['values_name'] . '</i></nobr>';
           }
         }
+
+        if ( isset($product['customizations']) && !empty($product['customizations']) ) {
+          $product_info .= '<p>';
+            foreach ($product['customizations'] as $key => $customization) {
+              $product_info .= '<div style="float: left">' . $customization['qty'] . ' x ' . '</div>';
+              $product_info .= '<div style="margin-left: 25px">';
+                foreach ($customization['fields'] as $orders_products_customizations_values_id => $field) {
+                  if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT) {
+                    $product_info .= $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+                  } else {
+                    $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '">' . $field['customization_value'] . '</a>' . '<br />';
+                  }
+                }
+              $product_info .= '</div>';
+            }
+          $product_info .= '</p>';
+        }
         
         if ( $product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
           $product_info .= '&nbsp;(' . $product['gift_certificates_code'] . ')';  
@@ -498,7 +555,7 @@
           
           $product_info .= '<br /><nobr>&nbsp;&nbsp;&nbsp;<i>' . $osC_Language->get('messages') . ': ' . $product['messages'] . '</i></nobr>';
         }
-        
+  
         $osC_Product = new osC_Product($product['id'], $osC_Order->getCustomer('customers_id'));
         $records[] = array('orders_products_id' => $product['orders_products_id'],
                            'products_id' => $product['id'],
@@ -550,7 +607,8 @@
 
       $records = array();
       foreach ( $osC_Order->getStatusHistory() as $status_history ) {
-		  $records[] = array('date_added' => osC_DateTime::getShort($status_history['date_added'], true), 
+		  $records[] = array('date_added' => osC_DateTime::getShort($status_history['date_added'], true),
+		                     'orders_status_history_id' => $status_history['orders_status_history_id'], 
                          'status' => $status_history['status'], 
                          'comments' => nl2br($status_history['comment']), 
                          'customer_notified' => osc_icon((($status_history['customer_notified'] === 1) ? 'checkbox_ticked.gif' : 'checkbox_crossed.gif')));
@@ -1006,6 +1064,8 @@
                     'use_store_credit' => $osC_Order->isUseStoreCredit(),
                     'has_payment_method' => $osC_Order->hasPaymentMethod(),
                     'enable_store_credit' => $enable_store_credit,
+                    'gift_wrapping' => $osC_Order->_customer['gift_wrapping'] == '1' ? true : false,
+                    'wrapping_message' => $osC_Order->_customer['wrapping_message'],
                     'billing_address' => str_replace(',', ' ', $osC_Order->getBilling('name')) . ',' .
                                         $osC_Order->getBilling('company'). ',' .
                                         $osC_Order->getBilling('street_address'). ',' .
@@ -1537,6 +1597,57 @@
       }
       
       echo $toC_Json->encode($response);
+    }
+    
+    function createReorder() {
+      global $toC_Json, $osC_Language;
+      
+      $return = osC_Order::createReorder($_REQUEST['orders_id'], $_REQUEST['reorders_Id']);
+      
+      if($return === false) {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed')); 
+      } else {
+	      $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'), 'out_stock_product' => $return);
+      }
+
+      echo $toC_Json->encode($response);
+    }
+    
+    function setGiftWrapping() {
+      global $toC_Json, $osC_Language, $osC_Tax, $osC_Weight, $osC_Currencies, $osC_ShoppingCart;
+      
+      $error = false;
+      $feedback = array();
+      
+      $osC_ShoppingCart = new toC_ShoppingCart_Adapter($_REQUEST['orders_id']);
+      $osC_Tax = new osC_Tax_Admin();
+      $osC_Weight = new osC_Weight();
+      $osC_Currencies = new osC_Currencies();
+      
+      if($osC_ShoppingCart->setGiftWrapping(($_REQUEST['checked'] == 'true' ? true : false), $_REQUEST['message'])) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+        
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed')); 
+      }
+      
+      echo $toC_Json->encode($response);
+    }
+    
+    function downloadCustomizationFile() {
+      header('Content-Description: File Transfer');
+      header('Content-Type: application/octet-stream');
+      header('Content-Transfer-Encoding: binary');
+      header('Content-Disposition: attachment; filename=' . $_REQUEST['file']);
+      header('Content-Length: ' . filesize(DIR_FS_CACHE . 'orders_customizations/' . $_REQUEST['cache_file']));
+      header('Pragma: public');
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+      
+      ob_clean();
+      flush();
+      readfile(DIR_FS_CACHE . 'orders_customizations/' . $_REQUEST['cache_file']);       
+      exit;
     }
   }
 ?>

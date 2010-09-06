@@ -12,7 +12,6 @@
 */
 
   class toC_Product_Attachments_Admin {
-    
     function getData($id) {
       global $osC_Database;
 

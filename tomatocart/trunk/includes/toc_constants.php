@@ -68,4 +68,8 @@
 /*email message flag*/
   define('EMAIL_MESSAGE_SENT_ITEM', 2);
   define('EMAIL_MESSAGE_DRAFT', 3);
+  
+/*email message flag*/
+  define('CUSTOMIZATION_FIELD_TYPE_INPUT_FILE', 0);
+  define('CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT', 1);
 ?>

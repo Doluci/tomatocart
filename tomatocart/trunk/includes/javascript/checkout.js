@@ -54,7 +54,7 @@ var Checkout = new Class({
     this.iniCheckoutForms();
     
     if ($defined(this.options.view)) {
-      this.loadPreviousForms(this.options.view);
+    	this.loadPreviousForms(this.options.view);
       this.gotoPanel(this.options.view);
     }
   },
@@ -71,15 +71,15 @@ var Checkout = new Class({
   },
   
   loadForm: function(form) {
-    var params = {action: 'load' + form};   
-    this.sendRequest(params, function(response) {
-      var result = JSON.decode(response);
-    
-      if (result.success == true) {
-        var script = 'this.load' + form + '(result.form);'; 
-        eval(script);
-      } 
-    }.bind(this));
+		var params = {action: 'load' + form};   
+		this.sendRequest(params, function(response) {
+		  var result = JSON.decode(response);
+		
+		  if (result.success == true) {
+		    var script = 'this.load' + form + '(result.form);'; 
+		    eval(script);
+		  } 
+		}.bind(this));
   },
   
   iniCheckoutForms: function() {
@@ -133,7 +133,7 @@ var Checkout = new Class({
       var result = JSON.decode(response);
       
       if (result.success == true) {
-        
+      	
         $('checkoutMethodForm').getElement('div').set('html', result.form);
         
         $('btnNewCustomer').addEvent('click', function(e) {
@@ -171,7 +171,6 @@ var Checkout = new Class({
         
         //save billing information
         $('btnSaveBillingInformation').addEvent('click', function(e) {
-          this.showNotify($('btnSaveBillingInformation'));
           this.btnSaveBillingInformationClick();          
         }.bind(this));
       }
@@ -229,12 +228,13 @@ var Checkout = new Class({
       params.billing_confirm_password = $('billing_confirm_password').value;
     }
     
+    this.showNotify($('btnSaveBillingInformation'));
     this.sendRequest(params, function(response){
+      this.hideNotify($('btnSaveBillingInformation'));
+      
       var result = JSON.decode(response);
       
       if (result.success == true) {
-        this.hideNotify($('btnSaveBillingInformation'));
-        
         //if isVirtualCart skip shipping form and shipping method
         if (isVirtualCart == true) {
           $('paymentInformationForm').getElement('div').set('html', result.form);
@@ -249,8 +249,8 @@ var Checkout = new Class({
           
           //btnSaveBillingInformation
           $('btnSavePaymentMethod').addEvent('click', function(e) {
-            this.showNotify($('btnSavePaymentMethod'));
-            
+          	this.showNotify($('btnSavePaymentMethod'));
+          	
             if (this.isTotalZero == false) {
               var result = check_form();
               
@@ -265,6 +265,7 @@ var Checkout = new Class({
           //if ship to this address          
           if ($('ship_to_this_address').checked == true) {
             this.loadShippingMethodForm(result.form);
+            this.gotoPanel('shippingMethodForm');
           } else {
             this.loadShippingInformationForm(result.form);
             this.gotoPanel('shippingInformationForm');
@@ -277,30 +278,29 @@ var Checkout = new Class({
   },
   
   loadShippingInformationForm: function(form) {
-    $('shippingInformationForm').getElement('div').set('html', form);
-    
-    //create new shipping address
-    if ($defined($('create_shipping_address'))) {
-      $('create_shipping_address').addEvent('click', function(e) {
-        if ($('create_shipping_address').checked == true) {
-          $('shippingAddressDetails').setStyle('display', '');
-          
-        } else {
-          $('shippingAddressDetails').setStyle('display', 'none');
-        }
-      });
-    }
-    
-    //shipping country change
-    $('shipping_country').addEvent('change', function(e) {
-      this.countryChange('shipping');
-    }.bind(this));
-    
-    //save shipping information
-    $('btnSaveShippingInformation').addEvent('click', function(e) {
-      this.showNotify($('btnSaveShippingInformation'));
-      this.btnSaveShippingInformationClick();          
-    }.bind(this)); 
+		$('shippingInformationForm').getElement('div').set('html', form);
+		
+		//create new shipping address
+		if ($defined($('create_shipping_address'))) {
+		  $('create_shipping_address').addEvent('click', function(e) {
+		    if ($('create_shipping_address').checked == true) {
+		      $('shippingAddressDetails').setStyle('display', '');
+		      
+		    } else {
+		      $('shippingAddressDetails').setStyle('display', 'none');
+		    }
+		  });
+		}
+		
+		//shipping country change
+		$('shipping_country').addEvent('change', function(e) {
+		  this.countryChange('shipping');
+		}.bind(this));
+		
+		//save shipping information
+		$('btnSaveShippingInformation').addEvent('click', function(e) {
+		  this.btnSaveShippingInformationClick();          
+		}.bind(this)); 
   },
   
   btnSaveShippingInformationClick: function() {
@@ -340,11 +340,13 @@ var Checkout = new Class({
       params.shipping_address_id = $('sel_shipping_address').options[$('sel_shipping_address').selectedIndex].value;
     }
     
+    this.showNotify($('btnSaveShippingInformation'));
     this.sendRequest(params, function(response) {
+      this.hideNotify($('btnSaveShippingInformation'));
+      
       var result = JSON.decode(response);
     
       if (result.success == true) {
-        this.hideNotify($('btnSaveShippingInformation'));
         this.loadShippingMethodForm(result.form);
         this.gotoPanel('shippingMethodForm');
       } else {
@@ -354,13 +356,12 @@ var Checkout = new Class({
   },  
   
   loadShippingMethodForm: function(form) {
-    $('shippingMethodForm').getElement('div').set('html', form);
-    
-    //btnSaveBillingInformation
-    $('btnSaveShippingMethod').addEvent('click', function(e) {
-      this.showNotify($('btnSaveShippingMethod'));
-      this.btnSaveShippingMethodClick();          
-    }.bind(this));
+		$('shippingMethodForm').getElement('div').set('html', form);
+		
+		//btnSaveBillingInformation
+		$('btnSaveShippingMethod').addEvent('click', function(e) {
+		  this.btnSaveShippingMethodClick();          
+		}.bind(this));
   },
   
   btnSaveShippingMethodClick: function() {
@@ -382,11 +383,19 @@ var Checkout = new Class({
         shipping_mod_sel: shipping_method,
         shipping_comments: $('shipping_comments').value
       };
-
+	    
+	    //gift wrapping
+	    if ($defined($('gift_wrapping'))) {
+	      params.gift_wrapping = $('gift_wrapping').checked;
+	      params.gift_wrapping_comments = $('gift_wrapping_comments').value;
+	    }
+    
+      this.showNotify($('btnSaveShippingMethod'));
       this.sendRequest(params, function(response) {
+        this.hideNotify($('btnSaveShippingMethod'));
+        
         var result = JSON.decode(response);
         
-        this.hideNotify($('btnSaveShippingMethod'));
         this.loadPaymentInformationForm(result);
         this.gotoPanel('paymentInformationForm');
       });       
@@ -396,29 +405,53 @@ var Checkout = new Class({
   },
   
   loadPaymentInformationForm: function(json) {
-    $('paymentInformationForm').getElement('div').set('html', json.form);        
+		$('paymentInformationForm').getElement('div').set('html', json.form);        
+		
+		eval(json.javascript);
+		
+		if($defined($('payment_method_store_credit'))) {
+		  $('payment_method_store_credit').addEvent('click', this.onChkUseStoreCreditChecked.bind(this));
+		}  
+
+    //btnRedeemCoupon
+    if ($defined($('btnRedeemCoupon'))) {
+      $('btnRedeemCoupon').addEvent('click', function(e) {
+        this.btnRedeemCouponClick(e);          
+      }.bind(this)); 
+    }
     
-    eval(json.javascript);
+    if ($defined($('btnDeleteCoupon'))) {
+      $('btnDeleteCoupon').addEvent('click', function(e) {
+        this.btnDeleteCouponClick(e);          
+      }.bind(this)); 
+    }
     
-    if($defined($('payment_method_store_credit'))) {
-      $('payment_method_store_credit').addEvent('click', this.onChkUseStoreCreditChecked.bind(this));
-    }  
+    //btnRedeemGiftCertificate
+    if ($defined($('btnRedeemGiftCertificate'))) {
+      $('btnRedeemGiftCertificate').addEvent('click', function(e) {
+        this.btnRedeemGiftCertificateClick();          
+      }.bind(this)); 
+    }
     
-    //btnSavePaymentMethod
-    $('btnSavePaymentMethod').addEvent('click', function(e) {
-      this.showNotify($('btnSavePaymentMethod'));
-      
-      if (this.isTotalZero == false) {
-        var result = check_form();
-        
-        if (result == true) {
-          this.btnSavePaymentMethodCllick();
-        }
-      } else {
-        this.btnSavePaymentMethodCllick();
-      }
-      
-    }.bind(this));  
+    $$('.btnDeleteGiftCertificate').each(function(btn){
+      btn.addEvent('click', function(e) {
+        this.btnDeleteGiftCertificateClick(btn.getParent().id);          
+      }.bind(this)); 
+    }.bind(this));
+		
+		//btnSavePaymentMethod
+		$('btnSavePaymentMethod').addEvent('click', function(e) {
+		  if (this.isTotalZero == false) {
+		    var result = check_form();
+
+		    if (result == true) {
+		      this.btnSavePaymentMethodCllick();
+		    }
+		  } else {
+		    this.btnSavePaymentMethodCllick();
+		  }
+		  
+		}.bind(this));  
   },
   
   onChkUseStoreCreditChecked: function() {
@@ -498,11 +531,13 @@ var Checkout = new Class({
       }
     }
     
+    this.showNotify($('btnSavePaymentMethod'));
     this.sendRequest(params, function(response) {
+      this.hideNotify($('btnSavePaymentMethod'));
+      
       var result = JSON.decode(response);
       
       if (result.success == true) {
-        this.hideNotify($('btnSavePaymentMethod'));
         this.loadOrderConfirmationForm(result.form);
         this.gotoPanel('orderConfirmationForm');
       } else {
@@ -515,37 +550,15 @@ var Checkout = new Class({
     $('orderConfirmationForm').getElement('div').set('html', form);
     
     if ( $defined($('btnConfirmOrder')) ) {
-      $('btnConfirmOrder').addEvent('click', function(e) {
+    	$('btnConfirmOrder').addEvent('click', function(e) {
          this.showNotify($('btnConfirmOrder'));
-      }.bind(this));
+    	}.bind(this));
     }
-    
-    if ($defined($('btnRedeemCoupon'))) {
-      $('btnRedeemCoupon').addEvent('click', function(e) {
-        this.btnRedeemCouponClick();          
-      }.bind(this)); 
-    }
-    
-    if ($defined($('btnDeleteCoupon'))) {
-      $('btnDeleteCoupon').addEvent('click', function(e) {
-        this.btnDeleteCouponClick();          
-      }.bind(this)); 
-    }
-    
-    if ($defined($('btnRedeemGiftCertificate'))) {
-      $('btnRedeemGiftCertificate').addEvent('click', function(e) {
-        this.btnRedeemGiftCertificateClick();          
-      }.bind(this)); 
-    }
-    
-    $$('.btnDeleteGiftCertificate').each(function(btn){
-      btn.addEvent('click', function(e) {
-        this.btnDeleteGiftCertificateClick(btn.getParent().id);          
-      }.bind(this)); 
-    }.bind(this));
   },
   
-  btnRedeemCouponClick: function() {
+  btnRedeemCouponClick: function(e) {
+    e.preventDefault();
+    
     var params = {
       action: 'redeem_coupon',
       coupon_redeem_code: $('coupon_redeem_code').value
@@ -556,8 +569,7 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderConfirmationForm(result.form);
-        this.gotoPanel('orderConfirmationForm');
+        this.loadPaymentInformationForm(result.form);
         
         this.isTotalZero = result.isTotalZero;
       } else {
@@ -566,7 +578,9 @@ var Checkout = new Class({
     });
   },
   
-  btnDeleteCouponClick: function() {
+  btnDeleteCouponClick: function(e) {
+    e.preventDefault();
+    
     var params = {
       action: 'delete_coupon'
     };
@@ -576,20 +590,16 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderConfirmationForm(result.form);
-        this.gotoPanel('orderConfirmationForm');
-        
-        if (result.go_to_payment_form == true) {
-          $('payment_methods').setStyle('display', '');
-          this.gotoPanel('paymentInformationForm');
-        }
+        this.loadPaymentInformationForm(result.form);
         
         this.isTotalZero = false;
       }
     });
   },  
    
-  btnRedeemGiftCertificateClick: function() {
+  btnRedeemGiftCertificateClick: function(e) {
+    e.preventDefault();
+    
     var params = {
       action: 'redeem_gift_certificate',
       gift_certificate_code: $('gift_certificate_code').value
@@ -600,8 +610,7 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderConfirmationForm(result.form);
-        this.gotoPanel('orderConfirmationForm');
+        this.loadPaymentInformationForm(result.form);
         
         this.isTotalZero = result.isTotalZero;
       } else {
@@ -610,7 +619,9 @@ var Checkout = new Class({
     });
   },    
   
-  btnDeleteGiftCertificateClick: function(gift_certificate_code) {
+  btnDeleteGiftCertificateClick: function(gift_certificate_code, e) {
+    e.preventDefault();
+    
     var params = {
       action: 'delete_gift_certificate',
       gift_certificate_code: gift_certificate_code
@@ -621,13 +632,7 @@ var Checkout = new Class({
       var result = JSON.decode(response);
         
       if (result.success == true) {
-        this.loadOrderConfirmationForm(result.form);
-        this.gotoPanel('orderConfirmationForm');
-        
-        if (result.go_to_payment_form == true) {
-          $('payment_methods').setStyle('display', '');
-          this.gotoPanel('paymentInformationForm');
-        }
+        this.loadPaymentInformationForm(result.form);
         
         this.isTotalZero = false;
       }

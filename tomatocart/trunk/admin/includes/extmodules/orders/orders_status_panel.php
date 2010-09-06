@@ -39,8 +39,9 @@ Ext.extend(Toc.orders.OrdersStatusPanel, Ext.Panel, {
         },
         reader: new Ext.data.JsonReader({
           root: Toc.CONF.JSON_READER_ROOT,
-          id: 'date_added'
+          id: 'orders_status_history_id'
         },[
+          'orders_status_history_id',
           'date_added',
           'status',
           'comments',

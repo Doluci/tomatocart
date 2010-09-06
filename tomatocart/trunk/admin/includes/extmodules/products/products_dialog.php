@@ -18,16 +18,26 @@ Toc.products.ProductDialog = function(config) {
   config.id = 'products-dialog-win';
   config.title = 'New Product';
   config.layout = 'fit';
-  config.width = 790;
-  config.height = 520;
+  config.width = 870;
+  config.height = 550;
   config.modal = true;
   config.iconCls = 'icon-products-win';
   config.productsId = config.products_id || null;
   this.owner = config.owner || null;
+  this.flagContinueEdit = false;
   
   config.items = this.buildForm(config.productsId);
   
   config.buttons = [
+    {
+      text: TocLanguage.btnSaveAndContinue,
+      handler: function(){
+        this.flagContinueEdit = true;
+        
+        this.submitForm();
+      },
+      scope:this
+    },
     {
       text:'Submit',
       handler: function(){
@@ -52,13 +62,17 @@ Toc.products.ProductDialog = function(config) {
 Ext.extend(Toc.products.ProductDialog, Ext.Window, {
   buildForm: function(productsId) {
     this.pnlData = new Toc.products.DataPanel();
-    this.pnlVariants = new Toc.products.VariantsPanel({productsId: productsId, pnlData: this.pnlData}); 
+    this.pnlVariants = new Toc.products.VariantsPanel({owner: this.owner, productsId: productsId, dlgProducts: this}); 
     this.pnlXsellProducts = new Toc.products.XsellProductsGrid({productsId: productsId});
     this.pnlAttributes = new Toc.products.AttributesPanel({productsId: productsId});
     this.pnlAttachments = new Toc.products.AttachmentsPanel({productsId: productsId, owner: this.owner});
+    this.pnlCustomizations = new Toc.products.CustomizationsPanel({productsId: productsId, owner: this.owner});
+    this.pnlImages = new Toc.products.ImagesPanel({productsId: productsId}); 
     
     this.pnlData.on('producttypechange', this.pnlVariants.onProductTypeChange, this.pnlVariants);
     this.pnlVariants.on('variantschange', this.pnlData.onVariantsChange, this.pnlData);
+    
+    this.pnlAccessories = new Toc.products.AccessoriesPanel({productsId: productsId});
     
     tabProduct = new Ext.TabPanel({
       activeTab: 0,
@@ -71,11 +85,13 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
         new Toc.products.MetaPanel(),
         this.pnlData,
         this.pnlCategories = new Toc.products.CategoriesPanel({productsId: productsId}),
-        new Toc.products.ImagesPanel({productsId: productsId}), 
+        this.pnlImages,
         this.pnlVariants, 
         this.pnlAttributes, 
         this.pnlXsellProducts,
-        this.pnlAttachments
+        this.pnlCustomizations,
+        this.pnlAttachments,
+        this.pnlAccessories
       ]
     }); 
 
@@ -97,6 +113,9 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
   show: function() {
     this.frmProduct.form.reset();  
 
+    this.pnlImages.grdImages.store.load();
+    this.pnlVariants.grdVariants.store.load();
+    
     if (this.productsId > 0) {
       this.frmProduct.load({
         url: Toc.CONF.CONN_URL,
@@ -127,30 +146,63 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
   submitForm: function() {
     var params = {
       action: 'save_product',
+      accessories_ids: this.pnlAccessories.getAccessoriesIds(),
       xsell_ids: this.pnlXsellProducts.getXsellProductIds(),
-      products_variants: this.pnlVariants.getVariants(),
+      products_variants: this.pnlVariants.getVariants(), 
       products_id: this.productsId,
       attachments_ids: this.pnlAttachments.getAttachmentsIDs(),
-      categories_id: this.pnlCategories.getCategories()
+      categories_id: this.pnlCategories.getCategories(),
+      customization_fields: this.pnlCustomizations.getCustomizations()
     };
+    
+    <?php if (USE_WYSIWYG_TINYMCE_EDITOR == '1') { ?>
+      tinyMCE.triggerSave();
+    <?php } ?>
     
     if (this.productsId > 0) {
       params.products_type = this.pnlData.getProductsType();
     }
     
-    this.frmProduct.form.submit({
-      params: params,
-      waitMsg: TocLanguage.formSubmitWaitMsg,
-      success:function(form, action){
-        this.fireEvent('saveSuccess', action.result.feedback);
-        this.close();  
-      },    
-      failure: function(form, action) {
-        if(action.failureType != 'client') {
-          Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
-        }
-      },
-      scope: this
-    });   
+    var status = this.pnlVariants.checkStatus();
+    
+    if (status == true) { 
+      this.frmProduct.form.submit({
+        params: params,
+        waitMsg: TocLanguage.formSubmitWaitMsg,
+        success:function(form, action){
+          this.fireEvent('saveSuccess', action.result.feedback);
+
+          if (this.flagContinueEdit == true) {
+            this.productsId = action.result.productsId;
+            this.frmProduct.form.baseParams['products_id'] = this.productsId;
+            this.pnlImages.grdImages.getStore().baseParams['products_id'] = this.productsId;
+            this.pnlImages.pnlImagesUpload.uploader.setUrl(Toc.CONF.CONN_URL + '?module=products&action=upload_image&products_id=' + this.productsId);
+            this.pnlImages.productsId = this.productsId;
+            
+            this.pnlData.cboProductsType.disable();
+            this.pnlCustomizations.getStore().reload();
+            this.pnlImages.grdImages.getStore().reload();
+
+            this.pnlVariants.pnlVariantDataContainer.removeAll(true);
+            this.pnlVariants.grdVariants.getStore().baseParams['products_id'] = this.productsId;
+            this.pnlVariants.grdVariants.getStore().reload();
+                        
+            this.flagContinueEdit = false;  
+            
+            Ext.MessageBox.alert(TocLanguage.msgSuccessTitle, action.result.feedback);
+          } else {
+            this.close();
+          }
+        },    
+        failure: function(form, action) {
+          if(action.failureType != 'client') {
+            Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
+          }
+        },
+        scope: this
+      });  
+    } else {
+      Ext.MessageBox.alert(TocLanguage.msgErrTitle, '<?php echo $osC_Language->get('msg_select_default_variants_records'); ?>');
+    }
   }
 });

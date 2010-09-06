@@ -465,6 +465,9 @@
     }
   }
   
+  /**
+   * class toC_CategoryTree
+   */
   class toC_CategoryTree extends osC_CategoryTree {
     var $leading_string = '';
     
@@ -530,6 +533,42 @@
       $result .= $this->parent_group_end_string;
   
       return $result;
+    }
+    
+    function buildCompleteBranch($categories, $level = 0) {
+      $result = ($level == 0) ? '<ul id="categoriesTree">' : '<ul>';
+      
+      foreach($categories as $parent_id => $category) {
+        $category_link = $parent_id;
+        
+        $result .= $this->child_start_string;     
+               
+        if ( ($this->follow_cpath === true) && in_array($category_id, $this->cpath_array) ) {
+          $link_title = $this->cpath_start_string . $category['name'] . $this->cpath_end_string;
+        } else {
+          $link_title = $category['name'];
+        }
+        
+        if ($this->show_category_product_count === true) {
+          $result .= osc_link_object(osc_href_link(FILENAME_DEFAULT, 'cPath=' . $category_link), $link_title . $this->category_product_count_start_string . $category['count'] . $this->category_product_count_end_string);
+        } else {
+          $result .= osc_link_object(osc_href_link(FILENAME_DEFAULT, 'cPath=' . $category_link), $this->leading_string . $link_title);
+        }       
+        
+        if(in_array($parent_id, array_keys($this->data))) {
+          $result .= $this->buildCompleteBranch($this->data[$parent_id], $level + 1);
+        }
+        
+        $result .= $this->child_end_string;
+      }
+      
+      $result .= '</ul>';
+      
+      return $result;
+    }
+    
+    function buildCompleteTree() {
+      return $this->buildCompleteBranch($this->data[0], 0);
     }
   }  
 ?>

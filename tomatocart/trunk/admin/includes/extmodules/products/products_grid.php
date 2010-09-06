@@ -37,6 +37,28 @@ Toc.products.ProductsGrid = function(config) {
       {name: 'products_price', type: 'string'},
       {name: 'products_quantity', type: 'int'}
     ]),
+    sortData:function(f, direction){  
+      direction = direction || 'ASC';  
+      var dir = direction == 'ASC' ? 1 : -1;  
+      var st = this.fields.get(f).sortType;  
+      var fn = function(r1, r2){  
+        var v1 = st(r1.data[f]), v2 = st(r2.data[f]);
+        if(f == "products_price"){
+          while(v1.indexOf(",") != -1) {
+            v1 = v1.replace(",", "");
+          }
+          while(v2.indexOf(",") != -1) {
+            v2 = v2.replace(",", "");
+          }
+          v1 = parseFloat(v1.substr(1));  v2 = parseFloat(v2.substr(1));
+        }
+        return v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);  
+      };  
+      this.data.sort(direction, fn);  
+      if(this.snapshot && this.snapshot != this.data){  
+        this.snapshot.sort(direction, fn);  
+      }  
+    },
     autoLoad: true
   });
   
@@ -51,7 +73,8 @@ Toc.products.ProductsGrid = function(config) {
   config.rowActions = new Ext.ux.grid.RowActions({
     actions:[
       {iconCls: 'icon-edit-record', qtip: TocLanguage.tipEdit},
-      {iconCls: 'icon-delete-record', qtip: TocLanguage.tipDelete}],
+      {iconCls: 'icon-delete-record', qtip: TocLanguage.tipDelete},
+      {iconCls: 'icon-copy-record', qtip: '<?php echo $osC_Language->get('action_duplicate') ?>'}],
       widthIntercept: Ext.isSafari ? 4 : 2
   });
   config.rowActions.on('action', this.onRowAction, this);    
@@ -227,6 +250,17 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
       }, this);
   },
   
+  onDuplicate: function(record) {
+    var dlg = this.owner.createProductDuplicateDialog(record.get("products_id"));
+    dlg.setTitle(record.get("products_name"));
+    
+    dlg.on('saveSuccess', function() {
+      this.onRefresh();
+    }, this);
+    
+    dlg.show();
+  },
+  
   onBatchDelete: function() {
     var keys = this.getSelectionModel().selections.keys;
     
@@ -346,6 +380,9 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
       
       case 'icon-edit-record':
         this.onEdit(record);
+        break;
+      case 'icon-copy-record':
+        this.onDuplicate(record);
         break;
     }
   },

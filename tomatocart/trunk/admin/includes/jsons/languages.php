@@ -365,6 +365,12 @@
       
       $QdefinitionValue = $osC_Database->query("select * from :table_languages_definitions where languages_id = :languages_id and content_group = :content_group");
       
+      if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {
+        $QdefinitionValue->appendQuery('and definition_key like :definition_key or definition_value like :definition_value');
+        $QdefinitionValue->bindValue(':definition_key', '%' . $_REQUEST['search'] . '%');
+        $QdefinitionValue->bindValue(':definition_value', '%' . $_REQUEST['search'] . '%');
+      }
+      
       $QdefinitionValue->bindTable(':table_languages_definitions', TABLE_LANGUAGES_DEFINITIONS);
       $QdefinitionValue->bindInt(':languages_id', $_REQUEST['languages_id']);
       $QdefinitionValue->bindvalue(':content_group', $group);

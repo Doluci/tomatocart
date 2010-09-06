@@ -25,7 +25,7 @@
     }
 
     function initialize() {
-      global $osC_Language, $osC_Template, $osC_Session;
+      global $osC_Language, $osC_Template, $osC_Session, $osC_Currencies;
 
       $this->_title_link = osc_href_link(FILENAME_CHECKOUT, null, 'SSL');
       
@@ -65,6 +65,8 @@
               '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' .
               '#ajaxCartOrderTotals {padding:5px 0;border-top: 1px dashed #CCCCCC;}' .
               '#ajaxCartContentLong #ajaxCartOrderTotals li {padding: 2px;font-size: 11px}' .
+              '#ajaxCartContentLong p{color: #616060;font-size: 10px;margin: 0}' .
+              '#ajaxCartContentLong p.variants, #ajaxCartContentLong p.customizations { padding: 2px;margin: 0 0 0 5px; }' .
               '#ajaxCartContentShort span.cartTotal {float:right; font-weight: bold}' .
               '#ajaxCartContentProducts dd span {display:block;padding-left:32px;}' .  
              '</style>' . "\n\n";                                 
@@ -73,7 +75,15 @@
       
       $js .= '<script type="text/javascript">
                 window.addEvent("domready",function() {
-                  new AjaxShoppingCart({sessionId : "' . $osC_Session->getID() . '"});
+                  var ajaxCart = new AjaxShoppingCart({
+                    sessionId : "' . $osC_Session->getID() . '",
+                    error_sender_name_empty: "' . $osC_Language->get('error_sender_name_empty') . '",
+                    error_sender_email_empty: "' . $osC_Language->get('error_sender_email_empty') . '",
+                    error_recipient_name_empty: "' . $osC_Language->get('error_recipient_name_empty') . '",
+                    error_recipient_email_empty: "' . $osC_Language->get('error_recipient_email_empty') . '",
+                    error_message_empty: "' . $osC_Language->get('error_message_empty') . '",
+                    error_message_open_gift_certificate_amount: "' . $osC_Language->get('error_message_open_gift_certificate_amount') . '"
+                  });
                 });
               </script>';
       

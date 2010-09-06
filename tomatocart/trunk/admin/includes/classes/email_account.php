@@ -115,10 +115,14 @@
       return ( ($this->_data['use_system_mailer'] == 1) ? true : false );
     }
             
+    function getSmtpSecure() {
+      return $this->_data['smtp_encryption'];
+    }
+    
     function getSmtpHost() {
       return $this->_data['smtp_host'];
     }
-              
+
     function getSmtpPort() {
       return $this->_data['smtp_port'];
     }
@@ -758,6 +762,7 @@
       $mailer->IsSMTP(); 
       $mailer->CharSet = "utf-8"; 
                
+      $mailer->SMTPSecure = $this->getSmtpSecure();
       $mailer->Host = $this->getSmtpHost(); 
       $mailer->Port = $this->getSmtpPort();
       $mailer->SMTPAuth = true;

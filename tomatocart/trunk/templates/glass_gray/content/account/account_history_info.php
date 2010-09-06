@@ -125,6 +125,19 @@
         echo '<br /><nobr><small>&nbsp;<i> - ' . $variant['groups_name'] . ': ' . $variant['values_name'] . '</i></small></nobr>';
       }
     }
+    
+    if ( isset($product['customizations']) && !empty($product['customizations']) ) {
+      echo '<p>';
+        foreach ($product['customizations'] as $key => $customization) {
+          echo '<div style="float: left">' . $customization['qty'] . ' x ' . '</div>';
+          echo '<div style="margin-left: 25px">';
+            foreach ($customization['fields'] as $field) {
+              echo $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+            }
+          echo '</div>';
+        }
+      echo '</p>';
+    }
 
     echo '        </td>' . "\n";
 
@@ -156,6 +169,21 @@
   </div>
 </div>
 
+<?php
+ if ( !empty($order->info['wrapping_message']) ) {
+?>
+
+<div class="moduleBox">
+  <h6><?php echo $osC_Language->get('gift_wrapping_message_heading'); ?></h6>
+
+  <div class="content">
+    <?php echo $order->info['wrapping_message']; ?>
+  </div>
+</div>
+
+<?php
+ }
+?>
 
 <?php
   $Qstatus = $order->getStatusListing();

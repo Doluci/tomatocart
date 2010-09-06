@@ -190,8 +190,16 @@
       <li style="height:10px;line-height:10px">&nbsp;</li>
     <?php          
     if ($osC_Customer->isLoggedOn()) {
+      if ($create_billing_address) {
     ?>
-      <li><?php echo osc_draw_checkbox_field('create_billing_address', array(array('id' => '1', 'text' => $osC_Language->get('create_new_billing_address'))) , $create_billing_address); ?></li>    
+      <li style="display:none;">
+    <?php }else { ?>
+       <li>  
+      <?php 
+          } 
+        echo osc_draw_checkbox_field('create_billing_address', array(array('id' => '1', 'text' => $osC_Language->get('create_new_billing_address'))) , $create_billing_address); 
+      ?>
+      </li>    
     <?php 
     }      
       

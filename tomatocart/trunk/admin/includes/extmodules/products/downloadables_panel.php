@@ -24,6 +24,9 @@ Toc.products.DownloadablesPanel = function(config) {
   
   config.items =this.buildForm();
   
+  this.addEvents({'fileupload': true});
+  this.on('fileupload', this.changeState, this);
+  
   Toc.products.DownloadablesPanel.superclass.constructor.call(this, config);
 };
 
@@ -57,13 +60,22 @@ Ext.extend(Toc.products.DownloadablesPanel, Ext.Panel, {
       allowBlank: false,
       width: 250
     });
-    
+
     return [this.file, 
             {xtype: 'panel', name: 'products_file', id: 'products_file_link_panel', border: false, html: ''},
             this.sampleFile, 
             {xtype: 'panel', name: 'products_sample_file', id: 'products_sample_file_link_panel', border: false}, 
             this.txtNumOfDownloads, 
             this.txtNumOfAccessibleDays];
+  },
+  
+  changeState: function(status) {
+    if (status == true) {
+      this.file.setValue(' ');
+      this.file.disable();
+    } else {
+      this.file.enable();
+    }
   },
   
   loadForm: function(data) {

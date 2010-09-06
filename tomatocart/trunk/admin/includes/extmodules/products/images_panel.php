@@ -28,104 +28,34 @@ Toc.products.ImagesPanel = function(config) {
 Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
 
   buildForm: function(productsId) {
-  
-    if (productsId > 0) {
-      this.grdImages = new Toc.products.ImagesGrid({productsId: productsId});
-       
-      pnlImages = new Ext.Panel({
-        layout: 'border',
-        border: false,
-        items:  [
-          {
-            region:'east',
-            layout:'accordion',
-            split: true,
-            width: 250,
-            minSize: 175,
-            maxSize: 400,
-            border:false,
-            items: [this.getImageUploadPanel(productsId), this.getLocalImagesPanel(productsId)]
-          }, 
-          this.grdImages
-        ]
-      });
-    } else {
-      pnlImages = new Ext.Panel({
-        layout: 'accordion',
-        border: false,
-        items: [
-          this.uploadImagesPnl = new Ext.Panel({
-            title:'<?php echo $osC_Language->get('image_remote_upload'); ?>',
-            layout: 'form',
-            border: false,
-            tbar:[
-              {
-                text: TocLanguage.btnAdd,
-                iconCls:'add',
-                handler: this.onAddPnlImagesUpload,
-                scope: this
-              }
-            ],
-            items:[
-              this.getNewUploadPanel()
-            ]
-          }),
-          this.getLocalImagesPanel()
-        ]
-      });
-    }
-    
-    return pnlImages;
-  },
-
-  getNewUploadPanel: function() {
-    return new Ext.Panel({
-      layout: 'column',
+    this.grdImages = new Toc.products.ImagesGrid({productsId: productsId});
+    pnlImages = new Ext.Panel({
+      layout: 'border',
       border: false,
-      width: 750,
-      items: [
-        {
-          columnWidth: 0.8,
-          layout: 'form',
-          labelSeparator: ' ',
-          labelWidth: 120,
-          border: false,
-          items: [
-            {
-              fieldLabel: '<?php echo $osC_Language->get('subsection_new_image'); ?>', 
-              xtype: 'fileuploadfield',
-              name: 'products_image[]',
-              anchor: '95%'
-            }
-          ]
-        },
-        {
-          columnWidth: 0.19,
-          style: 'margin: 2px',
-          labelSeparator: ' ',
-          border: false,
-          items: [
-            new Ext.Button({text:TocLanguage.btnDelete, iconCls:'remove', handler: this.onDeleteUploadPanel, scope: this})
-          ]
-        }
-      ]
+      items:  [{
+        region:'east',
+        layout:'accordion',
+        split: true,
+        width: 250,
+        minSize: 175,
+        maxSize: 400,
+        border:false,
+        items: [this.getImageUploadPanel(productsId), this.getLocalImagesPanel(productsId)]
+      }, 
+      this.grdImages
+     ]
     });
-  },
-  
-  onDeleteUploadPanel: function(btn) {
-    this.uploadImagesPnl.remove(btn.ownerCt.ownerCt);
-    this.uploadImagesPnl.doLayout();
-  },
-  
-  onAddPnlImagesUpload: function() {
-    this.uploadImagesPnl.add(
-      this.getNewUploadPanel()
-    );
-      
-    this.uploadImagesPnl.doLayout();
+    
+   return pnlImages;
   },
   
   getImageUploadPanel: function(productsId) {
+    var appendURl = '?module=products&action=upload_image';
+    
+    if (productsId > 0 ) {
+      appendURl += ('&products_id=' + productsId);
+    }
+      
     this.pnlImagesUpload = new Ext.ux.UploadPanel({
       title: '<?php echo $osC_Language->get('image_remote_upload'); ?>', 
       border: false,
@@ -133,7 +63,7 @@ Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
       addText: TocLanguage.btnAdd,
       uploadText: TocLanguage.btnUpload,
       enableProgress: false,
-      url: Toc.CONF.CONN_URL + '?module=products&action=upload_image&products_id=' + productsId
+      url: Toc.CONF.CONN_URL + appendURl
     });
     
     this.pnlImagesUpload.on('allfinished', function() {
@@ -162,8 +92,8 @@ Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
       fieldLabel:"Multiselect",
       name:"multiselect",
       style: 'padding: 5px 5px 0px 10px',
-      width: (productsId ? 230: 600),
-      height: (productsId ? 160: 180),
+      width: 230,
+      height: 220,
       store: dsLocalImages,
       legend: '<?php echo $osC_Language->get('section_images'); ?>',
       hiddenName: 'localimages[]',
@@ -172,48 +102,29 @@ Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
       isFormField: true
     });
     
-    if(productsId > 0) {
-      pnlLocalImages = new Ext.Panel({
-        title: '<?php echo $osC_Language->get('image_local_files'); ?>',
-        layout: 'border',
-        border: false,
-        items:[
-          {
-            region: 'north',
-            border: false,
-            html: '<p class="form-info"><?php echo $osC_Language->get('introduction_select_local_images'); ?></p>'
-          },  
-          {
-            region: 'center',
-            border: false,
-            items: this.selLocalImages
-          }
-        ],
-        tbar: [{
-          text: TocLanguage.btnAdd,
-          iconCls: 'add',
-          handler: this.onLocalImageAdd,
-          scope:this
-        }]   
-      });
-    } else {
-      pnlLocalImages = new Ext.Panel({
-        title: '<?php echo $osC_Language->get('image_local_files'); ?>',
-        layout: 'border',
-        items:[
-          {
-            region: 'north',
-            border: false,
-            html: '<p class="form-info"><?php echo $osC_Language->get('introduction_select_local_images'); ?></p>'
-          },  
-          {
-            region: 'center',
-            border: false,
-            items: this.selLocalImages
-          }
-        ]
-      });
-    }
+    pnlLocalImages = new Ext.Panel({
+      title: '<?php echo $osC_Language->get('image_local_files'); ?>',
+      layout: 'border',
+      border: false,
+      items:[
+        {
+          region: 'north',
+          border: false,
+          html: '<p class="form-info"><?php echo $osC_Language->get('introduction_select_local_images'); ?></p>'
+        },  
+        {
+          region: 'center',
+          border: false,
+          items: this.selLocalImages
+        }
+      ],
+      tbar: [{
+        text: TocLanguage.btnAdd,
+        iconCls: 'add',
+        handler: this.onLocalImageAdd,
+        scope:this
+      }]   
+    });
     
     return pnlLocalImages;
   },

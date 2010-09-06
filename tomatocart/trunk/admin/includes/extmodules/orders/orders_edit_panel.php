@@ -347,6 +347,42 @@ Ext.extend(Toc.orders.OrdersEditPanel, Ext.Panel, {
     });
     rowActions.on('action', this.onRowAction, this),  
     
+    this.fsGiftWrapping = new Ext.form.FieldSet({ 
+      title: '<?php echo $osC_Language->get('subsection_gift_wrapping'); ?>',
+      layout: 'form',
+      autoHeight: true,
+      labelSeparator: ' ',
+      defaults: {anchor: '97%'},
+      width: 792,
+      items: [
+        {
+          xtype: 'panel',
+          layout: 'column',
+          border: false,
+          items: [
+            {
+              columnWidth: 0.46,
+              border: false,
+              layout: 'form',
+              items: [
+                this.chkGiftWrapping = new Ext.form.Checkbox({fieldLabel: '<?php echo $osC_Language->get("field_gift_wrapping"); ?>', name: 'gift_wrapping'})
+              ]
+            },
+            {
+              columnWidth: 0.53,
+              border: false,
+              layout: 'form',
+              defaults: {anchor: '97%'},
+              items: [
+                this.txtWrappingMessage = new Ext.form.TextArea({fieldLabel: '<?php echo $osC_Language->get("field_wrapping_message"); ?>', name: 'wrapping_message', height:60})
+              ]
+            }
+          ]
+        }
+      ],
+      buttons: [{text: '<?php echo $osC_Language->get('button_update');?>', iconCls:'refresh', handler: this.updateGiftWrapping, scope: this}]
+    });
+    
     this.frmOrder = new Ext.form.FormPanel({
       url: Toc.CONF.CONN_URL,
       baseParams: {
@@ -494,7 +530,8 @@ Ext.extend(Toc.orders.OrdersEditPanel, Ext.Panel, {
             }
           ]
         },
-        this.grdProducts = new Toc.orders.OrdersEditProductsGrid({ordersId: config.ordersId, cboCurrencies: this.cboCurrencies,owner: config.owner}),
+        this.fsGiftWrapping,
+        this.grdProducts = new Toc.orders.OrdersEditProductsGrid({ordersId: config.ordersId, cboCurrencies: this.cboCurrencies, owner: config.owner, outStockProduct: config.outStockProduct}),
         {
           layout: 'fit',
           border: false,
@@ -520,7 +557,7 @@ Ext.extend(Toc.orders.OrdersEditPanel, Ext.Panel, {
       if (this.grdProducts.getStore(). getCount() > 0) {
         this.stxShippingMethod.setValue(this.grdProducts.store.reader.jsonData.shipping_method);
         this.fsOrderTotals.body.update(this.grdProducts.store.reader.jsonData.totals);
-        
+
         this.btnCoupon.enable();
         this.btnGiftCertificate.enable();
         this.cboPaymentMethods.enable();
@@ -541,6 +578,33 @@ Ext.extend(Toc.orders.OrdersEditPanel, Ext.Panel, {
     this.loadForm(config);
     
     return this.frmOrder;
+  },
+  
+  updateGiftWrapping: function() {
+    this.mask();
+    
+    Ext.Ajax.request({
+      waitMsg: TocLanguage.formSubmitWaitMsg,
+      url: Toc.CONF.CONN_URL,
+      params: {
+        module: 'orders',
+        action: 'set_gift_wrapping',
+        orders_id: this.ordersId,
+        checked: this.chkGiftWrapping.getValue(),
+        message: this.txtWrappingMessage.getValue()
+      },
+      callback: function (options, success, response) {
+        this.unmask();
+
+        var result = Ext.decode(response.responseText);
+        if (result.success == true) {
+          this.grdProducts.getStore().load();
+        } else {
+          Ext.MessageBox.alert(TocLanguage.msgErrTitle, result.feedback);
+        }
+      },
+      scope: this
+    });
   },
   
   loadForm: function (config) {

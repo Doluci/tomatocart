@@ -296,7 +296,7 @@
  * @access public
  */
 
-  function osc_draw_file_field($name, $show_max_size = false) {
+  function osc_draw_file_field($name, $show_max_size = false, $parameters = null) {
     global $osC_Language;
 
     static $upload_max_filesize;
@@ -305,7 +305,7 @@
       $show_max_size = false;
     }
 
-    $field = osc_draw_input_field($name, null, null, false, 'file');
+    $field = osc_draw_input_field($name, null, $parameters, false, 'file');
 
     if ($show_max_size === true) {
       if (!isset($upload_max_filesize)) {

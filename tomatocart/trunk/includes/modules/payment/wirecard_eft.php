@@ -29,11 +29,11 @@
 
       switch (MODULE_PAYMENT_WIRECARD_EFT_TRANSACTION_SERVER) {
         case 'production':
-          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_EFT_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_EFT_PASSWORD . '@frontend-test.wirecard.com/secure/ssl-gateway';
+          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_EFT_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_EFT_PASSWORD . '@c3.wirecard.com/secure/ssl-gateway';
           break;
 
         default:
-          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_EFT_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_EFT_PASSWORD . '@frontend-test.wirecard.com/secure/ssl-gateway';
+          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_EFT_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_EFT_PASSWORD . '@c3-test.wirecard.com/secure/ssl-gateway';
           break;
       }
 

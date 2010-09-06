@@ -60,7 +60,7 @@ Toc.orders.OrdersGrid = function(config) {
       +'</tpl>'
       +'</div>'
     ),
-    actions: ['','','','',''],
+    actions: ['','','','','',''],
     widthIntercept: Ext.isSafari ? 4: 2
   });
   config.rowActions.on('action', this.onRowAction, this);    
@@ -227,7 +227,7 @@ Toc.orders.OrdersGrid = function(config) {
 };
 
 Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
-  
+
   onAdd: function() {
     var dlg = this.owner.createOrdersChooseCustomerDialog();
     
@@ -260,6 +260,17 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
   
   onView: function(record) {
     var dlg = this.owner.createOrdersDialog({ordersId: record.get("orders_id")});
+    dlg.setTitle(record.get('orders_id') + ': ' + record.get('customers_name'));
+    
+    dlg.on('saveSuccess', function() {
+      this.onRefresh();
+    }, this);
+    
+    dlg.show();
+  },
+  
+  onReorder: function(record) {
+    var dlg = this.owner.createReorderDialog({ordersId: record.get("orders_id")});
     dlg.setTitle(record.get('orders_id') + ': ' + record.get('customers_name'));
     
     dlg.on('saveSuccess', function() {
@@ -365,6 +376,9 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
       case 'icon-edit-record':
         this.onEdit(record);
         break;
+      case 'icon-reorder-record':
+        this.onReorder(record);
+        break;  
       case 'icon-delete-record':
         this.onDelete(record);
         break;

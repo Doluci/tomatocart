@@ -15,7 +15,7 @@
   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 
   include('includes/application_top.php');
-  require('includes/classes/json.php');
+  require_once('includes/classes/json.php');
   
   $_SERVER['SCRIPT_FILENAME'] = __FILE__;
 

@@ -68,12 +68,12 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
             var store = null;
             
             if(field.mode == 'local') {
-              store = new Ext.data.SimpleStore({
+              this['ds' + field.title] = new Ext.data.SimpleStore({
                 fields: [{name: 'id', mapping: 'id'},{name: 'text', mapping: 'text'}],
                 data : field.values
               });            
-            }else if(field.mode == 'remote') {
-              store = new Ext.data.Store({
+            }else if (field.mode == 'remote') {
+              this['ds' + field.title] = new Ext.data.Store({
                 reader: new Ext.data.JsonReader({
                     fields: ['id', 'text'],
                     root: Toc.CONF.JSON_READER_ROOT
@@ -92,7 +92,7 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
               new Ext.form.ComboBox({
                 fieldLabel: field.title,
                 name: field.name,
-                store: store,
+                store: this['ds' + field.title],
                 displayField: 'text',
                 valueField: 'id',
                 typeAhead: true,
@@ -141,6 +141,9 @@ Ext.extend(Toc.configuration.ConfigurationGrid, Ext.grid.PropertyGrid, {
             result = Ext.decode(response.responseText);
             
             if (result.success == true) {
+              if (o.record.get('name') == 'Country') {
+                this.dsZone.reload();
+              }
               this.owner.app.showNotification({title: TocLanguage.msgSuccessTitle, html: result.feedback});
             } else {
               Ext.MessageBox.alert(TocLanguage.msgErrTitle, result.feedback);

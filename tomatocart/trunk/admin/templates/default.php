@@ -92,6 +92,14 @@
   
   <script type="text/javascript" src="external/devAnalogClock/swfobject.js"></script>
 
+<?php if (USE_WYSIWYG_TINYMCE_EDITOR == '1') { ?>  
+
+  <script type="text/javascript" src="external/tinymec/miframe-min.js"></script>
+  <script type="text/javascript" src="external/tinymec/tiny_mce/tiny_mce.js"></script>
+  <script type="text/javascript" src="external/tinymec/Ext.ux.TinyMCE.min.js"></script>
+
+<?php } ?>
+  
   <script type="text/javascript" src="templates/default/locale/ext-lang-<?php echo $osC_Language->getCode(); ?>-min.js"></script>
     
   <script type="text/javascript">

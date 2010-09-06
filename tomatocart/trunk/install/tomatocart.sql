@@ -338,6 +338,7 @@ CREATE TABLE toc_customers_basket (
   products_id tinytext NOT NULL,
   customers_basket_quantity int(11) NOT NULL,
   gift_certificates_data text,
+  customizations text,
   final_price decimal(15,4) NOT NULL,
   customers_basket_date_added datetime default NULL,
   PRIMARY KEY  (customers_basket_id)
@@ -375,13 +376,40 @@ CREATE TABLE toc_customers_groups_description (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS toc_department;
-CREATE TABLE toc_department (
-  id int(11) NOT NULL auto_increment,
-  title varchar(32) character set utf8 collate utf8_bin NOT NULL,
-  email_address varchar(96) NOT NULL,
-  description text NOT NULL,
-  PRIMARY KEY  (id)
+DROP TABLE IF EXISTS toc_customization_fields;
+CREATE TABLE IF NOT EXISTS toc_customization_fields (
+  customization_fields_id int(11) NOT NULL auto_increment,
+  products_id int(11) NOT NULL,
+  type tinyint(1) NOT NULL,
+  is_required tinyint(1) NOT NULL,
+  PRIMARY KEY  (customization_fields_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_customization_fields_description;
+CREATE TABLE IF NOT EXISTS toc_customization_fields_description (
+  customization_fields_id int(11) NOT NULL,
+  languages_id int(11) NOT NULL,
+  name varchar(64) NOT NULL,
+  PRIMARY KEY  (customization_fields_id, languages_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_departments;
+CREATE TABLE toc_departments (
+  departments_id int(11) NOT NULL auto_increment,
+  departments_email_address varchar(96) NOT NULL,
+  PRIMARY KEY (departments_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_departments_description;
+CREATE TABLE toc_departments_description (
+  departments_id int(11) NOT NULL auto_increment,
+  languages_id int(11) NOT NULL,
+  departments_title varchar(64) NOT NULL default '',
+  departments_description varchar(255) NOT NULL default '',
+  PRIMARY KEY (departments_id, languages_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -705,6 +733,8 @@ CREATE TABLE toc_orders (
   currency_value decimal(14,6) default NULL,
   invoice_date datetime default NULL,
   tracking_no varchar(64) default NULL,
+  gift_wrapping TINYINT(1) NOT NULL,
+  wrapping_message TEXT NOT NULL, 
   PRIMARY KEY  (orders_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -723,6 +753,29 @@ CREATE TABLE toc_orders_products (
   products_quantity int(2) NOT NULL,
   products_return_quantity int(2) NOT NULL,
   PRIMARY KEY  (orders_products_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_orders_products_customizations;
+CREATE TABLE toc_orders_products_customizations (
+  orders_products_customizations_id int(11) NOT NULL auto_increment,
+  orders_id int(11) NOT NULL,
+  orders_products_id int(11) NOT NULL,
+  quantity int(11) NOT NULL,
+  PRIMARY KEY  (orders_products_customizations_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS toc_orders_products_customizations_values;
+CREATE TABLE toc_orders_products_customizations_values (
+  orders_products_customizations_values_id int(11) NOT NULL auto_increment,
+  orders_products_customizations_id int(11) NOT NULL ,
+  customization_fields_id int(11) NOT NULL ,
+  customization_fields_name varchar(64) NOT NULL ,
+  customization_fields_type tinyint(1) NOT NULL ,
+  customization_fields_value varchar(255) NOT NULL ,
+  cache_file_name varchar(255) default NULL ,
+  PRIMARY KEY (orders_products_customizations_values_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -1183,6 +1236,13 @@ CREATE TABLE toc_products (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE IF NOT EXISTS toc_products_accessories (
+  products_id int(11) NOT NULL,
+  accessories_id int(11) NOT NULL,
+  PRIMARY KEY (products_id, accessories_id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS toc_products_attachments;
 CREATE TABLE toc_products_attachments (
   attachments_id int(11) NOT NULL auto_increment,
@@ -1341,13 +1401,17 @@ CREATE TABLE toc_products_notifications (
 DROP TABLE IF EXISTS toc_products_variants;
 CREATE TABLE toc_products_variants (
   products_variants_id int(11) NOT NULL auto_increment,
+  is_default tinyint(1) NOT NULL default '0',
   products_id int(11) NOT NULL default '0',
+  products_images_id int(11) default null,
   products_status tinyint(1) NOT NULL,
   products_price decimal(15,4) NOT NULL,
   products_sku varchar(64) NOT NULL,
   products_model varchar(255) NOT NULL,
   products_quantity int(4) NOT NULL,
   products_weight decimal(5,2) NOT NULL,
+  filename varchar(100) NOT NULL,
+  cache_filename varchar(100) NOT NULL,
   PRIMARY KEY  (products_variants_id),
   KEY idx_products_variants_products_id (products_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1521,6 +1585,7 @@ DROP TABLE IF EXISTS toc_specials;
 CREATE TABLE toc_specials (
   specials_id int(11) NOT NULL auto_increment,
   products_id int(11) NOT NULL,
+  specials_type int(1) NOT NULL default '0',
   specials_new_products_price decimal(15,4) NOT NULL,
   specials_date_added datetime default NULL,
   specials_last_modified datetime default NULL,
@@ -1682,7 +1747,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Prices with Tax', 'DISPLAY_PRICE_WITH_TAX', '1', 'Display prices with tax included (true) or add the tax at the end (false)', '1', '21', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Invoice Start Number', 'INVOICE_START_NUMBER', '10000', 'Invoices would be numbered according to the starting number + increment value per Step 1.', '1', '22', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Maintenance mode', 'MAINTENANCE_MODE', '-1', 'Maintenance Mode', '1', '23', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Contact Us Captcha',  'CONTACT_US_CAPTCHA', '1', 'contact us captcha', '1', '24', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1)', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Use TinyMCE Editor', 'USE_WYSIWYG_TINYMCE_EDITOR', '1', 'Use TinyMCE Editor', '1', '24', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Credit Card Owner Name', 'CC_OWNER_MIN_LENGTH', '3', 'Minimum length of credit card owner name', '2', '12', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Credit Card Number', 'CC_NUMBER_MIN_LENGTH', '10', 'Minimum length of credit card number', '2', '13', now());
@@ -1779,9 +1844,9 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('ZIP', 'CFG_APP_ZIP', '', 'The program location to zip.', '18', '3', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('UNZIP', 'CFG_APP_UNZIP', '', 'The program location to unzip.', '18', '4', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('cURL', 'CFG_APP_CURL', '', 'The program location to cURL.', '18', '5', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('ImageMagick "convert"', 'CFG_APP_IMAGEMAGICK_CONVERT', '', 'The program location to ImageMagicks "convert" to use when manipulating images.', '18', '6', now());
 
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Disallow more than one vote from the same IP address', 'DISALLOW_MORE_THAN_ONE_VOTE', '1', 'Disallow more than one vote from the same IP address', '19', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Activate Captcha',  'ACTIVATE_CAPTCHA', '1', 'active captcha for contact us page and guest book', '19', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Disallow more than one vote from the same IP address', 'DISALLOW_MORE_THAN_ONE_VOTE', '1', 'Disallow more than one vote from the same IP address', '19', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration_group VALUES ('1', 'My Store', 'General information about my store', '1', '1');
 INSERT INTO toc_configuration_group VALUES ('2', 'Minimum Values', 'The minimum values for functions / data', '2', '1');
@@ -1798,7 +1863,7 @@ INSERT INTO toc_configuration_group VALUES ('12', 'E-Mail Options', 'General set
 INSERT INTO toc_configuration_group VALUES ('16', 'Regulations', 'Regulation options', '16', '1');
 INSERT INTO toc_configuration_group VALUES ('17', 'Credit Cards', 'Credit card options', '17', '1');
 INSERT INTO toc_configuration_group VALUES ('18', 'Program Locations', 'Locations to certain programs on the server.', '18', '1');
-INSERT INTO toc_configuration_group VALUES ('19', 'Store Front', 'Store Front configuration', '19', '1');
+INSERT INTO toc_configuration_group VALUES ('19', 'Content Management System', 'Content Management System Configuration', '19', '1');
 
 INSERT INTO toc_countries VALUES (1,'Afghanistan','AF','AFG','');
 
@@ -2262,11 +2327,11 @@ INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'VBR','
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'VLI','Limburg');
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'VOV','Oost-Vlaanderen');
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'VWV','West-Vlaanderen');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WBR','Brabant Wallon');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WHT','Hainaut');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WLG','Liège/Lüttich');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WLX','Luxembourg');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WNA','Namur');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WBR','Brabant Wallonië');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WHT','Henegouwen');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WLG','Luik');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WLX','Luxemburg');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (21,'WNA','Namen');
 
 INSERT INTO toc_countries VALUES (22,'Belize','BZ','BLZ','');
 
@@ -6445,7 +6510,7 @@ INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'WRT',
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'WRX','Wrexham');
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'WSM','Westminster');
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'WSX','West Sussex');
-INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'YOR','York');
+INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'YOR','Yorkshire');
 INSERT INTO toc_zones (zone_country_id, zone_code, zone_name) VALUES (222,'ZET','Shetland Islands');
 
 INSERT INTO toc_countries VALUES (223,'United States of America','US','USA',":name\n:street_address\n:city :state_code :postcode\n:country");
@@ -6775,7 +6840,7 @@ INSERT INTO toc_orders_transactions_status VALUES ( '4', '1', 'Inquiry');
 INSERT INTO toc_products_images_groups values (1, 1, 'Originals', 'originals', 0, 0, 0);
 INSERT INTO toc_products_images_groups values (2, 1, 'Thumbnails', 'thumbnails', 100, 80, 0);
 INSERT INTO toc_products_images_groups values (3, 1, 'Product Information Page', 'product_info', 240, 180, 0);
-INSERT INTO toc_products_images_groups values (4, 1, 'Large', 'large', 360, 240, 0);
+INSERT INTO toc_products_images_groups values (4, 1, 'Large', 'large', 480, 360, 0);
 INSERT INTO toc_products_images_groups values (5, 1, 'Mini', 'mini', 55, 45, 0);
 
 INSERT INTO toc_tax_class VALUES (1, 'Taxable Goods', 'The following types of products are included non-food, services, etc', now(), now());
@@ -6816,6 +6881,7 @@ INSERT INTO toc_templates_boxes VALUES (17,'Cross Sell Products','xsell_products
 INSERT INTO toc_templates_boxes VALUES (18,'Compare Products','compare_products','TomatoCart','http://www.tomatocart.com','boxes');
 INSERT INTO toc_templates_boxes VALUES (19,'Popular Search Term','popular_search_terms_tag_cloud','TomatoCart','http://www.tomatocart.com','boxes');
 INSERT INTO toc_templates_boxes VALUES (20,'Feature Products','feature_products','TomatoCart','http://www.tomatocart.com','content');
+INSERT INTO toc_templates_boxes VALUES (21,'Shopping Cart','shopping_cart','TomatoCart','http://www.tomatocart.com','boxes');
 
 INSERT INTO toc_templates_boxes_to_pages VALUES (1,2,1,'*','left',100,0);
 INSERT INTO toc_templates_boxes_to_pages VALUES (2,6,1,'*','left',200,0);
@@ -6838,11 +6904,18 @@ INSERT INTO toc_templates_boxes_to_pages VALUES (18,17,1,'products/info','after'
 INSERT INTO toc_templates_boxes_to_pages VALUES (19,18,1,'*','right',10,0);
 INSERT INTO toc_templates_boxes_to_pages VALUES (20,19,1,'*','right',1200,0);
 INSERT INTO toc_templates_boxes_to_pages VALUES (21,20,1,'index/index','after',100,0);
+INSERT INTO toc_templates_boxes_to_pages VALUES (22,21,1,'*','right',50,0);
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Minimum List Size', 'BOX_BEST_SELLERS_MIN_LIST', '3', 'Minimum amount of products that must be shown in the listing', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum List Size', 'BOX_BEST_SELLERS_MAX_LIST', '10', 'Maximum amount of products to show in the listing', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'BOX_BEST_SELLERS_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Show Product Count', 'BOX_CATEGORIES_SHOW_PRODUCT_COUNT', '1', 'Show the amount of products each category has', '6', '0', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Display Drop Down Menu', 'BOX_CATEGORIES_DISPLAY_DROP_DOWN_MENU', '1', 'Use MenuMatic to display drop down menu', '6', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Drop Down Menu Effect', 'BOX_CATEGORIES_DROP_DOWN_MENU_EFFECT', 'slide & fade', 'Drop Down Menu Effect', '6', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(\'fade\', \'slide\', \'slide & fade\'))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Drop Down Menu Duration', 'BOX_CATEGORIES_DROP_DOWN_MENU_DURATION', '600', 'Drop Down Menu Duration', '6', '3', now());
+
+
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function ,date_added) values ('Manufacturers List Type', 'BOX_MANUFACTURERS_LIST_TYPE', 'Image List', 'The type of the manufacturers list(ComboBox, Image List).', '6', '0', 'osc_cfg_set_boolean_value(array(\'ComboBox\', \'Image List\'))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Manufacturers List Size', 'BOX_MANUFACTURERS_LIST_SIZE', '1', 'The size of the manufacturers pull down menu listing.', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum List Size', 'BOX_ORDER_HISTORY_MAX_LIST', '5', 'Maximum amount of products to show in the listing', '6', '0', now());
@@ -6861,6 +6934,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'MODULE_CONTENT_UPCOMING_PRODUCTS_CACHE', '1440', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY', '9', 'Maximum number of new products to display', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'MODULE_CONTENT_FEATURE_PRODUCTS_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function) VALUES ('Allow display price to guests', 'ALLOW_DISPLAY_PRICE_TO_GUESTS', '1', '', 1, 1, 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))');
 
 # Weight Classes
 INSERT INTO toc_weight_classes VALUES (1, 'g', 1, 'Gram(s)');
@@ -6916,7 +6990,7 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 (12, 1, 'The download link for %%downloadable_products%% is actived', 'Dear %%customer_name%%,<br /><br />The download link for the products you purchased from store %%store_name%%: <br /><br />%%downloadable_products%%<br /><br />is actived.<br /><br />Please go to the orders area of "My Account" and download the products.<br /><br />%%download_link%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (13, 1, 'A new credit slip is created for returned products', 'Dear %%customer_name%%,<br /><br />A new credit slip is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The slip number is %%slip_number%% and the total amount is %%total_amount%%. You can print out the credit slip in the "My Acount" area. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (14, 1, 'New store credit is created for returned products', 'Dear %%customer_name%%,<br /><br />New store credit is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The total amount is %%total_amount%% and the store credit is made to your billing account so that it can be used for future purchases. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
-(15, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
+(16, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (17, 1, 'Product out of Stock', 'TomatoCart<br>---------------------------------------------------<br>%%products_name%% %%products_variants%% is out of stock.<br>---------------------------------------------------<br>Remaining stock: %%products_quantity%%. You are advised to turn <br>to the Products section in the admin panel to replenish the inventory.');
 
 # Articles Categories

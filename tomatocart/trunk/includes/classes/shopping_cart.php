@@ -18,6 +18,8 @@
         $_weight = 0,
         $_tax = 0,
         $_tax_groups = array(),
+        $_is_gift_wrapping = false,
+        $_gift_wrapping_message = '',
         $_coupon_code = null,
         $_coupon_amount = 0,
         $_gift_certificate_codes = array(),
@@ -34,6 +36,7 @@
                                                    'total_cost' => 0,
                                                    'total_weight' => 0,
                                                    'tax' => 0,
+                                                   'is_gift_wrapping' => false,
                                                    'tax_groups' => array(),
                                                    'coupon_code' => null,
                                                    'coupon_amount' => 0,
@@ -59,6 +62,7 @@
       $this->_total =& $_SESSION['osC_ShoppingCart_data']['total_cost'];
       $this->_weight =& $_SESSION['osC_ShoppingCart_data']['total_weight'];
       $this->_tax =& $_SESSION['osC_ShoppingCart_data']['tax'];
+      $this->_is_gift_wrapping =& $_SESSION['osC_ShoppingCart_data']['is_gift_wrapping'];
       $this->_tax_groups =& $_SESSION['osC_ShoppingCart_data']['tax_groups'];
       $this->_coupon_code =& $_SESSION['osC_ShoppingCart_data']['coupon_code'];
       $this->_coupon_amount =& $_SESSION['osC_ShoppingCart_data']['coupon_amount'];
@@ -85,7 +89,7 @@
     function hasContents() {
       return !empty($this->_contents);
     }
-
+    
     function synchronizeWithDatabase() {
       global $osC_Database, $osC_Services, $osC_Language, $osC_Customer, $osC_Image;
 
@@ -103,7 +107,7 @@
           $Qproduct->execute();
 
           if ($Qproduct->numberOfRows() > 0) {
-            $Qupdate = $osC_Database->query('update :table_customers_basket set customers_basket_quantity = :customers_basket_quantity, gift_certificates_data = :gift_certificates_data where customers_id = :customers_id and products_id = :products_id');
+            $Qupdate = $osC_Database->query('update :table_customers_basket set customers_basket_quantity = :customers_basket_quantity, gift_certificates_data = :gift_certificates_data, customizations = :customizations where customers_id = :customers_id and products_id = :products_id');
             $Qupdate->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
             $Qupdate->bindInt(':customers_basket_quantity', $data['quantity'] + $Qproduct->valueInt('customers_basket_quantity'));
             
@@ -112,12 +116,18 @@
             } else {
               $Qupdate->bindRaw(':gift_certificates_data', 'null');
             }
+          
+            if (isset($data['customizations']) && !empty($data['customizations'])) {
+              $Qupdate->bindValue(':customizations', serialize($data['customizations']));
+            } else {
+              $Qupdate->bindRaw(':customizations', 'null');
+            }
             
             $Qupdate->bindInt(':customers_id', $osC_Customer->getID());
             $Qupdate->bindValue(':products_id', $products_id_string);
             $Qupdate->execute();
           } else {
-            $Qnew = $osC_Database->query('insert into :table_customers_basket (customers_id, products_id, customers_basket_quantity, gift_certificates_data, customers_basket_date_added) values (:customers_id, :products_id, :customers_basket_quantity, :gift_certificates_data, now())');
+            $Qnew = $osC_Database->query('insert into :table_customers_basket (customers_id, products_id, customers_basket_quantity, gift_certificates_data, customizations, customers_basket_date_added) values (:customers_id, :products_id, :customers_basket_quantity, :gift_certificates_data, :customizations, now())');
             $Qnew->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
             $Qnew->bindInt(':customers_id', $osC_Customer->getID());
             $Qnew->bindValue(':products_id', $products_id_string);
@@ -128,6 +138,12 @@
             } else {
               $Qnew->bindRaw(':gift_certificates_data', 'null');
             }
+
+            if (isset($data['customizations']) && !empty($data['customizations'])) {
+              $Qnew->bindValue(':customizations', serialize($data['customizations']));
+            } else {
+              $Qnew->bindRaw(':customizations', 'null');
+            }
             
             $Qnew->execute();
           }
@@ -137,7 +153,7 @@
 // reset per-session cart contents, but not the database contents
       $this->reset();
 
-      $Qproducts = $osC_Database->query('select cb.products_id, cb.customers_basket_quantity, cb.customers_basket_date_added, cb.gift_certificates_data, p.products_price, p.products_tax_class_id, p.products_weight, p.products_weight_class, pd.products_name, pd.products_keyword, i.image from :table_customers_basket cb, :table_products p left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd where cb.customers_id = :customers_id and cb.products_id = p.products_id and p.products_id = pd.products_id and pd.language_id = :language_id order by cb.customers_basket_date_added desc');
+      $Qproducts = $osC_Database->query('select cb.products_id, cb.customers_basket_quantity, cb.customers_basket_date_added, cb.gift_certificates_data, cb.customizations, p.products_price, p.products_tax_class_id, p.products_weight, p.products_weight_class, pd.products_name, pd.products_keyword, i.image from :table_customers_basket cb, :table_products p left join :table_products_images i on (p.products_id = i.products_id and i.default_flag = :default_flag), :table_products_description pd where cb.customers_id = :customers_id and cb.products_id = p.products_id and p.products_id = pd.products_id and pd.language_id = :language_id order by cb.customers_basket_date_added desc');
       $Qproducts->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
       $Qproducts->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
@@ -174,7 +190,7 @@
         if ($osC_Services->isStarted('specials')) {
           global $osC_Specials;
 
-          if ($new_price = $osC_Specials->getPrice(osc_get_product_id($Qproducts->value('products_id')))) {
+          if ($new_price = $osC_Specials->getPrice(osc_get_product_id($Qproducts->value('products_id')), $variants_array)) {
             $price = $new_price;
           }
         }
@@ -187,7 +203,6 @@
             $price = $gc_data['price'];
           }
         }
-        
         
         $this->_contents[$Qproducts->value('products_id')] = array('id' => $Qproducts->value('products_id'),
                                                                    'name' => $osC_Product->getTitle(),
@@ -204,6 +219,12 @@
                                                                    'weight_class_id' => $osC_Product->getWeightClass(),
                                                                    'gc_data' => $gc_data);
 
+        $customizations = $Qproducts->value('customizations');
+        if (!empty($customizations)) {
+          $this->_contents[$Qproducts->value('products_id')]['customizations'] = unserialize($customizations);
+        }
+        
+        
         if (!empty($variants_array)) {
           foreach ($variants_array as $group_id => $value_id) {
             $Qvariants = $osC_Database->query('select pvg.products_variants_groups_name, pvv.products_variants_values_name from :table_products_variants pv, :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pv.products_id = :products_id and pv.products_variants_id = pve.products_variants_id and pve.products_variants_groups_id = :groups_id and pve.products_variants_values_id = :variants_values_id and pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = :language_id and pvv.language_id = :language_id');
@@ -239,6 +260,29 @@
       global $osC_Database, $osC_Customer;
 
       if (($reset_database === true) && $osC_Customer->isLoggedOn()) {
+        //delete customization files
+        $Qcheck = $osC_Database->query('select customizations from :table_customers_basket where customers_id = :customers_id');
+        $Qcheck->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
+        $Qcheck->bindInt(':customers_id', $osC_Customer->getID());
+        $Qcheck->execute();
+        
+        while($Qcheck->next()) {
+          $customizations = $Qcheck->value('customizations');
+          if (!empty($customizations)) {
+            $customizations = unserialize($customizations);
+
+            foreach ($customizations as $customization) {
+              foreach ($customization['fields'] as $field) {
+                if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_FILE) {
+                  if ( file_exists(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']) ) {
+                    @unlink(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']);
+                  }
+                }
+              }
+            }
+          }
+        }
+          
         $Qdelete = $osC_Database->query('delete from :table_customers_basket where customers_id = :customers_id');
         $Qdelete->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
         $Qdelete->bindInt(':customers_id', $osC_Customer->getID());
@@ -269,8 +313,8 @@
       }
     }
     
-    function add($products_id_string, $variants = null, $quantity = null, $gift_certificates_data = null, $action = 'add') {
-      global $osC_Database, $osC_Services, $osC_Language, $osC_Customer, $osC_Image, $toC_Wishlist;
+    function add($products_id_string, $variants = null, $quantity = null, $gift_certificates_data = null, $customization_qty = null, $action = 'add') {
+      global $osC_Database, $osC_Services, $osC_Language, $osC_Customer, $osC_Image, $toC_Wishlist, $toC_Customization_Fields;
       
       $products_id = osc_get_product_id($products_id_string);
       $osC_Product = new osC_Product($products_id);
@@ -294,6 +338,8 @@
         }
         
         if ($this->exists($products_id_string)) {
+          $old_quantity = $this->getQuantity($products_id_string);
+          
           if (!is_numeric($quantity)) {
             $quantity = $this->getQuantity($products_id_string) + 1;
           } else if (is_numeric($quantity) && ($quantity == 0)) {
@@ -305,6 +351,12 @@
               $quantity = $this->getQuantity($products_id_string) + $quantity;
             } else if ($action == 'update') {
               $quantity = $quantity;
+              
+              if ( isset($customization_qty) && !empty($customization_qty) ) {
+                foreach($customization_qty as $key => $value) {
+                  $this->_contents[$products_id_string]['customizations'][$key]['qty'] = $value;
+                }
+              }
             }
           }
 
@@ -352,7 +404,7 @@
             if ($osC_Services->isStarted('specials')) {
               global $osC_Specials;
   
-              if ($new_price = $osC_Specials->getPrice($products_id)) {
+              if ($new_price = $osC_Specials->getPrice($products_id, $variants)) {
                 $price = $new_price;
               }
             }       
@@ -362,9 +414,16 @@
           $this->_contents[$products_id_string]['price'] = $price;
           $this->_contents[$products_id_string]['final_price'] = $price;
 
+          if ( $toC_Customization_Fields->exists($products_id) ) {
+            $fields = $toC_Customization_Fields->get($products_id);
+            $this->_contents[$products_id_string]['customizations'][time()] = array('qty' => ($quantity - $old_quantity), 'fields' => array_values($fields) );
+            
+            $toC_Customization_Fields->remove($products_id);
+          }
+          
 // update database
           if ($osC_Customer->isLoggedOn()) {
-            $Qupdate = $osC_Database->query('update :table_customers_basket set customers_basket_quantity = :customers_basket_quantity, gift_certificates_data = :gift_certificates_data where customers_id = :customers_id and products_id = :products_id');
+            $Qupdate = $osC_Database->query('update :table_customers_basket set customers_basket_quantity = :customers_basket_quantity, gift_certificates_data = :gift_certificates_data, customizations = :customizations where customers_id = :customers_id and products_id = :products_id');
             $Qupdate->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
             $Qupdate->bindInt(':customers_basket_quantity', $quantity);
             
@@ -372,6 +431,12 @@
               $Qupdate->bindValue(':gift_certificates_data', serialize($gift_certificates_data));
             } else {
               $Qupdate->bindRaw(':gift_certificates_data', 'null');
+            }
+            
+            if (isset($this->_contents[$products_id_string]['customizations']) && !empty($this->_contents[$products_id_string]['customizations'])) {
+              $Qupdate->bindValue(':customizations', serialize($this->_contents[$products_id_string]['customizations']));
+            } else {
+              $Qupdate->bindRaw(':customizations', 'null');
             }
             
             $Qupdate->bindInt(':customers_id', $osC_Customer->getID());
@@ -404,6 +469,12 @@
             $quantity = $products_moq + (floor(($quantity - $products_moq) / $increment) + 1) * $increment;
             $error = sprintf($osC_Language->get('error_order_increment'), $osC_Product->getTitle(), $increment);
           }
+          
+          //if product has variants and variants is not given
+          if ($osC_Product->hasVariants() && ($variants == null)) {
+            $variant = $osC_Product->getDefaultVariant();
+            $variants = osc_parse_variants_from_id_string($variant['product_id_string']);
+          }
 
           if (($osC_Product->isGiftCertificate()) && ($osC_Product->isOpenAmountGiftCertificate())) {
             $price = $gift_certificates_data['price']; 
@@ -413,7 +484,7 @@
             if ($osC_Services->isStarted('specials')) {
               global $osC_Specials;
   
-              if ($new_price = $osC_Specials->getPrice($products_id)) {
+              if ($new_price = $osC_Specials->getPrice($products_id, $variants)) {
                 $price = $new_price;
               }
             }          
@@ -433,6 +504,15 @@
                                                         'date_added' => osC_DateTime::getShort(osC_DateTime::getNow()),
                                                         'weight_class_id' => $osC_Product->getWeightClass(),
                                                         'gc_data' => $gift_certificates_data);
+        
+          if ( $toC_Customization_Fields->exists($products_id) ) {
+            $fields = $toC_Customization_Fields->get($products_id);
+            
+            $time = time();
+            $this->_contents[$products_id_string]['customizations'][$time] = array('qty' => $quantity, 'fields' => array_values($fields));
+            
+            $toC_Customization_Fields->remove($products_id);
+          }
           
           //set error to session
           if (isset($error) && !empty($error)) {
@@ -441,7 +521,7 @@
 
 // insert into database
           if ($osC_Customer->isLoggedOn()) {
-            $Qnew = $osC_Database->query('insert into :table_customers_basket (customers_id, products_id, customers_basket_quantity, gift_certificates_data, customers_basket_date_added) values (:customers_id, :products_id, :customers_basket_quantity, :gift_certificates_data, now())');
+            $Qnew = $osC_Database->query('insert into :table_customers_basket (customers_id, products_id, customers_basket_quantity, gift_certificates_data, customizations, customers_basket_date_added) values (:customers_id, :products_id, :customers_basket_quantity, :gift_certificates_data, :customizations, now())');
             $Qnew->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
             $Qnew->bindInt(':customers_id', $osC_Customer->getID());
             $Qnew->bindValue(':products_id', $products_id_string);
@@ -453,10 +533,26 @@
               $Qnew->bindRaw(':gift_certificates_data', 'null');
             }
             
+            if (isset($this->_contents[$products_id_string]['customizations']) && !empty($this->_contents[$products_id_string]['customizations'])) {
+              $Qnew->bindValue(':customizations', serialize($this->_contents[$products_id_string]['customizations']));
+            } else {
+              $Qnew->bindRaw(':customizations', 'null');
+            }
+            
             $Qnew->execute();
           }
 
           if (is_array($variants) && !empty($variants)) {
+            $variants_array = $osC_Product->getVariants();
+            $products_variants_id_string = osc_get_product_id_string($products_id_string, $variants);
+            $products_variants_id = $variants_array[$products_variants_id_string]['variants_id'];
+
+            $this->_contents[$products_id_string]['products_variants_id'] = $products_variants_id;
+            if (isset($variants_array[$products_variants_id_string]['filename']) && !empty($variants_array[$products_variants_id_string]['filename'])) {
+              $this->_contents[$products_id_string]['variant_filename'] = $variants_array[$products_variants_id_string]['filename'];
+              $this->_contents[$products_id_string]['variant_cache_filename'] = $variants_array[$products_variants_id_string]['cache_filename'];            
+            }
+
             foreach ($variants as $group_id => $value_id) {
               $Qvariants = $osC_Database->query('select pvg.products_variants_groups_name, pvv.products_variants_values_name from :table_products_variants pv, :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pv.products_id = :products_id and pv.products_variants_id = pve.products_variants_id and pve.products_variants_groups_id = :groups_id and pve.products_variants_values_id = :variants_values_id and pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = :language_id and pvv.language_id = :language_id');
               $Qvariants->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
@@ -528,8 +624,20 @@
     }
 
     function remove($products_id) {
-      global $osC_Database, $osC_Customer;
+      global $osC_Database, $osC_Customer, $toC_Customization_Fields;
 
+      if ( isset($this->_contents[$products_id]['customizations']) && !empty($this->_contents[$products_id]['customizations']) ) {
+        foreach ($this->_contents[$products_id]['customizations'] as $customization) {
+          foreach ($customization['fields'] as $field) {
+            if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_FILE) {
+              if ( file_exists(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']) ) {
+                @unlink(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']);
+              }
+            }
+          }
+        }
+      }
+      
       unset($this->_contents[$products_id]);
 
 // remove from database
@@ -966,6 +1074,10 @@
       $this->_tax += $amount;
     }
 
+    function getTax() {
+      return $this->_tax;
+    }
+    
     function numberOfTaxGroups() {
       return sizeof($this->_tax_groups);
     }
@@ -1079,6 +1191,14 @@
       return $this->_order_totals;
     }
 
+    function setGiftWrapping($gift_wrapping) {
+      $this->_is_gift_wrapping = $gift_wrapping;
+    }
+    
+    function isGiftWrapping() {
+      return $this->_is_gift_wrapping;
+    }
+    
     function getShippingBoxesWeight() {
       return $this->_shipping_boxes_weight;
     }
@@ -1092,6 +1212,19 @@
 
       foreach ($this->_contents as $product_id_string => $data) {
         if ($data['quantity'] < 1) {
+          //delete customization files
+          if ( isset($this->_contents[$products_id]['customizations']) && !empty($this->_contents[$products_id]['customizations']) ) {
+            foreach ($this->_contents[$products_id]['customizations'] as $customization) {
+              foreach ($customization['fields'] as $field) {
+                if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_FILE) {
+                  if ( file_exists(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']) ) {
+                    @unlink(DIR_FS_CACHE . '/products_customizations/' . $field['cache_filename']);
+                  }
+                }
+              }
+            }
+          }
+        
           unset($this->_contents[$product_id_string]);
 
 // remove from database
@@ -1191,7 +1324,7 @@
         if (!class_exists('osC_OrderTotal')) {
           include('includes/classes/order_total.php');
         }
-
+        
         $osC_OrderTotal = new osC_OrderTotal();
         $this->_order_totals = $osC_OrderTotal->getResult();
       }

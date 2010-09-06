@@ -10,17 +10,24 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
+
 ?>
 
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
+
+<?php
+  if ($messageStack->size('products') > 0) {
+    echo $messageStack->output('products');
+  }
+?>
 
 <div class="moduleBox">
 
   <div class="content">
     <div style="float: left;">
       <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.css" rel="stylesheet" type="text/css" />
-      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/zoom/zoom.css" rel="stylesheet" type="text/css" />
-            
+      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/mojozoom/mojozoom.css" rel="stylesheet" type="text/css" />
+      
       <div id="productImages">
       <?php
         echo osc_link_object($osC_Image->getImageUrl($osC_Product->getImage(), 'originals'), $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Product->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
@@ -28,42 +35,29 @@
     
         $images = $osC_Product->getImages();
         foreach ($images as $image){
-          echo osc_link_object($osC_Image->getImageUrl($image['image'], 'originals'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" rel="milkbox:group_products" style="float:left" class="mini"') . "\n";
-        }
-        
-        $price = '';
-        if (ALLOW_DISPLAY_PRICE_TO_GUESTS == '1') {
-          $price = $osC_Product->getPriceFormated(true). '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '');;
-        } else {
-          if ($osC_Customer->isLoggedOn() === true) {
-            $price = $osC_Product->getPriceFormated(true). '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '');;
-          }
+          echo osc_link_object($osC_Image->getImageUrl($image['image'], 'originals'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" style="float:left" class="mini"') . "\n";
         }
       ?>
       </div>
     </div>
+
 
     <form id="cart_quantity" name="cart_quantity" action="<?php echo osc_href_link(FILENAME_PRODUCTS, osc_get_all_get_params(array('action')) . '&action=cart_add'); ?>" method="post">
    
     <table id="productInfo" border="0" cellspacing="0" cellpadding="2" style="float: right; width: 270px">
     
       <tr>
-        <td colspan="2" class="productPrice"><?php echo $price; ?></td>
+        <td colspan="2" id="productInfoPrice"><?php echo $osC_Product->getPriceFormated(true) . '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '' ); ?></td>
       </tr>
       
-  <?php
-    if (!$osC_Product->hasVariants()) {
-  ?>
       <tr>
         <td class="label" width="45%"><?php echo $osC_Language->get('field_sku'); ?></td>
-        <td><?php echo $osC_Product->getSKU(); ?>&nbsp;</td>
+        <td id="productInfoSku"><?php echo $osC_Product->getSKU(); ?>&nbsp;</td>
       </tr>
-  <?php
-    }
-  ?>
+
       <tr>
         <td class="label"><?php echo $osC_Language->get('field_availability'); ?></td>
-        <td><?php echo $osC_Product->getQuantity() > 0 ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></td>
+        <td id="productInfoAvailable"><?php echo ($osC_Product->getQuantity() > 0) ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></td>
       </tr>
       
   <?php
@@ -71,7 +65,7 @@
   ?>
       <tr>
         <td class="label"><?php echo $osC_Language->get('field_quantity'); ?></td>
-        <td><?php echo $osC_Product->getQuantity() . ' ' . $osC_Product->getUnitClass(); ?></td>
+        <td id="productInfoQty"><?php echo $osC_Product->getQuantity() . ' ' . $osC_Product->getUnitClass(); ?></td>
       </tr>
   <?php
     }
@@ -194,22 +188,30 @@
   <?php
   }
   ?>
+
+  <?php 
+      if ($osC_Product->hasVariants()) {
+        $combobox_array = $osC_Product->getVariantsComboboxArray();
+
+        foreach ($combobox_array as $groups_name => $combobox) {
+          echo '<tr class="variantCombobox">
+                 <td class="label" valign="top">' . $groups_name . ':</td>
+                 <td>' . $combobox . '</td>
+               </tr>';          
+        }
+      }
+   ?>
+      
       <tr>
-        <td colspan="2" align="center" valign="top" style="padding-top: 15px">
-          
+        <td colspan="2" align="center" valign="top" style="padding-top: 15px" id="shoppingCart">
           <?php
-            if (!$osC_Product->hasVariants()) {
-              if ($osC_Product->isSimple()) {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" pid="' . osc_get_product_id($osC_Product->getID()) . '"');
-              }else {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;"');
-              }  
-            }
+            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" pid="' . osc_get_product_id($osC_Product->getID()) . '"');
           ?>
         </td>
       </tr>
+      
       <tr>
-        <td colspan="2" align="center">
+        <td colspan="2" align="center" id = "shoppingAction">
           <?php
             echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<span>|</span>&nbsp;' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Product->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
           ?>
@@ -227,35 +229,53 @@
   
 </div>
 
+<?php if ($osC_Product->hasCustomizations()) { ?>
+  <div class="moduleBox">
+    <h3><?php echo $osC_Language->get('section_heading_customizations'); ?></h3>
+  
+    <div class="content">
+      <?php
+        if ($messageStack->size('products_customizations') > 0) {
+          echo $messageStack->output('products_customizations');
+        }
+      ?>
+        
+      <form name="frmCustomizations" id="frmCustomizations" action="<?php echo osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&action=save_customization_fields'); ?>" method="post" enctype="multipart/form-data">
+      
+        <?php echo $osC_Product->renderCustomizationFieldsList(); ?>
+      
+        <div class="submitFormButtons" style="text-align: right;">
+          <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?>
+        </div>
+      </form>
+    </div>
+  </div>
+<?php } ?>
+
   <div id="productInfoTab">
     <?php
       if ($osC_Product->getDescription()) {
-        echo '<a tab="tabDescription" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_description'). '</a>'; 
+        echo '<a tab="tabDescription" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_description') . '</a>'; 
       }
-      
-      if($osC_Product->hasVariants()) {
-        echo '<a tab="tabVariants" href="javascript:void(0);">' . $osC_Language->get('section_heading_variants') . '</a>'; 
-      }
-      
+            
       echo '<a tab="tabReviews" href="javascript:void(0);">' . $osC_Language->get('section_heading_reviews') . '(' . $osC_Reviews->getReviewsCount($osC_Product->getID()) . ')</a>';
       
       if ($osC_Product->hasQuantityDiscount()) {
         echo '<a tab="tabQuantityDiscount" href="javascript:void(0);">' . $osC_Language->get('section_heading_quantity_discount') . '</a>';         
       }
       
-      if ($osC_Product->hasAttributes()) {
-        echo '<a tab="tabAttributes" href="javascript:void(0);">' . $osC_Language->get('products_attributes_filter') . '</a>'; 
-      }
-      
       if ($osC_Product->hasAttachments()) {
         echo '<a tab="tabAttachments" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_attachments') . '</a>'; 
+      }
+      
+      if ($osC_Product->hasAccessories()) {
+        echo '<a tab="tabAccessories" href="javascript:void(0);">' . $osC_Language->get('section_heading_products_accessories') . '</a>'; 
       }
     ?>
     <div style="clear:both;"></div>
   </div> 
-  
-  
-    <?php if ($osC_Product->getDescription()) {?>
+      
+   <?php if ($osC_Product->getDescription()) {?>
       <div id="tabDescription">
         <div class="moduleBox">
           <div class="content"><?php echo $osC_Product->getDescription(); ?></div>
@@ -370,14 +390,6 @@
       </div>
     </div>
       
-    <?php if($osC_Product->hasVariants()) { ?>
-      <div id="tabVariants">
-        <div class="moduleBox">
-          <div class="content"><?php echo $osC_Product->renderVariantsTable(); ?></div>
-        </div>
-      </div>
-    <?php } ?>
-    
     <?php  if ($osC_Product->hasQuantityDiscount()) { ?>
       <div id="tabQuantityDiscount">
         <div class="moduleBox">
@@ -385,24 +397,6 @@
         </div>
       </div>
     <?php } ?>
-    
-    <?php     
-      if ($osC_Product->hasAttributes()) {
-      $attributes = $osC_Product->getAttributes();
-    ?>
-      <div id="tabAttributes">
-        <div class="moduleBox">
-          <div class="content">
-            <?php foreach($attributes as $attribute) {?>
-             <tr>          
-               <td class="label" valign="top"><?php echo $attribute['name']; ?>:</td>
-               <td><?php echo $attribute['value']; ?></td>
-            </tr>
-        <?php } ?>
-          </div>
-        </div>
-      </div>
-    <?php }?>
     
     <?php 
     if ($osC_Product->hasAttachments()) {
@@ -426,31 +420,157 @@
     </div>
    <?php }?>
 
+<?php 
+    if ($osC_Product->hasAccessories()) {
+      $accessories = $osC_Product->getAccessories();
+   ?>
+    <div id="tabAccessories">
+      <div class="moduleBox">
+        <div class="content">
+          <?php
+            foreach ( $accessories as $accessory) {
+              $osC_Products = new osC_Product($accessory); 
+          ?>
+          
+          <div style="float: left;">
+            <div id="productImages" style="width:220px">
+              <?php
+                echo osc_link_object($osC_Image->getImageUrl($osC_Products->getImage(), 'originals'), $osC_Image->show($osC_Products->getImage(), $osC_Products->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Products->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
+                echo '<div style="clear:both"></div>';
+              ?>
+            </div>
+          </div>
+
+    <form id="cart_quantity" name="cart_quantity" action="<?php echo osc_href_link(FILENAME_PRODUCTS, osc_get_all_get_params(array('action')) . '&action=cart_add'); ?>" method="post">
+   
+    <table id="productInfo" border="0" cellspacing="0" cellpadding="2" style="float: right; width: 270px">
+    
+      <tr>
+        <td colspan="2" class="productPrice"><?php echo $osC_Products->getPriceFormated(true). '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : ''); ?></td>
+      </tr>
+      
+  <?php
+    if (!$osC_Products->hasVariants()) {
+  ?>
+      <tr>
+        <td class="label" width="45%"><?php echo $osC_Language->get('field_sku'); ?></td>
+        <td><?php echo $osC_Products->getSKU(); ?>&nbsp;</td>
+      </tr>
+  <?php
+    }
+  ?>
+      <tr>
+        <td class="label"><?php echo $osC_Language->get('field_availability'); ?></td>
+        <td><?php echo $osC_Products->getQuantity() > 0 ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></td>
+      </tr>
+      
+  <?php
+    if (PRODUCT_INFO_QUANTITY == '1') {
+  ?>
+      <tr>
+        <td class="label"><?php echo $osC_Language->get('field_quantity'); ?></td>
+        <td><?php echo $osC_Products->getQuantity() . ' ' . $osC_Products->getUnitClass(); ?></td>
+      </tr>
+  <?php
+    }
+
+    if ($osC_Products->getData('reviews_average_rating') > 0) {
+  ?>  
+      <tr>      
+        <td class="label"><?php echo $osC_Language->get('average_rating'); ?></td>
+        <td><?php echo osc_image(DIR_WS_IMAGES . 'stars_' . $osC_Products->getData('reviews_average_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $osC_Products->getData('reviews_average_rating'))); ?></td>
+      </tr>
+  <?php
+    }
+  ?>
+      <tr>
+        <td colspan="2" align="center" valign="top" style="padding-top: 15px">
+          
+          <?php
+            if (!$osC_Products->hasVariants()) {
+              if ($osC_Products->isSimple()) {
+                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajax_add_to_cart" pid="' . osc_get_product_id($osC_Products->getID()) . '"');
+              }else {
+                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;"');
+              }  
+            }
+          ?>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" align="center">
+          <?php
+            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Products->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<span>|</span>&nbsp;' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Products->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
+          ?>
+        </td>
+      </tr>
+    </table>
+    </form>
+    
+    <div style="clear: both;"></div>
+          <?php } ?>
+        </div>
+      </div>
+    </div>
+   <?php } ?>
+
+
+
+
 <div style="clear: both;"></div>
 
 <script type="text/javascript" src="includes/javascript/tab_panel.js"></script>
 <script type="text/javascript" src="includes/javascript/reviews.js"></script>
 <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/zoomer/zoomer.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/mojozoom/mojozoom.js"></script>
 
+<?php if ($osC_Product->hasVariants()) { ?>
+  <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/variants/variants.js"></script>
+<?php } ?>
+
+<script type="text/javascript">
 window.addEvent('domready', function(){
   //zoom image
-  var zoomer = new Zoomer('product_image', {
-    big: $('product_image').get('large-img'),
-    smooth: 10
+  MojoZoom.makeZoomable(  
+    document.getElementById("product_image"),   
+    $('product_image').get('large-img'),
+    null, 
+    270, 
+    210, 
+    false
+  );
+  
+  //variants
+  <?php 
+  if ($osC_Product->hasVariants()) {   
+  ?>
+
+  new TocVariants({
+    combVariants: $$('tr.variantCombobox select'),
+    variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
+    productsId: <?php echo $osC_Product->getID(); ?>,
+    lang: {
+      txtInStock: '<?php echo $osC_Language->get('in_stock');?>',
+      txtOutOfStock: '<?php echo $osC_Language->get('out_of_stock'); ?>',
+      txtNotAvailable: '<?php echo $osC_Language->get('not_available'); ?>',
+      txtTaxText: '<?php echo $osC_Language->get('including_tax'); ?>'
+    }
   });
+  
+ <?php } ?>
   
   //add mouse over events to mini images
   var miniImages = $$(".mini");
   if (miniImages.length > 0) {
     miniImages.each(function(img) {
-      img.addEvent('mouseenter', function(e) {
+      img.addEvent('click', function(e) {
+        if ($defined(e)) {e.preventDefault();}
+        
         new Fx.Tween($('product_image'), {
-           duration: 500,
+           duration: 100,
            property: 'opacity'
         }).start(0).chain(function() {
-          $$('.zoomer-wrapper-big').getElement('img').set('src', this.get("large-img"));
+          $$('.mojozoom_imgctr').getElement('img').set('src', this.get("large-img"));
           $('product_image').src =  this.get("product-info-img");
           $('product_image').fade('in');
         }.bind(this));
@@ -461,7 +581,6 @@ window.addEvent('domready', function(){
   //attach product image click event
   $('defaultProductImage').addEvent('click',function(e){
     e.preventDefault();
-    Milkbox.openMilkbox(Milkbox.galleries[0], 0);
   });
   
   //tab panel
@@ -477,11 +596,12 @@ window.addEvent('domready', function(){
     frmReviews: $('frmReviews')
   });
   
+  
   //gift certificate
   <?php 
   if ($osC_Product->isGiftCertificate()) {
   ?>
-    $('addToShoppingCart').addEvent('click', function(e){
+    $('cart_quantity').addEvent('submit', function(e) {
       e.preventDefault();
       
       var errors = [];
@@ -494,7 +614,7 @@ window.addEvent('domready', function(){
       var amount = $('gift_certificate_amount').value;
       
       if (amount < <?php echo $min; ?> || amount > <?php echo $max; ?>) {
-        errors.push('<?php echo sprintf($osC_Language->get('error_message_open_gift_certificate_amount'), $osC_Currencies->format($min), $osC_Currencies->format($max)); ?>');
+        errors.push('<?php echo $osC_Language->get('error_message_open_gift_certificate_amount'); ?>');
       }
     <?php 
     } 
@@ -530,6 +650,7 @@ window.addEvent('domready', function(){
       
       if (errors.length > 0) {
         alert(errors.join('\n'));
+        return false;
       } else {
         $('cart_quantity').submit();
       }

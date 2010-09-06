@@ -45,6 +45,7 @@ table_heading_total = Total
 table_heading_quantity_available = Qty
 table_heading_return_quantity = Qty to Refund
 table_heading_quantity_in_stock = In Stock
+table_heading_out_products_stock = This product is currentty out of stock !
 
 table_heading_date_added = Date Added
 table_heading_refunds_type = Refund Type
@@ -138,6 +139,7 @@ button_update = Update
 create_invoice_confirmation = Are you going to create an invoice for this order?
 restock_products_confirmation = Do you want to restock the product(s) in this order?
 
+tip_reorder = Reorder
 tip_create_invoice = Create Invoice
 tip_print_order = Print Order
 tip_view_order = View Order
@@ -192,3 +194,7 @@ button_add_product = Add Product
 
 empty_text_coupon_code = Coupon Code
 empty_text_gift_certificate = Gift Certificate Code
+
+subsection_gift_wrapping = Gift Wrapping
+field_gift_wrapping = Gift Wrapping
+field_wrapping_message = Gift Message

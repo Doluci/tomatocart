@@ -128,23 +128,23 @@
 
         $osC_ShoppingCart->addToTotal($coupon_amount * (-1));
 
-        if($toC_Coupon->isIncludeTax() == true){
+        if($toC_Coupon->isIncludeTax() == true) {
           $ratio = $coupon_amount / $valid_order_total;
 
-          foreach ($osC_ShoppingCart->_tax_groups as $key=>$value) {
+          foreach ($osC_ShoppingCart->_tax_groups as $key => $value) {
             if(isset($tax_groups[$key])){
               $coupon_tax += $tax_groups[$key] * $ratio ;
-              $osC_ShoppingCart->addTaxAmount($coupon_tax* -1);
-              $osC_ShoppingCart->addTaxGroup($key, $coupon_tax* -1);
+              $osC_ShoppingCart->addTaxAmount($coupon_tax * -1);
+              $osC_ShoppingCart->addTaxGroup($key, $coupon_tax * -1);
               $coupon_amount -= $coupon_tax;
             }
 
             if (DISPLAY_PRICE_WITH_TAX == '1')
               $coupon_amount += $coupon_tax;
           }
-        }else if($toC_Coupon->isIncludeTax() == false){
+        } else if($toC_Coupon->isIncludeTax() == false) {
           $ratio = $coupon_amount / $valid_order_total;
-          foreach ($osC_ShoppingCart->_tax_groups as $key=>$value) {
+          foreach ($osC_ShoppingCart->_tax_groups as $key => $value) {
             if(isset($tax_groups[$key])){
               $coupon_tax += $tax_groups[$key] * $ratio;
               $osC_ShoppingCart->addTaxAmount($coupon_tax * -1);
@@ -161,12 +161,11 @@
       if ($osC_ShoppingCart->isTotalZero()) {
         $osC_ShoppingCart->resetBillingMethod(false);
       }
-      
       $osC_ShoppingCart->setCouponAmount($coupon_amount);
 
       $this->output[] = array('title' => $this->_title . ' (' . $coupon_code . ') : ',
                                'text' => '-' . $osC_Currencies->format($coupon_amount),
-                              'value' => $coupon_amount);
+                              'value' => $coupon_amount * (-1));
     }
   }
 ?>

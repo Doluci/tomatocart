@@ -91,14 +91,22 @@ INSERT INTO toc_categories (categories_id, categories_image, parent_id, sort_ord
 (2, 'categories_desktops.jpg', 0, 0, now(), NULL),
 (3, 'categories_monitor.jpg', 0, 0, now(), NULL),
 (4, 'categories_printer.jpg', 0, 0, now(), NULL),
-(5, 'categories_ipod.jpg', 0, 0, now(), NULL);
+(5, 'categories_printer.jpg', 4, 0, now(), NULL),
+(6, 'categories_printer.jpg', 4, 0, now(), NULL),
+(7, 'categories_printer.jpg', 4, 0, now(), NULL),
+(8, 'categories_printer.jpg', 4, 0, now(), NULL),
+(9, 'categories_ipod.jpg', 0, 0, now(), NULL);
 
 INSERT INTO toc_categories_description (categories_id, language_id, categories_name) VALUES
 (1, 1, 'Laptop'),
 (2, 1, 'Desktops'),
 (3, 1, 'Monitors'),
 (4, 1, 'Printers & Scanners'),
-(5, 1, 'iPod & Camera');
+(5, 1, 'HP'),
+(6, 1, 'BROTHER'),
+(7, 1, 'EPSON'),
+(8, 1, 'CANON'),
+(9, 1, 'iPod & Camera');
 
 #products
 INSERT INTO toc_products (products_id, products_quantity, products_price, products_date_added, products_last_modified, products_date_available, products_weight, products_weight_class, products_status, products_tax_class_id, manufacturers_id, products_ordered, quantity_discount_groups_id, quantity_unit_class) VALUES

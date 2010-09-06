@@ -18,47 +18,71 @@
   class toC_Json_Products {
   
     function assignLocalImages() {
-      global $toC_Json, $osC_Database, $osC_Language;
+      global $toC_Json, $osC_Database, $osC_Language, $osC_Session;
 
-      if (isset($_REQUEST['products_id']) && isset($_REQUEST['localimages'])) {
-        $osC_Image = new osC_Image_Admin();
+      if (isset($_REQUEST['localimages'])) {
+        $localimages = explode(',', $_REQUEST['localimages']);
+        
+        if (isset($_REQUEST['products_id']) && is_numeric($_REQUEST['products_id'])) {
+          $osC_Image = new osC_Image_Admin();
             
-        $localimages = explode(',', $_REQUEST['localimages']);  
-        $default_flag = 1;
-
-        $Qcheck = $osC_Database->query('select id from :table_products_images where products_id = :products_id and default_flag = :default_flag limit 1');
-        $Qcheck->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-        $Qcheck->bindInt(':products_id', $_REQUEST['products_id']);
-        $Qcheck->bindInt(':default_flag', 1);
-        $Qcheck->execute();
-
-        if ($Qcheck->numberOfRows() === 1) {
-          $default_flag = 0;
-        }
-
-        foreach ($localimages as $image) {
-          $image = basename($image);
-
-          if (file_exists('../images/products/_upload/' . $image)) {
-            copy('../images/products/_upload/' . $image, '../images/products/originals/' . $image);
-            @unlink('../images/products/_upload/' . $image);
-
-            if (isset($_REQUEST['products_id'])) {
-              $Qimage = $osC_Database->query('insert into :table_products_images (products_id, image, default_flag, sort_order, date_added) values (:products_id, :image, :default_flag, :sort_order, :date_added)');
-              $Qimage->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-              $Qimage->bindInt(':products_id', $_REQUEST['products_id']);
-              $Qimage->bindValue(':image', $image);
-              $Qimage->bindInt(':default_flag', $default_flag);
-              $Qimage->bindInt(':sort_order', 0);
-              $Qimage->bindRaw(':date_added', 'now()');
-              $Qimage->setLogging($_SESSION['module'], $_REQUEST['products_id']);
-              $Qimage->execute();
-
-              foreach ($osC_Image->getGroups() as $group) {
-                if ($group['id'] != '1') {
-                  $osC_Image->resize($image, $group['id']);
+          $default_flag = 1;
+  
+          $Qcheck = $osC_Database->query('select id from :table_products_images where products_id = :products_id and default_flag = :default_flag limit 1');
+          $Qcheck->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+          $Qcheck->bindInt(':products_id', $_REQUEST['products_id']);
+          $Qcheck->bindInt(':default_flag', 1);
+          $Qcheck->execute();
+  
+          if ($Qcheck->numberOfRows() === 1) {
+            $default_flag = 0;
+          }
+  
+          foreach ($localimages as $image) {
+            $image = basename($image);
+  
+            if (file_exists('../images/products/_upload/' . $image)) {
+              copy('../images/products/_upload/' . $image, '../images/products/originals/' . $image);
+              @unlink('../images/products/_upload/' . $image);
+  
+              if (isset($_REQUEST['products_id'])) {
+                $Qimage = $osC_Database->query('insert into :table_products_images (products_id, image, default_flag, sort_order, date_added) values (:products_id, :image, :default_flag, :sort_order, :date_added)');
+                $Qimage->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+                $Qimage->bindInt(':products_id', $_REQUEST['products_id']);
+                $Qimage->bindValue(':image', $image);
+                $Qimage->bindInt(':default_flag', $default_flag);
+                $Qimage->bindInt(':sort_order', 0);
+                $Qimage->bindRaw(':date_added', 'now()');
+                $Qimage->execute();
+             
+                if (!$osC_Database->isError()) {
+                  $image_id  = $osC_Database->nextID();
+                  $new_image_name =  $_REQUEST['products_id'] . '_' . $image_id . '_' . $image;
+                  @rename('../images/products/originals/' . $image, '../images/products/originals/' . $new_image_name);
+              
+                  $Qupdate = $osC_Database->query('update :table_products_images set image = :image where id = :id');
+                  $Qupdate->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+                  $Qupdate->bindValue(':image', $new_image_name);
+                  $Qupdate->bindInt(':id', $image_id);
+                  $Qupdate->execute();
+                }
+  
+                foreach ($osC_Image->getGroups() as $group) {
+                  if ($group['id'] != '1') {
+                    $osC_Image->resize($new_image_name, $group['id']);
+                  }
                 }
               }
+            }
+          }
+        } else {
+          foreach ($localimages as $image) {
+            $image = basename($image);
+            $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+            toc_mkdir($image_path);
+            
+            if (file_exists('../images/products/_upload/' . $image)) {
+              copy('../images/products/_upload/' . $image,  $image_path . $image);
             }
           }
         }
@@ -73,9 +97,19 @@
     function setDefault() {
       global $toC_Json, $osC_Language;
       
+      $error = false;
+      
       $osC_Image = new osC_Image_Admin();
       
-      if ($osC_Image->setAsDefault($_REQUEST['image'])) {
+      if (isset($_REQUEST['image']) && is_numeric($_REQUEST['image'])) {
+        if (!$osC_Image->setAsDefault($_REQUEST['image'])) {
+          $error = true;
+        }
+      } else {
+        $_SESSION['default_images'] = basename($_REQUEST['image']);
+      }
+      
+      if ($error === false) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
@@ -86,15 +120,29 @@
     }
   
     function deleteImage() {
-      global $toC_Json, $osC_Language;
+      global $toC_Json, $osC_Language, $osC_Session;
       
-      $osC_Image = new osC_Image_Admin();
+      $error = false;
       
-      if ($osC_Image->delete($_REQUEST['image'])) {
+      if (is_numeric($_REQUEST['image'])) {
+        $osC_Image = new osC_Image_Admin();
+      
+        if (!$osC_Image->delete($_REQUEST['image'])) {
+          $error = true;
+        }
+      } else {
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        
+        if (!osc_remove($image_path . $_REQUEST['image'])) {
+          $error = true;
+        }
+      }
+      
+      if ($error === false) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
-      }   
+      } 
       
       echo $toC_Json->encode($response);
     }
@@ -136,7 +184,29 @@
       
       echo $toC_Json->encode($response);
     }
-  
+      
+    function copyProduct() {
+      global $toC_Json, $osC_Language, $osC_Image;
+      
+      $osC_Image = new osC_Image_Admin();      
+      
+      $data = array('copy_images' => ( isset($_POST['copy_images']) && ($_POST['copy_images'] == '1') ) ? 1 : 0,
+                    'copy_variants' => ( isset($_POST['copy_variants']) && ($_POST['copy_variants'] == '1') ) ? 1 : 0,
+                    'copy_attributes' => ( isset($_POST['copy_attributes']) && ($_POST['copy_attributes'] == '1') ) ? 1 : 0,
+                    'copy_customization_fields' => ( isset($_POST['copy_customization_fields']) && ($_POST['copy_customization_fields'] == '1') ) ? 1 : 0,
+                    'copy_attachments' => ( isset($_POST['copy_attachments']) && ($_POST['copy_attachments'] == '1') ) ? 1 : 0,
+                    'copy_accessories' => ( isset($_POST['copy_accessories']) && ($_POST['copy_accessories'] == '1') ) ? 1 : 0,
+                    'copy_xsell' => ( isset($_POST['copy_xsell']) && ($_POST['copy_xsell'] == '1') ) ? 1 : 0);
+      
+      if (osC_Products_Admin::copy($_POST['products_id'], $data)) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }   
+      
+      echo $toC_Json->encode($response);
+    }
+    
     function getLocalImages() {
       global $toC_Json;
       
@@ -159,7 +229,7 @@
     }
   
     function uploadImage() {
-      global $toC_Json, $osC_Database;
+      global $toC_Json, $osC_Database, $osC_Session;
       
       $osC_Image = new osC_Image_Admin();
       
@@ -167,12 +237,13 @@
         $products_image = array_keys($_FILES);
         $products_image = $products_image[0];
       }
-      
-      if (isset($_REQUEST['products_id'])) {
-        $products_image = new upload($products_image);
- 
+
+      $products_image = new upload($products_image);
+      if (isset($_REQUEST['products_id']) && $_REQUEST['products_id'] > 0 ) {
         if ($products_image->exists()) {
-          $products_image->set_destination(realpath('../images/products/originals'));
+          $image_path = '../images/products/originals/';
+          $products_image->set_destination($image_path);
+
           if ($products_image->parse() && $products_image->save()) {
             $default_flag = 1;
             $Qcheck = $osC_Database->query('select id from :table_products_images where products_id = :products_id and default_flag = :default_flag limit 1');
@@ -192,17 +263,37 @@
             $Qimage->bindInt(':default_flag', $default_flag);
             $Qimage->bindInt(':sort_order', 0);
             $Qimage->bindRaw(':date_added', 'now()');
-            $Qimage->setLogging($_SESSION['module'], $_REQUEST['products_id']);
             $Qimage->execute();
+            
+            if (!$osC_Database->isError()) {
+              $image_id  = $osC_Database->nextID();
+              $new_image_name =  $_REQUEST['products_id'] . '_' . $image_id . '_' . $products_image->filename;
+              @rename($image_path . $products_image->filename, $image_path . $new_image_name);
+              
+              $Qupdate = $osC_Database->query('update :table_products_images set image = :image where id = :id');
+              $Qupdate->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+              $Qupdate->bindValue(':image', $new_image_name);
+              $Qupdate->bindInt(':id', $image_id);
+              $Qupdate->execute();
+            }
 
             foreach ($osC_Image->getGroups() as $group) {
               if ($group['id'] != '1') {
-                $osC_Image->resize($products_image->filename, $group['id']);
+                $osC_Image->resize($new_image_name, $group['id']);
               }
             }
           }
         }
-      }      
+      } else {
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        toc_mkdir($image_path);
+        
+        if ($products_image->exists()) {
+          $products_image->set_destination($image_path);
+          $products_image->parse(); 
+          $products_image->save();
+        } 
+      }
       
       header('Content-Type: text/html');
       
@@ -213,30 +304,45 @@
     }
   
     function getImages() {
-      global $toC_Json, $osC_Database;
+      global $toC_Json, $osC_Database, $osC_Session;
     
       $osC_Image = new osC_Image_Admin();
 
       $records = array();
-
-      $Qimages = $osC_Database->query('select id, image, default_flag from :table_products_images where products_id = :products_id order by sort_order');
-      $Qimages->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-      $Qimages->bindInt(':products_id', $_REQUEST['products_id']);
-      $Qimages->execute();
-  
-      while ($Qimages->next()) {
-        $records[] = array('id' => $Qimages->valueInt('id'),
-                           'image' => '<img src="' . DIR_WS_HTTP_CATALOG . 'images/products/mini/'. $Qimages->value('image') . '" border="0" width="' . $osC_Image->getWidth('mini') . '" />',
-                           'name' => $Qimages->value('image'),
-                           'size' => number_format(@filesize(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/originals/' . $Qimages->value('image'))) . ' bytes',
-                           'default' => $Qimages->valueInt('default_flag'));
-      }
       
+      if (isset($_REQUEST['products_id']) && is_numeric($_REQUEST['products_id'])) {
+        $Qimages = $osC_Database->query('select id, image, default_flag from :table_products_images where products_id = :products_id order by sort_order');
+        $Qimages->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+        $Qimages->bindInt(':products_id', $_REQUEST['products_id']);
+        $Qimages->execute();
+    
+        while ($Qimages->next()) {
+          $records[] = array('id' => $Qimages->valueInt('id'),
+                             'image' => '<img src="' . DIR_WS_HTTP_CATALOG . 'images/products/mini/'. $Qimages->value('image') . '" border="0" />',
+                             'name' => $Qimages->value('image'),
+                             'size' => number_format(@filesize(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/originals/' . $Qimages->value('image'))) . ' bytes',
+                             'default' => $Qimages->valueInt('default_flag'));
+        }
+      } else {
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+                    
+        $osC_DirectoryListing = new osC_DirectoryListing($image_path, true);
+        $osC_DirectoryListing->setIncludeDirectories('false');
+        
+        foreach ($osC_DirectoryListing->getFiles() as $file) {
+          $records[] = array('id' => '',
+                             'image' => '<img src="' . $image_path . $file['name'] . '" border="0" width="' . $osC_Image->getWidth('mini') . '" height="' .  $osC_Image->getHeight('mini') . '" />',
+                             'name' => $file['name'],
+                             'size' => number_format($file['size']) . ' bytes',
+                             'default' => ($_SESSION['default_images'] == $file['name']) ? 1 : 0);
+        }
+      }
+          
       $response = array(EXT_JSON_READER_TOTAL => sizeof($records),
                         EXT_JSON_READER_ROOT => $records);
                         
       echo $toC_Json->encode($response);   
-    } 
+    }
   
     function listProducts() {
       global $toC_Json, $osC_Database, $osC_Language, $osC_Currencies;
@@ -270,7 +376,7 @@
         $Qproducts->bindValue(':products_name', '%' . $_REQUEST['search'] . '%');
       }
     
-      $Qproducts->appendQuery(' order by pd.products_name');
+      $Qproducts->appendQuery(' order by pd.products_id desc');
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
       $Qproducts->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
       $Qproducts->bindInt(':language_id', $osC_Language->getID());
@@ -450,125 +556,101 @@
       $Qvariants->execute();
       
       $records = array();
-      $variants_groups = array();
-      $variant_values = array();
-      
       while ($Qvariants->next()) {
-        $Qentries = $osC_Database->query('select * from :table_products_variants_entries where products_variants_id = :products_variants_id order by products_variants_entries_id');
+        $Qentries = $osC_Database->query('select e.products_variants_id, e.products_variants_groups_id as gid, e.products_variants_values_id as vid, g.products_variants_groups_name as gname, v.products_variants_values_name as vname from :table_products_variants_entries e inner join :table_products_variants_groups g on e.products_variants_groups_id = g.products_variants_groups_id inner join :table_products_variants_values v on e.products_variants_values_id = v.products_variants_values_id  where g.language_id = v.language_id and g.language_id = :language_id and products_variants_id = :products_variants_id order by g.products_variants_groups_id, v.products_variants_values_id');
         $Qentries->bindTable(':table_products_variants_entries', TABLE_PRODUCTS_VARIANTS_ENTRIES);
+        $Qentries->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
+        $Qentries->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
         $Qentries->bindInt(':products_variants_id', $Qvariants->valueInt('products_variants_id'));
+        $Qentries->bindInt(':language_id', $osC_Language->getID());
         $Qentries->execute();
         
-        $id = array();
+        $variants_values = array();
+        $variants_values_name = array();
+        
         $data = array();
+        $group_values = array();
+        $variant_values = array();
+        $variants_groups = array();
+        
         while ($Qentries->next()) {
-          $groups_id = $Qentries->valueInt('products_variants_groups_id');
-          $values_id = $Qentries->valueInt('products_variants_values_id');
-          
-          $id[] = $groups_id . '_' . $values_id;
-          
-          if (!isset($variants_groups[$groups_id])) {
-            $Qname = $osC_Database->query('select * from :products_variants_groups where products_variants_groups_id = :products_variants_groups_id and language_id = :language_id');
-            $Qname->bindTable(':products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
-            $Qname->bindInt(':products_variants_groups_id', $groups_id);
-            $Qname->bindInt(':language_id', $osC_Language->getID());
-            $Qname->execute();
-            
-            $variants_groups[$groups_id] = $Qname->value('products_variants_groups_name');
-          }
-          
-          if (!isset($variant_values[$values_id])) {
-            $Qname = $osC_Database->query('select * from :products_variants_values where products_variants_values_id = :products_variants_values_id and language_id = :language_id');
-            $Qname->bindTable(':products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
-            $Qname->bindInt(':products_variants_values_id', $Qentries->valueInt('products_variants_values_id'));
-            $Qname->bindInt(':language_id', $osC_Language->getID());
-            $Qname->execute();
-            
-            $variant_values[$values_id] = $Qname->value('products_variants_values_name');
-          }
-          
-          $data[$groups_id] = $variant_values[$values_id];
+          $variants_values[] = $Qentries->valueInt('gid') . '_' . $Qentries->valueInt('vid');
+          $variants_values_name[] = $Qentries->value('gname') . ':' . $Qentries->value('vname');
+          $variants_groups[] = array('id' => $Qentries->valueInt('gid'),
+                                     'name' => $Qentries->value('gname'),
+                                     'rawvalue' => $Qentries->value('vname'),
+                                     'value' => $Qentries->value('vid'));
         }
         
-        $data['id'] = implode('-', $id);
-        $data['qty'] = $Qvariants->valueInt('products_quantity');
-        $data['price'] = $Qvariants->valueInt('products_price');
-        $data['sku'] = $Qvariants->value('products_sku');
-        $data['model'] = $Qvariants->value('products_model');
-        $data['weight'] = $Qvariants->value('products_weight');
-        $data['status'] = ($Qvariants->value('products_status') == 1) ? true : false;
+        $data['products_variants_id'] = $Qvariants->valueInt('products_variants_id');
+        $data['default'] =  $Qvariants->valueInt('is_default');
+        $data['variants_values_name'] = implode('; ', $variants_values_name);
+        $data['variants_groups'] = $variants_groups;
+        
+        $ids = implode('-', $variants_values);
+        $data['variants_values'] = $ids;
+        
+        $data['data'] = array('variants_quantity' => $Qvariants->value('products_quantity'),
+                              'variants_sku' => $Qvariants->value('products_sku'),
+                              'variants_net_price' => $Qvariants->value('products_price'),
+                              'variants_model' => $Qvariants->value('products_model'),
+                              'variants_weight' => $Qvariants->value('products_weight'),
+                              'variants_status' => $Qvariants->valueInt('products_status'),
+                              'variants_image' => $Qvariants->value('products_images_id'),
+                              'variants_download_filename' => $Qvariants->value('filename'),
+                              'variants_download_cachefilename' => $Qvariants->value('cache_filename'),
+                              'variants_download_file' => 'json.php?cache_filename=' . $Qvariants->value('cache_filename') . '&file_name=' . $Qvariants->value('filename') . '&module=products&action=download_variants_file');
 
+        
         $records[] = $data;
       }
+            
+      $response = array(EXT_JSON_READER_TOTAL => sizeof($records),
+                        EXT_JSON_READER_ROOT => $records);
       
-      if (sizeof($records) > 0) {
-        $response['success'] = true;
-        $response['variants_groups_ids'] = array_keys($variants_groups);
-        $response['variants_groups_names'] = array_values($variants_groups);
-        $response['data'] = array(EXT_JSON_READER_TOTAL => sizeof($records),
-                                  EXT_JSON_READER_ROOT => $records);
-      } else {
-        $response['success'] = false;
-      }
-                        
       echo $toC_Json->encode($response);    
     }
     
-    function getVariants() {
+    function getVariantsValues() {
       global $toC_Json, $osC_Database, $osC_Language;
+      
+      $Qvalues = $osC_Database->query('select pvv.products_variants_values_id as variants_id, products_variants_values_name from :table_products_variants_values pvv, :table_products_variants_values_to_products_variants_groups pv2pv where pvv.products_variants_values_id = pv2pv.products_variants_values_id and pv2pv.products_variants_groups_id = :groups_id and pvv.language_id = :language_id');
+      $Qvalues->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
+      $Qvalues->bindTable(':table_products_variants_values_to_products_variants_groups', TABLE_PRODUCTS_VARIANTS_VALUES_TO_PRODUCTS_VARIANTS_GROUPS);
+      $Qvalues->bindInt(':groups_id', $_REQUEST['group_id']);
+      $Qvalues->bindInt(':language_id', $osC_Language->getID());
+      $Qvalues->execute();
+      
+      $variant_value = array();
+      while ($Qvalues->next()) {
+        $variant_value[] = array('id'   => $Qvalues->value('variants_id'),
+                                 'text' => $Qvalues->value('products_variants_values_name'));
+      }
+      
+      $Qvalues->freeResult();
+          
+      $response = array(EXT_JSON_READER_ROOT => $variant_value);      
+                        
+      echo $toC_Json->encode($response);
+    }
     
+    function loadVariantsGroups() {
+      global $toC_Json, $osC_Database, $osC_Language;
+      
       $Qgroups = $osC_Database->query('select products_variants_groups_id as groups_id, products_variants_groups_name as groups_name from :table_products_variants_groups where language_id = :language_id order by products_variants_groups_name');
       $Qgroups->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
       $Qgroups->bindInt(':language_id', $osC_Language->getID());
       $Qgroups->execute();
-    
-      $variants_groups = array();
+      
+      $groups = array();
       while ($Qgroups->next()) {
-        $group = array();
-        $group['id'] = $Qgroups->value('groups_id');
-        $group['text'] = $Qgroups->value('groups_name');
-        $group['expanded'] = true;
-    
-        $Qvalues = $osC_Database->query('select pvv.products_variants_values_id as values_id, pvv.products_variants_values_name as values_name from :table_products_variants_values pvv, :table_products_variants_values_to_products_variants_groups pvv2pvg where pvv2pvg.products_variants_groups_id = :products_variants_groups_id and pvv2pvg.products_variants_values_id = pvv.products_variants_values_id and pvv.language_id = :language_id order by pvv.products_variants_values_name');
-        $Qvalues->bindTable(':table_products_variants_values', TABLE_PRODUCTS_VARIANTS_VALUES);
-        $Qvalues->bindTable(':table_products_variants_values_to_products_variants_groups', TABLE_PRODUCTS_VARIANTS_VALUES_TO_PRODUCTS_VARIANTS_GROUPS);
-        $Qvalues->bindInt(':products_variants_groups_id', $Qgroups->value('groups_id'));
-        $Qvalues->bindInt(':language_id', $osC_Language->getID());
-        $Qvalues->execute();
-    
-        $values = array();
-        if ($Qvalues->numberOfRows() > 0) {
-          while ($Qvalues->next()) {
-            $value = array();
-            $value['id'] = $Qgroups->value('groups_id') . '_' . $Qvalues->valueInt('values_id');
-            $value['text'] = $Qvalues->value('values_name');
-            $value['leaf'] = true;
-
-            if (isset($_REQUEST['products_id']) && is_numeric($_REQUEST['products_id'])) {
-              $Qcheck = $osC_Database->query('select pve.* from :table_products_variants_entries pve, :table_products_variants pv where pv.products_id = :products_id and pv.products_variants_id = pve.products_variants_id and pve.products_variants_groups_id = :products_variants_groups_id and pve.products_variants_values_id = :products_variants_values_id');
-              $Qcheck->bindTable(':table_products_variants_entries', TABLE_PRODUCTS_VARIANTS_ENTRIES);
-              $Qcheck->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
-              $Qcheck->bindInt(':products_id', $_REQUEST['products_id']);
-              $Qcheck->bindInt(':products_variants_groups_id', $Qgroups->value('groups_id'));
-              $Qcheck->bindInt(':products_variants_values_id', $Qvalues->valueInt('values_id'));
-              $Qcheck->execute();
-              
-              if ($Qcheck->numberOfRows() > 0) {
-                $value['checked'] = true;
-              } else {
-                $value['checked'] = false;
-              }
-            }
-            
-            $values[] = $value;
-          }
-          
-          $group['children'] = $values;
-          $variants_groups[] = $group;
-        }
+        $groups[] = array('groups_id'   => $Qgroups->value('groups_id'),
+                          'groups_name' => $Qgroups->value('groups_name'));
       }
-    
-      echo $toC_Json->encode($variants_groups);
+      
+      $response = array(EXT_JSON_READER_ROOT => $groups); 
+                        
+      echo $toC_Json->encode($response);
     }
     
     function saveProduct() {
@@ -642,8 +724,13 @@
         $data['categories'] = explode(',', $_REQUEST['categories_id']);
       }
       
-      if (isset($_REQUEST['attachments_ids'])) {
+      if (isset($_REQUEST['attachments_ids'])&& !empty($_REQUEST['attachments_ids'])) {
         $data['attachments'] = explode(',', $_REQUEST['attachments_ids']);
+      }
+      
+      if (isset($_REQUEST['accessories_ids']) && !empty($_REQUEST['accessories_ids'])) {
+        $accessories_ids = explode(';', $_REQUEST['accessories_ids']);
+        $data['accessories_ids'] = $accessories_ids;
       }
       
       
@@ -652,29 +739,60 @@
         $data['localimages'] = $localimages;
       }
       
-      if (isset($_REQUEST['products_variants']) && !empty($_REQUEST['products_variants'])) {
+      if ( $data['products_type'] != PRODUCT_TYPE_GIFT_CERTIFICATE && isset($_REQUEST['products_variants']) && !empty($_REQUEST['products_variants'])) {
         $products_variants = explode(';', $_REQUEST['products_variants']);
         
+        $data['variants'] = $products_variants;
         $data['variants_quantity'] = array();
         $data['variants_status'] = array();
         $data['variants_price'] = array();
         $data['variants_sku'] = array();
         $data['variants_model'] = array();
         $data['variants_weight'] = array();
+        $data['variants_change'] = array();
+        
         foreach ($products_variants as $variant) {
           $variants = explode(':', $variant);
+          $data['products_variants_id'][$variants[0]] = $variants[1];
+          $data['variants_default'][$variants[0]] = $variants[2];
+          $data['variants_quantity'][$variants[0]] = $_REQUEST['variants_quantity'][$variants[0]];
+          $data['variants_price'][$variants[0]] = $_REQUEST['variants_net_price'][$variants[0]];
+          $data['variants_sku'][$variants[0]] = $_REQUEST['variants_sku'][$variants[0]];
+          $data['variants_model'][$variants[0]] = $_REQUEST['variants_model'][$variants[0]];
+          $data['variants_weight'][$variants[0]] = $_REQUEST['variants_weight'][$variants[0]];
+          $data['variants_status'][$variants[0]] = $_REQUEST['variants_status_' . $variants[0]];
+          $data['variants_image'][$variants[0]] = isset($_REQUEST['variants_image_' . $variants[0]]) ? $_REQUEST['variants_image_' . $variants[0]] : null;
           
-          $data['variants_quantity'][$variants[0]] = $variants[1];
-          $data['variants_price'][$variants[0]] = $variants[2];
-          $data['variants_sku'][$variants[0]] = $variants[3];
-          $data['variants_model'][$variants[0]] = $variants[4];
-          $data['variants_weight'][$variants[0]] = $variants[5];
-          $data['variants_status'][$variants[0]] = (($variants[6] == 'true') ? 1 : 0);
+          if ($data['products_type'] == PRODUCT_TYPE_DOWNLOADABLE) {
+            $data['variants_cache_filename'][$variants[0]] = $variants[2];
+          }
+          
+          //$data['variants_change'][$variants[0]] = $variants[3];
         }
       }
       
-      if (osC_Products_Admin::save((isset($_REQUEST['products_id']) && (is_numeric($_REQUEST['products_id']) && ($_REQUEST['products_id'] != '-1')) ? $_REQUEST['products_id'] : null), $data)) {
-        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      if (isset($_REQUEST['customization_fields']) && !empty($_REQUEST['customization_fields'])) {
+        $fields = explode(';;', $_REQUEST['customization_fields']);
+        
+        if (sizeof($fields) > 0) {
+          $data['customization_fields'] = array();
+          
+          foreach ($fields as $field) {
+            $tmp = explode('::', $field);
+  
+            $data['customization_fields'][] = array(
+              'customizations_fields_id' => $tmp[0],
+              'customizations_type' => $tmp[1],
+              'customizations_is_required' => ($tmp[2] == 'true') ? 1 : 0,
+              'customizations_name_data' => $toC_Json->decode($tmp[3]));
+          }
+        }
+      }
+      
+      $products_id = osC_Products_Admin::save((isset($_REQUEST['products_id']) && (is_numeric($_REQUEST['products_id']) && ($_REQUEST['products_id'] != '-1')) ? $_REQUEST['products_id'] : null), $data);
+      
+      if ($products_id) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'),  'productsId' => $products_id);
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
       }      
@@ -741,6 +859,34 @@
       
       echo $toC_Json->encode($response);
     }
+    
+    function getAccessories() {
+      global $toC_Json, $osC_Database, $osC_Language;
+      
+      $response = array(EXT_JSON_READER_TOTAL => 0, EXT_JSON_READER_ROOT => array());  
+      if (isset($_REQUEST['products_id']) && ($_REQUEST['products_id'] > 0)) {
+        $Qaccessories = $osC_Database->query('select pd.products_id, pd.products_name from :table_products_accessories pa, :table_products_description pd where pa.accessories_id = pd.products_id and pa.products_id = :products_id and pd.language_id = :language_id');
+        $Qaccessories->bindTable(':table_products_accessories', TABLE_PRODUCTS_ACCESSORIES);
+        $Qaccessories->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
+        $Qaccessories->bindInt(':products_id', $_REQUEST['products_id']);
+        $Qaccessories->bindInt(':language_id', $osC_Language->getID());
+        $Qaccessories->execute();
+    
+        $products = array();
+        while ($Qaccessories->next()) {
+          $products[] = array('accessories_id' => $Qaccessories->value('products_id'),
+                              'products_name' => $Qaccessories->value('products_name'));
+        }
+        $Qaccessories->freeResult();
+        
+        $response = array(EXT_JSON_READER_TOTAL => sizeof($products),
+                          EXT_JSON_READER_ROOT => $products); 
+      }
+      
+      echo $toC_Json->encode($response);
+    }
+    
+    
     function getAttributes() {
       global $toC_Json, $osC_Database;
       
@@ -985,6 +1131,43 @@
       echo $toC_Json->encode($response);
     }
     
+    function listCustomizationFields() {
+      global $osC_Database, $toC_Json, $osC_Language;
+      
+      $Qcustomizations = $osC_Database->query('select cf.customization_fields_id, products_id, type, is_required, name from :table_customization_fields cf inner join :table_customization_fields_description cfd on cf.customization_fields_id = cfd.customization_fields_id where cf.products_id = :products_id and cfd.languages_id = :languages_id order by cf.customization_fields_id');
+      $Qcustomizations->bindTable(':table_customization_fields', TABLE_CUSTOMIZATION_FIELDS);
+      $Qcustomizations->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+      $Qcustomizations->bindInt(':products_id', $_REQUEST['products_id']);
+      $Qcustomizations->bindInt(':languages_id', $osC_Language->getID());
+      $Qcustomizations->execute();
+      
+      $records = array();
+      while($Qcustomizations->next()){
+        $customization_fields_id = $Qcustomizations->valueInt('customization_fields_id');
+        $name = array();
+        
+        $Qdescription = $osC_Database->query('select * from :table_customization_fields_description where customization_fields_id = :customization_fields_id');
+        $Qdescription->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+        $Qdescription->bindInt(':customization_fields_id', $customization_fields_id);
+        $Qdescription->execute();
+  
+        while ($Qdescription->next()) {
+          $name['name' . $Qdescription->valueInt('languages_id')] = $Qdescription->value('name');
+        }
+        
+        $records[] = array('customization_fields_id'   => $customization_fields_id,
+                           'customization_fields_name' => $Qcustomizations->value('name'),
+                           'products_id'               => $Qcustomizations->valueInt('products_id'),
+                           'customization_type'        => $Qcustomizations->valueInt('type'),
+                           'is_required'               => $Qcustomizations->valueInt('is_required'),
+                           'name_data'                 => $toC_Json->encode($name));  
+      }
+     
+      $response = array(EXT_JSON_READER_ROOT  => $records); 
+                        
+      echo $toC_Json->encode($response);
+    }
+    
     function saveAttachment() {
       global $toC_Json, $osC_Language;
       
@@ -1059,5 +1242,16 @@
       
       readfile(DIR_FS_CACHE . 'products_attachments/' . $_REQUEST['cache_filename']);
     }
+    
+    function downloadVariantsFile() {
+      header("Expires: Mon, 26 Nov 1962 00:00:00 GMT");
+      header("Last-Modified: " . gmdate("D,d M Y H:i:s") . " GMT");
+      header("Cache-Control: no-cache, must-revalidate");
+      header("Pragma: no-cache");
+      header("Content-Type: Application/octet-stream");
+      header("Content-disposition: attachment; filename=" . $_REQUEST['file_name']);
+      
+      readfile(DIR_FS_DOWNLOAD . $_REQUEST['cache_filename']);
+    } 
   }
 ?>

@@ -76,7 +76,14 @@
         $module = 'osC_OrderTotal_' . $module;
 
         if ($GLOBALS[$module]->isEnabled() === true) {
+          //use the cart total value to caculate the tax of order total module 
+          //cart total value before module process
+          $pre_total = $osC_ShoppingCart->getTotal();
+          
           $GLOBALS[$module]->process();
+          
+          //cart total value after module process
+          $post_total = $osC_ShoppingCart->getTotal();
 
           foreach ($GLOBALS[$module]->output as $output) {
             if (!empty($output['title']) && !empty($output['text'])) {
@@ -84,6 +91,7 @@
                                      'title' => $output['title'],
                                      'text' => $output['text'],
                                      'value' => $output['value'],
+                                     'tax' => ($post_total - $pre_total - $output['value']),
                                      'sort_order' => $GLOBALS[$module]->getSortOrder());
             }
           }

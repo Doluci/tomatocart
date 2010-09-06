@@ -24,9 +24,15 @@
 /* Class constructor */
 
     function osC_Checkout_Cart() {
-      global $osC_Services, $osC_Language, $breadcrumb;
+      global $osC_Services, $osC_Language, $breadcrumb, $payment_modules;
 
       $this->_page_title = $osC_Language->get('shopping_cart_heading');
+       
+      if (!class_exists('osC_Payment')) {
+        require_once('includes/classes/payment.php');
+      }
+      
+      $payment_modules = new osC_Payment();
 
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_checkout_shopping_cart'), osc_href_link(FILENAME_CHECKOUT, null, 'SSL'));

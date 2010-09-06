@@ -12,6 +12,7 @@ heading_title = Products
 heading_attachments_title = Attachments
 heading_title_new_product = New Product
 heading_title_new_attachment = New Attachment
+heading_title_variants = Variants
 
 operation_title_search = Search:
 
@@ -30,10 +31,16 @@ table_heading_frontpage = Front Page
 table_heading_attachments_name = Name
 table_heading_attachments_description = Description
 table_heading_attachments_file = File
+table_heading_customizations_name = Name
+table_heading_customizations_is_required = Is Required
+table_heading_customizations_type = Type
+table_heading_variants = Variants
+table_heading_default = Default
 
 action_heading_delete_image = Delete Image
 action_heading_batch_copy_products = Batch Copy Products
 action_heading_batch_delete_products = Batch Delete Products
+action_heading_new_customization = New Customization
 
 section_general = General
 section_meta = Meta Info
@@ -45,6 +52,8 @@ section_attributes = Attributes
 section_downloadables = Downloadable Product Options
 section_gift_certificates = Gift Certificate Options
 section_attachments = Attachments
+section_customizations = Customizations
+section_accessories = Accessories
 
 subsection_price = Price
 subsection_data = Data
@@ -78,6 +87,11 @@ field_Maximum_order_quantity = Max. Order Quantity:
 field_unlimited = Unlimited
 field_increment = Quantity Increment:
 field_quantity_unit = Quantity Unit:
+field_customization_type_text = Input Text
+field_customization_type_file = Upload File Field
+field_customization_type = Field Type:
+field_customization_required = Is Required:
+field_customization_name = Field Name:
 
 field_status = Status:
 
@@ -109,6 +123,16 @@ field_attachments_name = Name:
 field_attachments_file = File
 field_attachments_description = Description:
 
+field_copy_images = Copy Product Images?
+field_copy_variants = Copy Product Variants?
+field_copy_attributes = Copy Products Attributes?
+field_copy_xsell = Copy Cross Sell Products?
+field_copy_accessories = Copy Product Accessories?
+field_copy_attachments = Copy Product Attachments?
+field_copy_customization_fields = Copy Product Customization Fields?
+
+introduction_duplicate_product = Please check the following items to choose the data that to be copied.
+
 none = -- None --
 top_category = -- Top Category --
 search_terms = --Products Name or SKU--
@@ -125,7 +149,8 @@ image_retrieving_local_files = Retrieving local images..
 image_multiple_upload_progress = Uploading images to server..
 images_loading_from_server = Loading images from server..
 copy_method_link = Link Product
-copy_method_duplicate = Duplicate Product
+action_duplicate = Duplicate Product
+
 toggle_html_editor = Toggle HTML Editor
 
 introduction_select_local_images = The following images are available on the server where additional images can be uploaded via FTP. The listing can be refreshed by clicking on the Local Files link.<br /><br />Please select from the following listing which images to assign to this product.
@@ -147,6 +172,7 @@ ms_error_image_directory_non_existant = Error: The product images directory does
 ms_error_product_keyword_empty = Error: This product has an empty product key which needs to be defined. Please use a unique keyword to publicly identify this product.
 ms_error_product_keyword_exists = Error: This product keyword is already in use: %s. Please use another unique keyword for this product.
 ms_error_product_keyword_invalid = Error: This product keyword is invalid: %s. Product keywords must be one word containing letters and numbers (a-zA-Z0-9), and can be separated by underscores (_) and minus symbols (-) only.
+ms_notice_no_products_image = Notice: There is no image available.
 
 xsell_products_title = Xsell Products
 section_xsell_products = Xsell Products
@@ -155,5 +181,19 @@ table_heading_xsell_products = Products
 table_heading_xsell_products_action = Action
 
 dialog_search_products_heading_title = Search Products
+dialog_variants_groups_heading_title = Variants Groups
 
 table_heading_category = Category
+
+button_manage_variants_groups = Manage Variants Groups
+
+msg_warning_variants_groups_changed = Do you really want to change the variants groups?
+msg_warning_must_choose_value_for_variant_group = Please choose a variant value for each variant group.
+msg_records_exist = This composition exist
+
+msg_warning_variant_values_exist = The variant does already exist.
+msg_select_default_variants_records = Please select a default variant for this product.
+
+fieldset_lengend_data_title = Data
+fieldset_lengend_image_title = Images
+fieldset_lengend_download_title = Downloadable File

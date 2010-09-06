@@ -12,26 +12,26 @@
 */
   
   class toC_Ratings_Admin {
-    function getData($id) {
-      global $toC_Json, $osC_Language, $osC_Database;
-      
-      $Qrating = $osC_Database->query('select r.status, rd.ratings_text, rd.languages_id from :table_ratings r inner join :table_ratings_description rd on r.ratings_id = rd.ratings_id and r.ratings_id = :ratings_id');
-      $Qrating->bindTable(':table_ratings', TABLE_RATINGS);
-      $Qrating->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
-      $Qrating->bindInt(':ratings_id', $id);
-      $Qrating->execute();
-      
-      $data = array();
-      while( $Qrating->next() ) {
-        $data['status'] = $Qrating->valueInt('status');
-        $data['ratings_text[' . $Qrating->valueInt('languages_id') .']'] = $Qrating->value('ratings_text');
-      }
+  	function getData($id) {
+  		global $toC_Json, $osC_Language, $osC_Database;
+  		
+  		$Qrating = $osC_Database->query('select r.status, rd.ratings_text, rd.languages_id from :table_ratings r inner join :table_ratings_description rd on r.ratings_id = rd.ratings_id and r.ratings_id = :ratings_id');
+  		$Qrating->bindTable(':table_ratings', TABLE_RATINGS);
+  		$Qrating->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+  		$Qrating->bindInt(':ratings_id', $id);
+  		$Qrating->execute();
+  		
+  		$data = array();
+  		while( $Qrating->next() ) {
+  			$data['status'] = $Qrating->valueInt('status');
+  			$data['ratings_text[' . $Qrating->valueInt('languages_id') .']'] = $Qrating->value('ratings_text');
+  		}
 
-      $Qrating->freeResult();
-      
-      return $data;     
-    }
-    
+  		$Qrating->freeResult();
+  		
+      return $data;  		
+  	}
+  	
     function save($id = null, $data) {
       global $osC_Database, $osC_Language;
       
@@ -50,33 +50,33 @@
       $Qrating->execute();
       
       if ( !$osC_Database->isError() ) {
-        $ratings_id = is_numeric($id) ? $id : $osC_Database->nextID();
-        
-        foreach($osC_Language->getAll() as $l) {
-          if ( is_numeric($id) ) {
-            $Qrd = $osC_Database->query('update :table_ratings_description set ratings_text = :ratings_text where ratings_id = :ratings_id and languages_id = :languages_id');
-          }else {
-            $Qrd = $osC_Database->query('insert into :table_ratings_description (ratings_id, languages_id, ratings_text) values (:ratings_id, :languages_id, :ratings_text)');
-          }
-          
-          $Qrd->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
-          $Qrd->bindInt(':ratings_id', $ratings_id);
-          $Qrd->bindInt(':languages_id', $l['id']);
-          $Qrd->bindValue(':ratings_text', $data['ratings_text'][$l['id']]);
-          $Qrd->execute();
-          
-          if ( $osC_Database->isError() ) {
-            $error =true;
-            
-            break;
-          }
-        }
+      	$ratings_id = is_numeric($id) ? $id : $osC_Database->nextID();
+      	
+      	foreach($osC_Language->getAll() as $l) {
+      		if ( is_numeric($id) ) {
+      			$Qrd = $osC_Database->query('update :table_ratings_description set ratings_text = :ratings_text where ratings_id = :ratings_id and languages_id = :languages_id');
+      		}else {
+      			$Qrd = $osC_Database->query('insert into :table_ratings_description (ratings_id, languages_id, ratings_text) values (:ratings_id, :languages_id, :ratings_text)');
+      		}
+      		
+      		$Qrd->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
+      		$Qrd->bindInt(':ratings_id', $ratings_id);
+      		$Qrd->bindInt(':languages_id', $l['id']);
+      		$Qrd->bindValue(':ratings_text', $data['ratings_text'][$l['id']]);
+      		$Qrd->execute();
+      		
+      		if ( $osC_Database->isError() ) {
+      			$error =true;
+      			
+      			break;
+      		}
+      	}
       }
       
       if ( $error === false ) {
-        $osC_Database->commitTransaction();
-        
-        return true;
+      	$osC_Database->commitTransaction();
+      	
+      	return true;
       }
       
       $osC_Database->rollbackTransaction();
@@ -85,12 +85,12 @@
     }
     
     function delete($id) {
-      global $osC_Database, $osC_Language;
-      
-      $error = false;
+    	global $osC_Database, $osC_Language;
+    	
+    	$error = false;
       
       $osC_Database->startTransaction();
-      
+    	
       $Qdelete = $osC_Database->query('delete from :table_ratings where ratings_id = :ratings_id');
       $Qdelete->bindTable(':table_ratings', TABLE_RATINGS);
       $Qdelete->bindInt(':ratings_id', $id);
@@ -100,17 +100,17 @@
         $error = true;
       }
 
-      if ($error === false){
+    	if ($error === false){
         $Qrd = $osC_Database->query('delete from :table_ratings_description where ratings_id = :ratings_id');
         $Qrd->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
         $Qrd->bindInt(':ratings_id', $id);
         $Qrd->execute();
-              
+    	        
         if ( $osC_Database->isError() ) {
           $error = true;
         }
-      }
-      
+    	}
+    	
       if ($error === false){
         $Qcr = $osC_Database->query('delete from :table_categories_ratings where ratings_id = :ratings_id');
         $Qcr->bindTable(':table_categories_ratings', TABLE_CATEGORIES_RATINGS);
@@ -133,20 +133,20 @@
         }
       }
       
-      if ($error == false) {
-        $osC_Database->commitTransaction();
+    	if ($error == false) {
+    		$osC_Database->commitTransaction();
         
         return true;
-      }
-      
+    	}
+    	
       $osC_Database->rollbackTransaction();
       
       return false;
     }
     
     function setStatus($id, $status) {
-      global $toC_Json, $osC_Database, $osC_Language;
-      
+    	global $toC_Json, $osC_Database, $osC_Language;
+    	
       $Qupdate = $osC_Database->query('update :table_ratings set status = :status where ratings_id = :ratings_id');
       $Qupdate->bindTable(':table_ratings', TABLE_RATINGS);
       $Qupdate->bindInt(':ratings_id', $id);
@@ -171,7 +171,7 @@
       $Qtext->execute();
       
       while ( $Qtext->next() ) {
-        $ratings_text = $Qtext->value('ratings_text');
+	      $ratings_text = $Qtext->value('ratings_text');
       }
       $Qtext->freeResult();
       
@@ -188,7 +188,7 @@
       
       $ratings_desc = array();
       while ( $Qtext->next() ) {
-        $languages_id = $Qtext->valueInt('languages_id');
+      	$languages_id = $Qtext->valueInt('languages_id');
         $ratings_desc[$languages_id] = $Qtext->value('ratings_text');
       }
       $Qtext->freeResult();
@@ -221,8 +221,8 @@
     }
     
     function deleteLanguage($ratings_id){
-      global $osC_Database;
-      
+    	global $osC_Database;
+    	
       $Qratings = $osC_Database->query('delete from :table_ratings_description where ratings_id = :ratings_id');
       $Qratings->bindTable(':table_ratings_description', TABLE_RATINGS_DESCRIPTION);
       $Qratings->bindInt(':ratings_id', $ratings_id);

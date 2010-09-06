@@ -108,7 +108,7 @@ Ext.extend(Toc.products.XsellProductsGrid, Ext.grid.GridPanel, {
     if (!Ext.isEmpty(productId)) {
       store = this.getStore();
       
-      if (store.find('products_id', productId) == -1) {
+      if (store.findExact('products_id', productId) == -1) {
         var record = Ext.data.Record.create([
           {name: 'products_id', type: 'string'},
           {name: 'products_name', type: 'string'}

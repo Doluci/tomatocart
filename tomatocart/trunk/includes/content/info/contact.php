@@ -10,7 +10,9 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
-
+  require_once("includes/classes/departments.php");
+  require_once("includes/classes/captcha.php");
+  
   class osC_Info_Contact extends osC_Template {
 
 /* Private variables */
@@ -35,24 +37,79 @@
       if ($_GET[$this->_module] == 'process') {
         $this->_process();
       }
+      
+      if($_GET[$this->_module] == 'showImage') {
+        $this->_generateImage();
+      }
     }
 
 /* Private methods */
 
     function _process() {
       global $osC_Language, $messageStack;
-
-      $name = osc_sanitize_string($_POST['name']);
-      $email_address = osc_sanitize_string($_POST['email']);
-      $enquiry = osc_sanitize_string($_POST['enquiry']);
-
-      if (osc_validate_email_address($email_address)) {
-        osc_email(STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS, $osC_Language->get('contact_email_subject'), $enquiry, $name, $email_address);
-
-        osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO'));
+      
+      if (isset($_POST['department_email']) && !empty($_POST['department_email'])) {
+        $department_email = osc_sanitize_string($_POST['department_email']);
+        
+        if (!osc_validate_email_address($department_email)) {
+          $messageStack->add('contact', $osC_Language->get('field_departments_email_error'));
+        }
       } else {
-        $messageStack->add('contact', $osC_Language->get('field_customer_email_address_check_error'));
+        $messageStack->add('contact', $osC_Language->get('field_departments_email_error'));
       }
+      
+      if (isset($_POST['name']) && !empty($_POST['name'])) {
+        $name = osc_sanitize_string($_POST['name']);
+      } else {
+        $messageStack->add('contact', $osC_Language->get('field_customer_name_error'));
+      }
+      
+      if (isset($_POST['telephone']) && !empty($_POST['telephone'])) {
+        $telephone = osc_sanitize_string($_POST['telephone']);
+      } else {
+        $messageStack->add('contact', $osC_Language->get('field_telephone_error'));
+      }
+      
+      if (isset($_POST['email']) && !empty($_POST['email'])) {
+        $email_address = osc_sanitize_string($_POST['email']);
+        
+        if (!osc_validate_email_address($email_address)) {
+          $messageStack->add('contact', $osC_Language->get('field_customer_concat_email_error'));
+        }
+      } else {
+        $messageStack->add('contact', $osC_Language->get('field_customer_concat_email_error'));
+      }
+      
+      if (isset($_POST['enquiry']) && !empty($_POST['enquiry'])) {
+        $enquiry = osc_sanitize_string($_POST['enquiry']);
+      } else {
+        $messageStack->add('contact', $osC_Language->get('field_enquiry_error'));
+      }
+      
+      if ( ACTIVATE_CAPTCHA == '1' ) {
+        if (isset($_POST['concat_code']) && !empty($_POST['concat_code'])) {
+          $concat_code = osc_sanitize_string($_POST['concat_code']);
+          
+          if ( !strcasecmp($concat_code, $_SESSION['verify_code']) == 0 ) {
+            $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
+          }
+        } else {
+          $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
+        }  
+      }
+      
+      if ( $messageStack->size('contact') === 0 ) {
+        osc_email(STORE_OWNER, $department_email, $osC_Language->get('contact_email_subject'), $enquiry . '<br /><br /><br />' . $osC_Language->get('contact_telephone_title') . $telephone, $name, $email_address);
+
+        osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO'));    
+      } 
+    }
+    
+    function _generateImage() {
+      $captcha = new toC_Captcha();
+      $_SESSION['verify_code'] = $captcha->getCode(); 
+      
+      $captcha->genCaptcha();
     }
   }
 ?>

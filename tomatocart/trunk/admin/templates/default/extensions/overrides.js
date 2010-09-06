@@ -27,6 +27,21 @@ Ext.grid.GridPanel.override({
 });
 
 /**
+ * Finds the index of the first matching Record in this store by a specific field value.
+ * @param {String} fieldName The name of the Record field to test.
+ * @param {Mixed} value The value to match the field against.
+ * @param {Number} startIndex (optional) The index to start searching at
+ * @return {Number} The matched index or -1
+ */
+Ext.override(Ext.data.Store, {
+	findExact: function(property, value, start){
+		return this.data.findIndexBy(function(rec){
+		  return rec.get(property) === value;
+		}, this, start);
+	}
+});
+
+/**
  * Override the renderItem method of FormLayout 
  * Makes labelStyle work independently of other config options
  */

@@ -63,6 +63,7 @@ Toc.languages.TranslationsEditGrid = function(config) {
     rowActions
   ]);
   config.autoExpandColumn = 'language_translation';
+  config.search = new Ext.form.TextField({name: 'search', width: 250});
   
   config.tbar = [
     {
@@ -70,8 +71,15 @@ Toc.languages.TranslationsEditGrid = function(config) {
       iconCls: 'add',
       handler: function() {this.onAddDefinition(config.languagesId)},
       scope: this
-    }
-  ];
+    },
+    '->',
+    config.search,
+    '',
+    {
+      iconCls: 'search',
+      handler: this.onSearch,
+      scope: this
+    }];
   
   config.listeners = {
     afteredit: this.onAfterEdit,
@@ -88,6 +96,13 @@ Ext.extend(Toc.languages.TranslationsEditGrid, Ext.grid.EditorGridPanel, {
 	  
     this.getStore().baseParams['group'] = group;
     this.getStore().reload();
+  },
+  
+  onSearch: function () {
+    var store = this.getStore();
+
+    store.baseParams['search'] = this.search.getValue() || null;
+    store.reload();
   },
   
   onAddDefinition: function(languagesId) {

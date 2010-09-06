@@ -100,6 +100,31 @@
       }
     }
 
+    if ( isset($products['customizations']) && !empty($products['customizations']) ) {
+?>
+    <p>
+<?php      
+      foreach ($products['customizations'] as $key => $customization) {
+?>
+        <div style="float: left">
+<?php 
+          echo $customization['qty'] . ' x '; 
+?>
+        </div>
+        <div style="margin-left: 30px">
+<?php
+          foreach ($customization['fields'] as $field) {
+            echo $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+          }
+?>
+        </div>
+<?php 
+      } 
+?>
+    </p>
+<?php 
+    }
+
     echo '</td>' . "\n";
 
     if ($osC_ShoppingCart->numberOfTaxGroups() > 1) {
@@ -151,68 +176,6 @@
   }
 ?>
 
-<?php
-  global $osC_OrderTotal_coupon;
-  if(isset($osC_OrderTotal_coupon) && is_object($osC_OrderTotal_coupon) && $osC_OrderTotal_coupon->isEnabled()){
-?>
-<div class="moduleBox">
-  <h6><?php echo '<b>' . $osC_Language->get('coupons_redeem_heading') . '</b>'; ?></h6>
-  <div class="content" id="couponRedeem">
-<?php
-    if(!$osC_ShoppingCart->hasCoupon()){
-?>
-<?php echo '<b>' . $osC_Language->get('coupons_redeem_information_title') . '</b>'; ?><br/>
-    <div>
-      <br/>
-      <?php echo '<b>' . $osC_Language->get('fields_coupons_redeem_code') . '</b>'; ?>
-      <?php echo osc_draw_input_field('coupon_redeem_code'); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('button_redeem.gif', $osC_Language->get('button_coupon_redeem'), 'id="btnRedeemCoupon" style="vertical-align: middle"'); ?>
-    </div>
-<?php
-    }else{
-?>
-    <?php echo '<b>' . $osC_Language->get('coupons_redeem_information_title') . '</b>'; ?><br/>
-    <div>
-      <br/>
-      <?php echo '<b>' . $osC_Language->get('fields_coupons_redeem_code') . '</b>'; ?>
-      <?php echo $osC_ShoppingCart->getCouponCode(); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('small_delete.gif', $osC_Language->get('button_delete'), 'id="btnDeleteCoupon" style="vertical-align: middle"'); ?>
-    </div>
-<?php
-    }
-?>
-  </div>
-</div>
-<?php
-  }
-?>
-
-<?php
-  global $osC_OrderTotal_gift_certificate;
-  if(isset($osC_OrderTotal_gift_certificate) && is_object($osC_OrderTotal_gift_certificate) && $osC_OrderTotal_gift_certificate->isEnabled()){
-?>
-<div class="moduleBox">
-  <h6><?php echo '<b>' . $osC_Language->get('gift_certificates_redeem_heading') . '</b>'; ?></h6>
-  <div class="content">
-<?php echo '<b>' . $osC_Language->get('gift_certificates_redeem_information_title') . '</b>'; ?><br/>
-<?php
-    if  ($osC_ShoppingCart->hasGiftCertificate()){
-      foreach ($osC_ShoppingCart->getGiftCertificateCodes() as $gift_certificate) {
-        echo '<p id="' . $gift_certificate . '">' . $gift_certificate . '&nbsp;[' . $osC_Currencies->format($osC_ShoppingCart->getGiftCertificateRedeemAmount($gift_certificate)) . ']' . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . osc_draw_image_submit_button('small_delete.gif', $osC_Language->get('button_delete'), 'class="btnDeleteGiftCertificate" style="vertical-align: middle"') . '</p>';
-      }
-    }
-?>
-    <div>
-      <br/>
-      <?php echo '<b>' . $osC_Language->get('fields_gift_certificates_redeem_code') . '</b>'; ?>
-      <?php echo osc_draw_input_field('gift_certificate_redeem_code', null, 'id="gift_certificate_code"'); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('button_redeem.gif', $osC_Language->get('button_gift_certificate_redeem'), 'id="btnRedeemGiftCertificate" style="vertical-align: middle"'); ?>
-    </div>
-  </div>
-</div>
-<?php
-  }
-?>
 <div class="submitFormButtons">
 
 <?php

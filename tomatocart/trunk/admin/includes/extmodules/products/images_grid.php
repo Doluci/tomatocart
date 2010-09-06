@@ -36,22 +36,27 @@ Toc.products.ImagesGrid = function(config) {
       'size',
       'default'
     ]),
-    autoLoad: true
+    listeners: {
+      load: function() {
+        this.fireEvent('imagechange', this.getStore(), this);
+      },
+      scope: this
+    }
   });  
     
-  function renderAction(value){
+  function renderAction(value) {
     if(value == '1') {
       return '<img class="img-button btn-default" style="cursor: pointer" src="templates/default/images/icons/16x16/default.png" />&nbsp;<img class="img-button btn-delete" style="cursor: pointer" src="templates/default/images/icons/16x16/delete.png" />';
-    }else {
+    } else {
       return '<img class="img-button btn-set-default" style="cursor: pointer" src="templates/default/images/icons/16x16/default_grey.png" />&nbsp;<img class="img-button btn-delete" style="cursor: pointer" src="templates/default/images/icons/16x16/delete.png" />';
     }
   }
-  
+
   config.cm = new Ext.grid.ColumnModel([
     { header: '&nbsp;', dataIndex: 'image', align: 'center'},
     { id:'products_image_name', header: '<?php echo $osC_Language->get('subsection_images'); ?>', dataIndex: 'name'},
     { header: '&nbsp;',dataIndex: 'size'},
-    { header: '&nbsp;',dataIndex: 'default', width:50, renderer: renderAction}
+    { header: '&nbsp;',dataIndex: 'default', width:50, renderer: renderAction, align: 'center'}
   ]);
   config.autoExpandColumn = 'products_image_name';
   
@@ -64,19 +69,22 @@ Toc.products.ImagesGrid = function(config) {
     }
   ];
   
+  this.addEvents({'imagechange' : true});
+  
   Toc.products.ImagesGrid.superclass.constructor.call(this, config);
 };
 
 Ext.extend(Toc.products.ImagesGrid, Ext.grid.GridPanel, {
   onSetDefault: function(row) {
     var record = this.getStore().getAt(row);
+    var image  = Ext.isEmpty(record.get('id')) ? record.get('name') : record.get('id');   
     
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {
         module: 'products',
         action: 'set_default',
-        image: record.get('id')
+        image: image
       },
       callback: function(options, success, response){
         var result = Ext.decode(response.responseText);
@@ -93,6 +101,7 @@ Ext.extend(Toc.products.ImagesGrid, Ext.grid.GridPanel, {
   
   onDelete: function(row) {
     var record = this.getStore().getAt(row);
+    var image  = Ext.isEmpty(record.get('id')) ? record.get('name') : record.get('id');   
     
     Ext.MessageBox.confirm(
       TocLanguage.msgWarningTitle, 
@@ -104,7 +113,7 @@ Ext.extend(Toc.products.ImagesGrid, Ext.grid.GridPanel, {
             params: {
               module: 'products',
               action: 'delete_image',
-              image: record.get('id')
+              image: image
             },
             callback: function(options, success, response){
               var result = Ext.decode(response.responseText);

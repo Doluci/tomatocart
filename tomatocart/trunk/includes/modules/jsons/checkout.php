@@ -17,9 +17,8 @@
   require_once('includes/classes/gift_certificates.php');
 
   class toC_Json_Checkout {
-  
     function loadCheckoutMethodForm() {
-      global $osC_Language, $osC_Customer, $toC_Json;
+      global $osC_Language, $osC_Customer, $osC_ShoppingCart, $toC_Json;
       
       $osC_Language->load('account');
       $osC_Language->load('checkout');    
@@ -53,7 +52,47 @@
             
       echo $toC_Json->encode($response);
     }
-
+    
+    function loadShippingInformationForm() {
+      global $toC_Json;
+      
+      $form = self::_getShippingInformationForm();
+      
+      $response = array('success' => true, 'form' => $form);
+          
+      echo $toC_Json->encode($response);
+    }
+      
+    function loadShippingMethodForm() {
+      global $toC_Json;
+      
+      $form = self::_getShippingMethodForm();
+      
+      $response = array('success' => true, 'form' => $form);
+          
+      echo $toC_Json->encode($response);
+    }
+        
+    function loadPaymentInformationForm() {
+      global $toC_Json;
+      
+      $form = self::_getPaymentMethodForm();
+      
+      $response = array('success' => true, 'form' => $form);
+          
+      echo $toC_Json->encode($response);
+    }
+          
+    function loadOrderConfirmationForm() {
+      global $toC_Json;
+      
+      $form = self::_getOrderConfirmationForm();
+      
+      $response = array('success' => true, 'form' => $form);
+          
+      echo $toC_Json->encode($response);
+    }
+    
     function saveBillingAddress() {
       global $toC_Json, $osC_Language, $osC_Database, $osC_ShoppingCart, $osC_Customer;
 
@@ -468,6 +507,19 @@
         $osC_ShoppingCart->resetShippingMethod();
       }
       
+      //gift wrapping
+      if (isset($_POST['gift_wrapping']) && ($_POST['gift_wrapping'] == 'true')) {
+        $osC_ShoppingCart->setGiftWrapping(true);
+
+        if (!empty($_POST['gift_wrapping_comments'])) {
+          $_SESSION['gift_wrapping_comments'] = osc_sanitize_string($_POST['gift_wrapping_comments']);
+        } 
+      } else {
+        $osC_ShoppingCart->setGiftWrapping(false);
+        
+        unset($_SESSION['gift_wrapping_comments']);
+      }
+      
       if (sizeof($errors) > 0) {
         $response = array('success' => false, 'errors' => $errors);
       } else {
@@ -603,7 +655,7 @@
       if(sizeof($errors) == 0){
         $osC_ShoppingCart->addGiftCertificateCode($_POST['gift_certificate_code']);
       
-        $form = toC_Json_Checkout::_getOrderConfirmationForm();
+        $form = toC_Json_Checkout::_getPaymentMethodForm();
         
         $response = array('success' => true, 'form' => $form, 'isTotalZero' => $osC_ShoppingCart->isTotalZero());
       } else {
@@ -618,11 +670,7 @@
       
       $osC_ShoppingCart->deleteGiftCertificate($_POST['gift_certificate_code']);
       
-      $go_to_payment_form = false;
-      if (!$osC_ShoppingCart->isTotalZero() && !$osC_ShoppingCart->hasBillingMethod()) {
-        $go_to_payment_form = true;
-      } 
-      $form = toC_Json_Checkout::_getOrderConfirmationForm();
+      $form = toC_Json_Checkout::_getPaymentMethodForm();
         
       $response = array('success' => true, 'form' => $form, 'go_to_payment_form' => $go_to_payment_form);
       
@@ -672,7 +720,7 @@
       if(sizeof($errors) == 0){
         $osC_ShoppingCart->setCouponCode($_POST['coupon_redeem_code']);
       
-        $form = toC_Json_Checkout::_getOrderConfirmationForm();
+        $form = toC_Json_Checkout::_getPaymentMethodForm();
         
         $response = array('success' => true, 'form' => $form, 'isTotalZero' => $osC_ShoppingCart->isTotalZero());
       } else {
@@ -687,11 +735,7 @@
       
       $osC_ShoppingCart->deleteCoupon();
 
-      $go_to_payment_form = false;
-      if (!$osC_ShoppingCart->isTotalZero() && !$osC_ShoppingCart->hasBillingMethod()) {
-        $go_to_payment_form = true;
-      } 
-      $form = toC_Json_Checkout::_getOrderConfirmationForm();
+      $form = toC_Json_Checkout::_getPaymentMethodForm();
         
       $response = array('success' => true, 'form' => $form, 'go_to_payment_form' => $go_to_payment_form);
       
@@ -753,7 +797,13 @@
       }        
               
       ob_start();
-      
+
+      //load all order total modules
+      if (!class_exists('osC_OrderTotal')) {
+        include('includes/classes/order_total.php');
+      }
+      $osC_OrderTotal = new osC_OrderTotal();
+        
       include('includes/modules/shipping_method_form.php'); 
       $form = ob_get_contents();
       
@@ -787,7 +837,7 @@
     }
       
     function _getOrderConfirmationForm() {
-      global $osC_Language, $osC_ShoppingCart, $osC_Payment, $osC_Currencies, $osC_ShoppingCart, $osC_Tax;
+      global $osC_Language, $osC_ShoppingCart, $osC_Payment, $osC_Currencies, $osC_Tax;
       
       $osC_Language->load('account');
       $osC_Language->load('checkout');

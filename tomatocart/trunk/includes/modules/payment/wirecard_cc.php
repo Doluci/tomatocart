@@ -29,11 +29,11 @@
 
       switch (MODULE_PAYMENT_WIRECARD_CC_TRANSACTION_SERVER) {
         case 'production':
-          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_CC_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_CC_PASSWORD . '@frontend-test.wirecard.com/secure/ssl-gateway';
+          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_CC_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_CC_PASSWORD . '@c3.wirecard.com/secure/ssl-gateway';
           break;
 
         default:
-          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_CC_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_CC_PASSWORD . '@frontend-test.wirecard.com/secure/ssl-gateway';
+          $this->_gateway_url = 'https://' . MODULE_PAYMENT_WIRECARD_CC_USERNAME . ':' . MODULE_PAYMENT_WIRECARD_CC_PASSWORD . '@c3-test.wirecard.com/secure/ssl-gateway';
           break;
       }
 
@@ -257,7 +257,7 @@
                       '    </W_JOB>' . "\n" .
                       '  </W_REQUEST>' . "\n" .
                       '</WIRECARD_BXML>';
-
+      
       $this->_transaction_response = $this->sendTransactionToGateway($this->_gateway_url, $post_string, array('Content-type: text/xml'));
 
       if (empty($this->_transaction_response) === false) {
@@ -266,12 +266,15 @@
       } else {
         $result = array();
       }
-
-      $error = false;
+      
+      $error = false;      
 
       if (isset($result['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PREAUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'])) {
         if ($result['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PREAUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'] != 'ACK') {
           $errno = $result['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PREAUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS']['ERROR']['Number'];
+          
+          echo $result['WIRECARD_BXML']['W_RESPONSE']['W_JOB']['FNC_CC_PREAUTHORIZATION']['CC_TRANSACTION']['PROCESSING_STATUS']['FunctionResult'];
+          exit;
 
           switch ($errno) {
             case '14':

@@ -53,7 +53,7 @@
             }
   
             $Qvalues->freeResult();
-          }else{
+          } else {
             $values = explode(',', $Qentries->value('value'));
   
             for ($i = 1; $i <= sizeof($values); $i++) {

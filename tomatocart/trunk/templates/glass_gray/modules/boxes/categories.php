@@ -11,26 +11,14 @@
   as published by the Free Software Foundation.
 */
 
-  $toC_CategoryTree = new toC_CategoryTree();
-  $toC_CategoryTree->reset();
-  $toC_CategoryTree->setCategoryPath($cPath, '<b>', '</b>');
-  $toC_CategoryTree->setParentGroupString('', '');
-  $toC_CategoryTree->setParentString('', '');
-  $toC_CategoryTree->setChildString('<li>', '</li>');
-  $toC_CategoryTree->setSpacerString('&nbsp;', 5);
-  $toC_CategoryTree->setLeadingString('<img src="templates/' . $osC_Template->getCode() . '/images/box_category_arrow.png" />&nbsp;&nbsp;');
-  $toC_CategoryTree->setShowCategoryProductCount((BOX_CATEGORIES_SHOW_PRODUCT_COUNT == '1') ? true : false);
 ?>
 
 <!-- box categories start //-->
-
 <div id="boxCategories" class="boxNew">
   <div class="boxTitle"><?php echo $osC_Box->getTitle(); ?></div>
 
   <div class="boxContents">
-    <ul>
-      <?php echo $toC_CategoryTree->buildTree(); ?>
-    </ul>
+      <?php echo $osC_Box->getContent(); ?>
   </div>
 </div>
 
