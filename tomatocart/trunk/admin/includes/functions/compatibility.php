@@ -15,19 +15,19 @@
  * posix_getpwuid() not implemented on Microsoft Windows platforms
  */
 
-  if (!function_exists('posix_getpwuid')) {
-    function posix_getpwuid($id) {
-      return '-?-';
-    }
-  }
+//  if (!function_exists('posix_getpwuid')) {
+//    function posix_getpwuid($id) {
+//      return '-?-';
+//    }
+//  }
 
 /*
  * posix_getgrgid() not implemented on Microsoft Windows platforms
  */
 
-  if (!function_exists('posix_getgrgid')) {
-    function posix_getgrgid($id) {
-      return '-?-';
-    }
-  }
+//  if (!function_exists('posix_getgrgid')) {
+//    function posix_getgrgid($id) {
+//      return '-?-';
+//    }
+//  }
 ?>

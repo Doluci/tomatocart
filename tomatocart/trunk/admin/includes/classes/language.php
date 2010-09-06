@@ -424,6 +424,27 @@
           }
 
           if ($error === false) {
+            $QcustomizationFields = $osC_Database->query('select customization_fields_id, languages_id, name from :table_customization_fields_description where languages_id = :languages_id');
+            $QcustomizationFields->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+            $QcustomizationFields->bindInt(':languages_id', $default_language_id);
+            $QcustomizationFields->execute();
+
+            while ($QcustomizationFields->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_customization_fields_description (customization_fields_id, languages_id, name) values (:customization_fields_id, :languages_id, :name)');
+              $Qinsert->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+              $Qinsert->bindInt(':customization_fields_id', $QcustomizationFields->valueInt('customization_fields_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':name', $QcustomizationFields->value('name'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
+          
+          if ($error === false) {
             $Qvariants = $osC_Database->query('select products_variants_groups_id, products_variants_groups_name from :table_products_variants_groups where language_id = :language_id');
             $Qvariants->bindTable(':table_products_variants_groups', TABLE_PRODUCTS_VARIANTS_GROUPS);
             $Qvariants->bindInt(':language_id', $default_language_id);
@@ -729,6 +750,28 @@
               }
             }
           }
+          
+          if ( $error === false ) {
+            $Qdepart = $osC_Database->query('select departments_id, departments_title, departments_description from :table_departments_description where languages_id = :language_id');
+            $Qdepart->bindTable(':table_departments_description', TABLE_DEPARTMENTS_DESCRIPTION);
+            $Qdepart->bindInt(':language_id', $default_language_id);
+            $Qdepart->execute();
+
+            while ($Qdepart->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_departments_description (departments_id, languages_id, departments_title, departments_description) values (:departments_id, :languages_id, :departments_title, :departments_description)');
+              $Qinsert->bindTable(':table_departments_description', TABLE_DEPARTMENTS_DESCRIPTION);
+              $Qinsert->bindInt(':departments_id', $Qdepart->valueInt('departments_id'));
+              $Qinsert->bindInt(':languages_id', $language_id);
+              $Qinsert->bindValue(':departments_title', $Qdepart->value('departments_title'));
+              $Qinsert->bindValue(':departments_description', $Qdepart->value('departments_description'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }          
+          }
         }
       }
 
@@ -1025,12 +1068,34 @@
         if ($osC_Database->isError()) {
           $error = true;
         }
+        
+        if ($error === false) {
+          $Qcustomization = $osC_Database->query('delete from :table_customization_fields_description where languages_id = :languages_id');
+          $Qcustomization->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+          $Qcustomization->bindInt(':languages_id', $id);
+          $Qcustomization->execute();
+          
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
 
         if ($error === false) {
           $Qproducts = $osC_Database->query('delete from :table_products_description where language_id = :language_id');
           $Qproducts->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
           $Qproducts->bindInt(':language_id', $id);
           $Qproducts->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+              
+        if ($error === false) {
+          $QcustomizationFields = $osC_Database->query('delete from :table_customization_fields_description where languages_id = :languages_id');
+          $QcustomizationFields->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+          $QcustomizationFields->bindInt(':languages_id', $id);
+          $QcustomizationFields->execute();
 
           if ($osC_Database->isError()) {
             $error = true;
@@ -1296,6 +1361,17 @@
           $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
           $Qattachments->bindInt(':languages_id', $id);
           $Qattachments->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+          }
+        }
+        
+        if ($error === false) {
+          $Qdepartment = $osC_Database->query('delete from :table_departments_description where languages_id = :languages_id');
+          $Qdepartment->bindTable(':table_departments_description', TABLE_DEPARTMENTS_DESCRIPTION);
+          $Qdepartment->bindInt(':languages_id', $id);
+          $Qdepartment->execute();
 
           if ($osC_Database->isError()) {
             $error = true;

@@ -23,38 +23,24 @@
     
       if ($Qproducts->numberOfRows() > 0) {
         while ($Qproducts->next()) {
+
           $osC_Product = new osC_Product($Qproducts->value('products_id'));
           
-        $price = '';
-	      if (ALLOW_DISPLAY_PRICE_TO_GUESTS == '1') {
-	        $price = $osC_Language->get('price').' '.$osC_Product->getPriceFormated(true);
-	      } else {
-	        if ($osC_Customer->isLoggedOn() === true) {
-	          $price = $osC_Language->get('price').' '.$osC_Product->getPriceFormated(true);
-	        }
-	      }
+          $products_price = $osC_Product->getPriceFormated(true);
     ?>
     
       <tr>
         <td width="<?php echo $osC_Image->getWidth('thumbnails') + 10; ?>" valign="top" align="left">
     
     <?php
-        if ($osC_Product->isSimple()) {
-          echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')), 'id="productImage' . $Qproducts->value('products_id') . '"');
-        }else {
-          echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')));
-        }
+        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')), 'id="productImage' . $Qproducts->value('products_id') . '"');
     ?>
     
         </td>
-        <td valign="top"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), '<b><u>' . $Qproducts->value('products_name') . '</u></b>') . '<br />' . $osC_Language->get('date_added') . ' ' . osC_DateTime::getLong($Qproducts->value('products_date_added')) . '<br />' . $osC_Language->get('manufacturer') . ' ' . $Qproducts->value('manufacturers_name') . '<br /><br />' . $price; ?></td>
+        <td valign="top"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), '<b><u>' . $Qproducts->value('products_name') . '</u></b>') . '<br />' . $osC_Language->get('date_added') . ' ' . osC_DateTime::getLong($Qproducts->value('products_date_added')) . '<br />' . $osC_Language->get('manufacturer') . ' ' . $Qproducts->value('manufacturers_name') . '<br /><br />' . $osC_Language->get('price') . ' ' . $products_price; ?></td>
         <td align="right" valign="middle">
           <?php 
-            if ($osC_Product->isSimple()) {
-              echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" pid="' . $Qproducts->value('products_id') . '"'));
-            }else {
-              echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart')));
-            } 
+            echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" pid="' . $Qproducts->value('products_id') . '"'));
           ?>
         </td>
       </tr>

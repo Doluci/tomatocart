@@ -140,7 +140,7 @@
       }
     }
 
-    function insert() {
+    function insert($order_status = DEFAULT_ORDERS_STATUS_ID) {
       global $osC_Database, $osC_Customer, $osC_Language, $osC_Currencies, $osC_ShoppingCart, $osC_Tax, $toC_Wishlist;
 
       if (isset($_SESSION['prepOrderID'])) {
@@ -178,8 +178,8 @@
           }
         }
       }
-               
-      $Qorder = $osC_Database->query('insert into :table_orders (customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_comment, customers_state_code, customers_country, customers_country_iso2, customers_country_iso3, customers_telephone, customers_email_address, customers_address_format, customers_ip_address, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_zone_id, delivery_state_code, delivery_country_id, delivery_country, delivery_country_iso2, delivery_country_iso3, delivery_address_format, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_zone_id, billing_state_code, billing_country_id, billing_country, billing_country_iso2, billing_country_iso3, billing_address_format, payment_method, payment_module, uses_store_credit, store_credit_amount, date_purchased, orders_status, currency, currency_value) values (:customers_id, :customers_name, :customers_company, :customers_street_address, :customers_suburb, :customers_city, :customers_postcode, :customers_state, :customers_comment, :customers_state_code, :customers_country, :customers_country_iso2, :customers_country_iso3, :customers_telephone, :customers_email_address, :customers_address_format, :customers_ip_address, :delivery_name, :delivery_company, :delivery_street_address, :delivery_suburb, :delivery_city, :delivery_postcode, :delivery_state, :delivery_zone_id, :delivery_state_code, :delivery_country_id, :delivery_country, :delivery_country_iso2, :delivery_country_iso3, :delivery_address_format, :billing_name, :billing_company, :billing_street_address, :billing_suburb, :billing_city, :billing_postcode, :billing_state, :billing_zone_id, :billing_state_code, :billing_country_id, :billing_country, :billing_country_iso2, :billing_country_iso3, :billing_address_format, :payment_method, :payment_module, :uses_store_credit, :store_credit_amount, now(), :orders_status, :currency, :currency_value)');
+                     
+      $Qorder = $osC_Database->query('insert into :table_orders (customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_comment, customers_state_code, customers_country, customers_country_iso2, customers_country_iso3, customers_telephone, customers_email_address, customers_address_format, customers_ip_address, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_zone_id, delivery_state_code, delivery_country_id, delivery_country, delivery_country_iso2, delivery_country_iso3, delivery_address_format, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_zone_id, billing_state_code, billing_country_id, billing_country, billing_country_iso2, billing_country_iso3, billing_address_format, payment_method, payment_module, uses_store_credit, store_credit_amount, date_purchased, orders_status, currency, currency_value, gift_wrapping, wrapping_message) values (:customers_id, :customers_name, :customers_company, :customers_street_address, :customers_suburb, :customers_city, :customers_postcode, :customers_state, :customers_comment, :customers_state_code, :customers_country, :customers_country_iso2, :customers_country_iso3, :customers_telephone, :customers_email_address, :customers_address_format, :customers_ip_address, :delivery_name, :delivery_company, :delivery_street_address, :delivery_suburb, :delivery_city, :delivery_postcode, :delivery_state, :delivery_zone_id, :delivery_state_code, :delivery_country_id, :delivery_country, :delivery_country_iso2, :delivery_country_iso3, :delivery_address_format, :billing_name, :billing_company, :billing_street_address, :billing_suburb, :billing_city, :billing_postcode, :billing_state, :billing_zone_id, :billing_state_code, :billing_country_id, :billing_country, :billing_country_iso2, :billing_country_iso3, :billing_address_format, :payment_method, :payment_module, :uses_store_credit, :store_credit_amount, now(), :orders_status, :currency, :currency_value, :gift_wrapping, :wrapping_message)');
       $Qorder->bindTable(':table_orders', TABLE_ORDERS);
       $Qorder->bindInt(':customers_id', $osC_Customer->getID());
       $Qorder->bindValue(':customers_name', $osC_Customer->getName());
@@ -230,9 +230,11 @@
       $Qorder->bindValue(':payment_module', implode(',', $osC_ShoppingCart->getCartBillingModules()));
       $Qorder->bindInt(':uses_store_credit', $osC_ShoppingCart->isUseStoreCredit());
       $Qorder->bindValue(':store_credit_amount', ($osC_ShoppingCart->isUseStoreCredit() ? $osC_ShoppingCart->getStoreCredit() : '0'));
-      $Qorder->bindInt(':orders_status', DEFAULT_ORDERS_STATUS_ID);
+      $Qorder->bindInt(':orders_status', $order_status);
       $Qorder->bindValue(':currency', $osC_Currencies->getCode());
       $Qorder->bindValue(':currency_value', $osC_Currencies->value($osC_Currencies->getCode()));
+      $Qorder->bindInt(':gift_wrapping', ($osC_ShoppingCart->isGiftWrapping() ? '1' : '0'));
+      $Qorder->bindValue(':wrapping_message', (isset($_SESSION['gift_wrapping_comments']) ? $_SESSION['gift_wrapping_comments'] : ''));
       $Qorder->execute();
 
       $insert_id = $osC_Database->nextID();
@@ -272,9 +274,38 @@
         $Qproducts->execute();
 
         $order_products_id = $osC_Database->nextID();
+        
+        if (!empty($products['customizations'])) {
+          foreach ($products['customizations'] as $customization) {
+            $Qcustomization = $osC_Database->query('insert into :table_orders_products_customizations (orders_id, orders_products_id, quantity) values (:orders_id, :orders_products_id, :quantity)');
+            $Qcustomization->bindTable(':table_orders_products_customizations', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS);
+            $Qcustomization->bindInt(':orders_id', $insert_id);
+            $Qcustomization->bindInt(':orders_products_id', $order_products_id);
+            $Qcustomization->bindInt(':quantity', $customization['qty']);
+            $Qcustomization->execute();
+            
+            $orders_products_customizations_id = $osC_Database->nextID();
+            
+            foreach ($customization['fields'] as $field) {
+              $Qfield = $osC_Database->query('insert into :table_orders_products_customizations_values (orders_products_customizations_id , customization_fields_id, customization_fields_name, customization_fields_type, customization_fields_value, cache_file_name) values (:orders_products_customizations_id, :customization_fields_id, :customization_fields_name, :customization_fields_type, :customization_fields_value, :cache_file_name)');
+              $Qfield->bindTable(':table_orders_products_customizations_values', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS_VALUES);
+              $Qfield->bindInt(':orders_products_customizations_id', $orders_products_customizations_id);
+              $Qfield->bindInt(':customization_fields_id', $field['customization_fields_id']);
+              $Qfield->bindValue(':customization_fields_name', $field['customization_fields_name']);
+              $Qfield->bindInt(':customization_fields_type', $field['customization_type']);
+              $Qfield->bindValue(':customization_fields_value', $field['customization_value']);
+              $Qfield->bindValue(':cache_file_name', $field['cache_filename']);
+              $Qfield->execute();
+              
+              if ($osC_Database->isError() === false) {
+                @copy(DIR_FS_CACHE . 'products_customizations/' . $field['cache_filename'], DIR_FS_CACHE . 'orders_customizations/' . $field['cache_filename']);
+              }
+            }
+          }
+        }
 
         if ($osC_ShoppingCart->hasVariants($products['id'])) {
-          foreach ($osC_ShoppingCart->getVariants($products['id']) as $variants) {
+          foreach ($osC_ShoppingCart->getVariants($products['id']) as $variants_id => $variants) {
             $Qvariants = $osC_Database->query('select pvg.products_variants_groups_name, pvv.products_variants_values_name from :table_products_variants pv, :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pv.products_id = :products_id and pv.products_variants_id = pve.products_variants_id and pve.products_variants_groups_id = :groups_id and pve.products_variants_values_id = :variants_values_id and pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = :pvg_language_id and pvv.language_id = :pvv_language_id');
             $Qvariants->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
             $Qvariants->bindTable(':table_products_variants_entries', TABLE_PRODUCTS_VARIANTS_ENTRIES);
@@ -302,15 +333,23 @@
         if ($products['type'] == PRODUCT_TYPE_DOWNLOADABLE) {
           $Qdownloadable = $osC_Database->query('select * from :table_products_downloadables where products_id = :products_id');
           $Qdownloadable->bindTable(':table_products_downloadables', TABLE_PRODUCTS_DOWNLOADABLES);
-          $Qdownloadable->bindInt(':products_id', $products['id']);
+          $Qdownloadable->bindInt(':products_id', osc_get_product_id($products['id']));
           $Qdownloadable->execute();
+            
+          if ($osC_ShoppingCart->hasVariants($products['id'])) {
+            $variants_filename = $products['variant_filename'];
+            $variants_cache_filename = $products['variant_cache_filename'];
+          } else {
+            $variants_filename = $Qdownloadable->value('filename');
+            $variants_cache_filename = $Qdownloadable->value('cache_filename');
+          }
           
           $Qopd = $osC_Database->query('insert into :table_orders_products_download (orders_id, orders_products_id, orders_products_filename, orders_products_cache_filename, download_maxdays, download_count) values (:orders_id, :orders_products_id, :orders_products_filename, :orders_products_cache_filename, :download_maxdays, :download_count)');
           $Qopd->bindTable(':table_orders_products_download', TABLE_ORDERS_PRODUCTS_DOWNLOAD);
           $Qopd->bindInt(':orders_id', $insert_id);
           $Qopd->bindInt(':orders_products_id', $order_products_id);
-          $Qopd->bindValue(':orders_products_filename', $Qdownloadable->value('filename'));
-          $Qopd->bindValue(':orders_products_cache_filename', $Qdownloadable->value('cache_filename'));
+          $Qopd->bindValue(':orders_products_filename', $variants_filename);
+          $Qopd->bindValue(':orders_products_cache_filename', $variants_cache_filename);
           $Qopd->bindValue(':download_maxdays', $Qdownloadable->valueInt('number_of_accessible_days'));
           $Qopd->bindValue(':download_count', $Qdownloadable->valueInt('number_of_downloads'));
           $Qopd->execute();
@@ -486,7 +525,7 @@
       return $data;
     }
     
-    function process($order_id, $status_id = '') {
+    function process($order_id, $status_id = '', $comments = '') {
       global $osC_Database;
 
       if (empty($status_id) || (is_numeric($status_id) === false)) {
@@ -498,7 +537,7 @@
       $Qstatus->bindInt(':orders_id', $order_id);
       $Qstatus->bindInt(':orders_status_id', $status_id);
       $Qstatus->bindInt(':customer_notified', (SEND_EMAILS == '1') ? '1' : '0');
-      $Qstatus->bindValue(':comments', '');
+      $Qstatus->bindValue(':comments', $comments);
       $Qstatus->execute();
 
       $Qupdate = $osC_Database->query('update :table_orders set orders_status = :orders_status where orders_id = :orders_id');
@@ -749,7 +788,8 @@
                           'last_modified' => $Qorder->value('last_modified'),
                           'total' => $order_total_string,
                           'shipping_method' => $shipping_method_string,
-                          'tracking_no' => $Qorder->value('tracking_no'));
+                          'tracking_no' => $Qorder->value('tracking_no'),
+                          'wrapping_message' => $Qorder->value('wrapping_message'));
 
       $this->customer = array('id' => $Qorder->valueInt('customers_id'),
                               'name' => $Qorder->valueProtected('customers_name'),
@@ -867,12 +907,61 @@
             $subindex++;
           }
         }
-
+        
+        $Qcustomizations = $osC_Database->query('select orders_products_customizations_id, quantity from :table_orders_products_customizations where orders_id = :orders_id and orders_products_id = :orders_products_id');
+        $Qcustomizations->bindTable(':table_orders_products_customizations', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS);
+        $Qcustomizations->bindInt(':orders_id', $order_id);
+        $Qcustomizations->bindInt(':orders_products_id', $Qproducts->valueInt('orders_products_id'));
+        $Qcustomizations->execute();
+        
+        $customizations = null;
+        while ( $Qcustomizations->next() ) {
+          $Qfields = $osC_Database->query('select * from :table_orders_products_customizations_values where orders_products_customizations_id = :orders_products_customizations_id');
+          $Qfields->bindTable(':table_orders_products_customizations_values', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS_VALUES);
+          $Qfields->bindInt(':orders_products_customizations_id', $Qcustomizations->valueInt('orders_products_customizations_id'));
+          $Qfields->execute();
+          
+          $fields = array();
+          while( $Qfields->next() ) {
+            $fields[$Qfields->valueInt('orders_products_customizations_values_id')] = 
+              array('customization_fields_id' => $Qfields->valueInt('customization_fields_id'),
+                    'customization_fields_name' => $Qfields->value('customization_fields_name'),
+                    'customization_type' => $Qfields->valueInt('customization_fields_type'),
+                    'customization_value' => $Qfields->value('customization_fields_value'),
+                    'cache_filename' => $Qfields->value('cache_file_name'));
+          }
+          $customizations[] = array('qty' => $Qcustomizations->valueInt('quantity'), 'fields' => $fields);
+        }
+        
+        if ($customizations != null) {
+          $this->products[$index]['customizations'] = $customizations;
+        }
+        
         $this->info['tax_groups']["{$this->products[$index]['tax']}"] = '1';
 
         $index++;
       }
     }
+    
+    function insertOrderStatusHistory($orders_id, $orders_status, $comments) {
+      global $osC_Database;
+      
+      $Qinsert = $osC_Database->query('insert into :table_orders_status_history (orders_id, orders_status_id, date_added, customer_notified, comments) values (:orders_id, :orders_status_id, now(), :customer_notified, :comments)');
+      $Qinsert->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
+      $Qinsert->bindInt(':orders_id', $orders_id);
+      $Qinsert->bindInt(':orders_status_id', $orders_status);
+      $Qinsert->bindInt(':customer_notified', (SEND_EMAILS == '1') ? '1' : '0');
+      $Qinsert->bindValue(':comments', $comments);
+      $Qinsert->execute();
+      
+      if (!$osC_Database->isError()) {
+        return true;
+      }
+      
+      return false;
+    }
+    
+
     
     function getBilling() {
       return $this->billing;    

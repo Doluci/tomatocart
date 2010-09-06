@@ -117,7 +117,7 @@ Ext.extend(Toc.tax_classes.TaxRatesDialog, Ext.Window, {
       },
       items: [
         this.cobZoneGroup,
-        {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('field_tax_rate'); ?>', name: 'tax_rate', width:300},
+        {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('field_tax_rate'); ?>', name: 'tax_rate', decimalPrecision: 4, width:300},
         {xtype: 'textfield', fieldLabel: '<?php echo $osC_Language->get('field_tax_rate_description'); ?>', name: 'tax_description', width:300},
         {xtype: 'textfield', fieldLabel: '<?php echo $osC_Language->get('field_tax_rate_priority'); ?>', name: 'tax_priority', width:300}
       ]

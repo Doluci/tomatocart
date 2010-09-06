@@ -22,6 +22,8 @@
         $_weight = 0,
         $_tax = 0,
         $_tax_groups = array(),
+        $_is_gift_wrapping = false,
+        $_gift_wrapping_message = '',
         $_coupon_code = null,
         $_coupon_amount = 0,
         $_order_id = 0,
@@ -65,6 +67,7 @@
         $this->_customers_id = $Qorder->valueInt('customers_id');
         $this->_invoice_number = $Qorder->value('invoice_number');
         $this->_invoice_date = $Qorder->value('invoice_date');
+        $this->_is_gift_wrapping = $Qorder->valueInt('gift_wrapping');
 
         $customers_name = explode(' ', $Qorder->valueProtected('customers_name'));
         $first_name = (isset($customers_name[0]) ? $customers_name[0] : '');
@@ -85,6 +88,8 @@
                                  'country_iso2' => $Qorder->value('customers_country_iso2'),
                                  'country_iso3' => $Qorder->value('customers_country_iso3'),
                                  'format' => $Qorder->value('customers_address_format'),
+                                 'gift_wrapping' => $Qorder->valueInt('gift_wrapping'),
+                                 'wrapping_message' => $Qorder->value('wrapping_message'),
                                  'telephone' => $Qorder->valueProtected('customers_telephone'),
                                  'email_address' => $Qorder->valueProtected('customers_email_address'));
 
@@ -191,7 +196,7 @@
 
       $history_array = array();
 
-      $Qhistory = $osC_Database->query('select osh.orders_status_id, osh.date_added, osh.customer_notified, osh.comments, os.orders_status_name from :table_orders_status_history osh left join :table_orders_status os on (osh.orders_status_id = os.orders_status_id and os.language_id = :language_id) where osh.orders_id = :orders_id order by osh.date_added');
+      $Qhistory = $osC_Database->query('select osh.orders_status_history_id, osh.orders_status_id, osh.date_added, osh.customer_notified, osh.comments, os.orders_status_name from :table_orders_status_history osh left join :table_orders_status os on (osh.orders_status_id = os.orders_status_id and os.language_id = :language_id) where osh.orders_id = :orders_id order by osh.date_added');
       $Qhistory->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
       $Qhistory->bindTable(':table_orders_status', TABLE_ORDERS_STATUS);
 
@@ -204,6 +209,7 @@
 
       while ($Qhistory->next()) {
         $history_array[] = array('status_id' => $Qhistory->valueInt('orders_status_id'),
+                                 'orders_status_history_id' => $Qhistory->valueInt('orders_status_history_id'),
                                  'status' => $Qhistory->value('orders_status_name'),
                                  'date_added' => $Qhistory->value('date_added'),
                                  'customer_notified' => $Qhistory->valueInt('customer_notified'),
@@ -275,7 +281,7 @@
     function _getProducts() {
       global $osC_Database;
 
-      $Qproducts = $osC_Database->query('select op.orders_products_id, op.products_id, op.products_type, op.products_name, op.products_sku, op.products_price, op.products_tax, op.products_quantity, op.products_return_quantity, op.final_price, p.products_weight, p.products_weight_class, p.products_tax_class_id from :table_orders_products op left join :table_products p on p.products_id = op.products_id where op.orders_id = :orders_id');
+      $Qproducts = $osC_Database->query('select op.orders_products_id, op.products_id, op.products_type, op.products_name, op.products_sku, op.products_price, op.products_tax, op.products_quantity, op.products_return_quantity, op.final_price, p.products_weight, p.products_weight_class, p.products_tax_class_id from :table_orders_products op, :table_products p where p.products_id = op.products_id and orders_id = :orders_id');
       $Qproducts->bindTable(':table_orders_products', TABLE_ORDERS_PRODUCTS);
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
       $Qproducts->bindInt(':orders_id', $this->_order_id);
@@ -333,6 +339,35 @@
 
             $variants[$Qvariants->valueInt('groups_id')] = $Qvariants->valueInt('values_id');
           }
+        }
+        
+        $Qcustomizations = $osC_Database->query('select orders_products_customizations_id, quantity from :table_orders_products_customizations where orders_id = :orders_id and orders_products_id = :orders_products_id');
+        $Qcustomizations->bindTable(':table_orders_products_customizations', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS);
+        $Qcustomizations->bindInt(':orders_id', $this->_order_id);
+        $Qcustomizations->bindInt(':orders_products_id', $Qproducts->valueInt('orders_products_id'));
+        $Qcustomizations->execute();
+        
+        $customizations = null;
+        while ( $Qcustomizations->next() ) {
+          $Qfields = $osC_Database->query('select * from :table_orders_products_customizations_values where orders_products_customizations_id = :orders_products_customizations_id');
+          $Qfields->bindTable(':table_orders_products_customizations_values', TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS_VALUES);
+          $Qfields->bindInt(':orders_products_customizations_id', $Qcustomizations->valueInt('orders_products_customizations_id'));
+          $Qfields->execute();
+          
+          $fields = array();
+          while( $Qfields->next() ) {
+            $fields[$Qfields->valueInt('orders_products_customizations_values_id')] = 
+              array('customization_fields_id' => $Qfields->valueInt('customization_fields_id'),
+                    'customization_fields_name' => $Qfields->value('customization_fields_name'),
+                    'customization_type' => $Qfields->valueInt('customization_fields_type'),
+                    'customization_value' => $Qfields->value('customization_fields_value'),
+                    'cache_filename' => $Qfields->value('cache_file_name'));
+          }
+          $customizations[] = array('qty' => $Qcustomizations->valueInt('quantity'), 'fields' => $fields);
+        }
+        
+        if ($customizations != null) {
+          $product['customizations'] = $customizations;
         }
         
         if ($product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
@@ -1096,5 +1131,117 @@
 
       return false;
     }
+    
+    function createReorder($orders_id, $reorders_id){
+      global $osC_Database;
+      
+      $error = false;
+      $osC_Database->startTransaction();
+      
+      $Qreorders = $osC_Database->query('select * from :table_orders where orders_id = :orders_id');
+      $Qreorders->bindTable(':table_orders', TABLE_ORDERS);
+      $Qreorders->bindInt(':orders_id', $reorders_id);
+      $Qreorders->execute();
+      
+      if($Qreorders->next()) {
+	      $Qorders = $osC_Database->query('update :table_orders set  payment_method = :payment_method , payment_module = :payment_module where orders_id = :orders_id');
+	      $Qorders->bindTable(':table_orders', TABLE_ORDERS);
+	      $Qorders->bindValue(':payment_method', $Qreorders->value('payment_method'));
+	      $Qorders->bindValue(':payment_module', $Qreorders->value('payment_module'));
+	      $Qorders->bindInt(':orders_id', $orders_id);
+	      $Qorders->execute();
+
+	      if ( $osC_Database->isError() ) {
+          $error = true;
+        }
+      }
+
+      if($error === false) {
+	      $QreordersProducts = $osC_Database->query('select * from :table_orders_products where orders_id = :orders_id');
+	      $QreordersProducts->bindTable(':table_orders_products', TABLE_ORDERS_PRODUCTS);
+	      $QreordersProducts->bindInt(':orders_id', $reorders_id);
+	      $QreordersProducts->execute();
+	          
+	      while ($QreordersProducts->next()) {          
+		      $QordersProducts = $osC_Database->query('insert into :table_orders_products (orders_id, products_id, products_type, products_sku, products_name, products_price, final_price,  products_tax, products_quantity, products_return_quantity) values (:orders_id, :products_id, :products_type, :products_sku, :products_name, :products_price, :final_price, :products_tax, :products_quantity, :products_return_quantity)');
+		      $QordersProducts->bindTable(':table_orders_products', TABLE_ORDERS_PRODUCTS);
+		      $QordersProducts->bindInt(':orders_id', $orders_id);
+		      $QordersProducts->bindInt(':products_id', $QreordersProducts->valueInt('products_id'));
+		      $QordersProducts->bindInt(':products_type', $QreordersProducts->valueInt('products_type'));
+		      $QordersProducts->bindValue(':products_sku', $QreordersProducts->value('products_sku'));
+		      $QordersProducts->bindValue(':products_name', $QreordersProducts->value('products_name'));
+		      $QordersProducts->bindValue(':products_price', $QreordersProducts->value('products_price'));
+		      $QordersProducts->bindValue(':final_price', $QreordersProducts->value('products_price'));
+		      $QordersProducts->bindValue(':products_tax', $QreordersProducts->value('products_tax'));
+		      $QordersProducts->bindInt(':products_quantity', $QreordersProducts->valueInt('products_quantity'));
+		      $QordersProducts->bindInt(':products_return_quantity', $QreordersProducts->valueInt('products_return_quantity'));
+		      $QordersProducts->execute();      
+	
+	        if ( $osC_Database->isError() ) {
+	          $error = true;
+	        }
+	      }
+	      
+	      
+	      
+	      $QreordersProducts->freeResult();
+	      
+	      
+	      $QordersProducts = $osC_Database->query('select * from :table_orders_products where orders_id = :orders_id');
+	      $QordersProducts->bindTable(':table_orders_products', TABLE_ORDERS_PRODUCTS);
+	      $QordersProducts->bindInt(':orders_id', $orders_id);
+	      $QordersProducts->execute(); 
+	      
+	      $out_stock_products = array();
+	      while ($QordersProducts->next()) { 
+	         osC_Product::updateStock($orders_id, $QordersProducts->value('orders_products_id'), $QordersProducts->value('products_id'), $QordersProducts->value('products_quantity')); 
+	         $product = new osC_Product($QordersProducts->value('products_id'));
+	
+	         if($product->_data['quantity'] < 1) {
+	           $out_stock_products[] = $product->_data['id'];
+	         }
+	      }
+      }
+      
+      if ( $error === false ) {
+        $QordersTotal = $osC_Database->query('delete from :table_orders_total where orders_id = :orders_id');
+	      $QordersTotal->bindTable(':table_orders_total', TABLE_ORDERS_TOTAL);
+	      $QordersTotal->bindInt(':orders_id', $orders_id);
+	      $QordersTotal->execute();
+	        
+        $QreordersTotal = $osC_Database->query('select * from :table_orders_total where orders_id = :orders_id');
+        $QreordersTotal->bindTable(':table_orders_total', TABLE_ORDERS_TOTAL);
+        $QreordersTotal->bindInt(':orders_id', $reorders_id);
+        $QreordersTotal->execute();
+       
+        while ($QreordersTotal->next()) { 
+
+          $QTotal = $osC_Database->query('insert into :table_orders_total (orders_id, title, text, value, class, sort_order) values (:orders_id, :title, :text, :value, :class, :sort_order)');
+          $QTotal->bindTable(':table_orders_total', TABLE_ORDERS_TOTAL);
+          $QTotal->bindInt(':orders_id', $orders_id);
+          $QTotal->bindValue(':title', $QreordersTotal->value('title'));
+          $QTotal->bindValue(':text', $QreordersTotal->value('text'));
+          $QTotal->bindValue(':value', $QreordersTotal->value('value'));
+          $QTotal->bindValue(':class', $QreordersTotal->value('class'));
+          $QTotal->bindInt(':sort_order', $QreordersTotal->valueInt('sort_order'));
+          $QTotal->execute();
+
+          if ( $osC_Database->isError() ) {
+            $error = true;
+          }          	  
+        }
+      }
+      
+      if ( $error === false ) {
+        $osC_Database->commitTransaction();
+
+        return array_unique ($out_stock_products);
+      }
+
+      $osC_Database->rollbackTransaction();
+
+      return false;      
+    }
+    
   }
 ?>

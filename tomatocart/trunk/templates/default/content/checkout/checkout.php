@@ -14,7 +14,13 @@ $step = 1;
 ?>
 
 <h1><?php echo $osC_Language->get('checkout')?></h1>
-  
+
+<?php
+  if ($messageStack->size('checkout') > 0) {
+    echo $messageStack->output('checkout');
+  }
+?>
+
 <ul id="checkoutForm"> 
   <?php if ($osC_Customer->isLoggedOn() === false) { ?>
     <li id="checkoutMethodForm">
@@ -64,10 +70,18 @@ $step = 1;
 
 <script type="text/javascript">
   window.addEvent('domready', function() {
-    checkout = new Checkout({
+    checkout = new tocCheckout({
+      remoteUrl: '<?php echo osc_href_link('json.php', null, 'SSL', false, false, true); ?>',
       isLoggedOn: <?php echo ($osC_Customer->isLoggedOn() === true) ? 'true' : 'false';?>,
       sessionName: '<?php echo $osC_Session->getName(); ?>',
       sessionId: '<?php echo $osC_Session->getID(); ?>',
+<?php 
+  if ( isset($_GET['view']) && !empty($_GET['view']) ) {
+?>      
+      view: '<?php echo $_GET['view']; ?>',
+<?php 
+  }
+?>
       isVirtualCart: <?php echo ($osC_ShoppingCart->isVirtualCart() ? 'true' : 'false'); ?>,
       isTotalZero: <?php echo ($osC_ShoppingCart->isTotalZero() ? 'true' : 'false'); ?>
     });

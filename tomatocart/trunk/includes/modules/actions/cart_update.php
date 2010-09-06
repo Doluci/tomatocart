@@ -15,9 +15,21 @@
     function execute() {
       global $osC_ShoppingCart;
 
+
       if (isset($_POST['products']) && is_array($_POST['products']) && !empty($_POST['products'])) {
         foreach ($_POST['products'] as $product => $quantity) {
-          if (!is_numeric($quantity)) {
+          $customizations_qty = null;
+          
+          if ( is_array($quantity) ) {
+            $customizations_qty = $quantity;
+            $qty = 0;
+            
+            foreach ($quantity as $key => $value) {
+              $qty += $value;
+            }
+            
+            $quantity = $qty;
+          } else if ( !is_numeric($quantity) ) {
             return false;
           }
 
@@ -42,7 +54,7 @@
             $variants_array = $product[1];
           }
           
-          $osC_ShoppingCart->add($product[0], $variants_array, $quantity, null, 'update');
+          $osC_ShoppingCart->add($product[0], $variants_array, $quantity, null, $customizations_qty, 'update');
         }
       }
 

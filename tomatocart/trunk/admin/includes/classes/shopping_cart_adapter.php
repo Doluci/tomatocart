@@ -1298,5 +1298,32 @@
       
       return false;
     }
+  
+    function setGiftWrapping($gift_wrapping, $wrapping_message) {
+      global $osC_Database;
+      
+      $this->_is_gift_wrapping = $gift_wrapping;
+      
+      $this->_calculate();
+      $this->updateOrderTotal();
+      
+      $Qupdate = $osC_Database->query('update :table_orders set gift_wrapping = :gift_wrapping, wrapping_message = :wrapping_message where orders_id = :orders_id');
+      $Qupdate->bindTable(':table_orders', TABLE_ORDERS);
+      $Qupdate->bindValue(':gift_wrapping', ($gift_wrapping == true ? 1 : 0));
+      $Qupdate->bindValue(':wrapping_message', $wrapping_message);
+      $Qupdate->bindInt(':orders_id', $this->_order_id);
+      $Qupdate->setLogging($_SESSION['module'], $this->_order_id);
+      $Qupdate->execute();
+      
+      if (!$osC_Database->isError()) {
+        return true;
+      }
+      
+      return false;
+    }
+
+    function isGiftWrapping() {
+      return $this->_is_gift_wrapping;
+    }
   }
 ?>

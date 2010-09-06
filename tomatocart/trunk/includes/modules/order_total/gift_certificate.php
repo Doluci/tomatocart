@@ -76,7 +76,7 @@
       if ($order_total != 0) {
         $this->output[] = array('title' => $this->_title . ' (' . implode(', ', $gift_certificates) . ') : ',
                                  'text' => '-' . $osC_Currencies->format($total_amount),
-                                'value' => $gift_certificate_amount);
+                                'value' => $gift_certificate_amount * (-1));
       }
     }
   }

@@ -11,7 +11,8 @@
   as published by the Free Software Foundation.
 */
 
-/*  
+?>
+
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
 
 <?php
@@ -23,6 +24,3 @@
 ?>
 
 <p><?php echo $osC_Language->get('index_text'); ?></p>
-*/
-
-?>

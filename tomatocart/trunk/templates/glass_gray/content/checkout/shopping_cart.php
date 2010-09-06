@@ -15,6 +15,12 @@
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
 
 <?php
+  if ($messageStack->size('shopping_cart') > 0) {
+    echo $messageStack->output('shopping_cart');
+  }
+?>
+
+<?php
   if ($osC_ShoppingCart->hasContents()) {
 ?>
 
@@ -59,49 +65,73 @@
         </td>
         <td valign="center">
 
-<?php
-      echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products['id']), '<b>' . $products['name'] . '</b>');
-      
-      if ( (STOCK_CHECK == '1') && ($osC_ShoppingCart->isInStock($products['id']) === false) ) {
-        echo '<span class="markProductOutOfStock">' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '</span>';
-      }
-
-      echo '&nbsp;(Top Category)';
-      
-      if (isset($products['error'])) {
-        echo '<br /><span class="markProductError">' . $products['error'] . '</span>';
-        $osC_ShoppingCart->clearError($products_id_string);
-      }
-      
-      if ($products['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
-        echo '<br />- ' . $osC_Language->get('senders_name') . ': ' . $products['gc_data']['senders_name'];
+        <?php
+        echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products['id']), '<b>' . $products['name'] . '</b>');
         
-        if ($products['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
-          echo '<br />- ' . $osC_Language->get('senders_email')  . ': ' . $products['gc_data']['senders_email'];
+        if ( (STOCK_CHECK == '1') && ($osC_ShoppingCart->isInStock($products['id']) === false) ) {
+          echo '<span class="markProductOutOfStock">' . STOCK_MARK_PRODUCT_OUT_OF_STOCK . '</span>';
+        }
+  
+        echo '&nbsp;(Top Category)';
+        
+        if (isset($products['error'])) {
+          echo '<br /><span class="markProductError">' . $products['error'] . '</span>';
+          $osC_ShoppingCart->clearError($products_id_string);
         }
         
-        echo '<br />- ' . $osC_Language->get('recipients_name') . ': ' . $products['gc_data']['recipients_name'];
-        
-        if ($products['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
-          echo '<br />- ' . $osC_Language->get('recipients_email')  . ': ' . $products['gc_data']['recipients_email'];
+        if ($products['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
+          echo '<br />- ' . $osC_Language->get('senders_name') . ': ' . $products['gc_data']['senders_name'];
+          
+          if ($products['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+            echo '<br />- ' . $osC_Language->get('senders_email')  . ': ' . $products['gc_data']['senders_email'];
+          }
+          
+          echo '<br />- ' . $osC_Language->get('recipients_name') . ': ' . $products['gc_data']['recipients_name'];
+          
+          if ($products['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
+            echo '<br />- ' . $osC_Language->get('recipients_email')  . ': ' . $products['gc_data']['recipients_email'];
+          }
+          
+          echo '<br />- ' . $osC_Language->get('message')  . ': ' . $products['gc_data']['message'];
         }
         
-        echo '<br />- ' . $osC_Language->get('message')  . ': ' . $products['gc_data']['message'];
-      }
-      
-      $atttributes_array = array();
-
-      if ($osC_ShoppingCart->hasVariants($products['id'])) {
-        foreach ($osC_ShoppingCart->getVariants($products['id']) as $variants) {
-          $atttributes_array[$variants['groups_id']] = $variants['variants_values_id'];
-
-          echo '<br />- ' . $variants['groups_name'] . ': ' . $variants['values_name'];
+        $atttributes_array = array();
+  
+        if ($osC_ShoppingCart->hasVariants($products['id'])) {
+          foreach ($osC_ShoppingCart->getVariants($products['id']) as $variants) {
+            $atttributes_array[$variants['groups_id']] = $variants['variants_values_id'];
+  
+            echo '<br />- ' . $variants['groups_name'] . ': ' . $variants['values_name'];
+          }
         }
-      }
-?>
-
+        
+        if ( isset($products['customizations']) && !empty($products['customizations']) ) {
+        ?>
+          <p>
+            <?php      
+              foreach ($products['customizations'] as $key => $customization) {
+            ?>
+              <div style="float: left">
+                <?php echo osc_draw_input_field('products[' . $products_id_string . '][' . $key . ']', $customization['qty'], 'size="4" style="width: 20px"') . ' x '; ?>
+              </div>
+              <div style="margin-left: 40px">
+                <?php
+                  foreach ($customization['fields'] as $field) {
+                    echo $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
+                  }
+                ?>
+              </div>
+            <?php } ?>
+          </p>
+        <?php } ?>
         </td>
-        <td valign="top"><?php echo osc_draw_input_field('products[' . $products_id_string . ']', $products['quantity'], 'size="4" style="width: 40px"'); ?></td>
+        <td valign="top">
+          <?php
+            if (!isset($products['customizations'])) { 
+              echo osc_draw_input_field('products[' . $products_id_string . ']', $products['quantity'], 'size="4" style="width: 40px"'); 
+            }
+          ?>
+        </td>
         <td valign="top" align="right"><?php echo '<b>' . $osC_Currencies->displayPrice($products['final_price'], $products['tax_class_id'], $products['quantity']) . '</b>'; ?></td>
       </tr>
 
@@ -151,11 +181,30 @@
   <span style="padding-left: 120px">
     <?php echo osc_draw_image_submit_button('button_continue_shopping.gif', $osC_Language->get('button_continue_shopping'), 'onclick="javascript:history.go(-1);return false;"'); ?>
   </span>
+  
 </div>
 
 </form>
+  <?php
+    $initialize_checkout_methods = $payment_modules->get_checkout_initialization_methods();
+    
+    if ( !empty($initialize_checkout_methods) && is_array($initialize_checkout_methods) ) {
+      reset($initialize_checkout_methods);
+    
+  ?>
+  
+    <div align="right">
+      <p align="right"><?php echo $osC_Language->get('alternative_checkout_methods'); ?></p>
 
-<?php
+      <?php 
+        foreach($initialize_checkout_methods as $value) {
+          echo $value;
+        }        
+      ?>
+    </div>
+    
+  <?php 
+    } 
   } else {
 ?>
 

@@ -18,8 +18,8 @@
       osC_Services_category_path::process();
 
       include('includes/classes/category_tree.php');
-      $osC_CategoryTree = new osC_CategoryTree();
-
+      $osC_CategoryTree = new toC_CategoryTree();
+      
       return true;
     }
 

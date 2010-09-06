@@ -1,6 +1,6 @@
 <?php
 /*
-  $Id: new_products.php $
+  $Id: compare_products.php $
   TomatoCart Open Source Shopping Cart Solutions
   http://www.tomatocart.com
 

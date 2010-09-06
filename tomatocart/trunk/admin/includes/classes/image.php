@@ -34,17 +34,7 @@
     }
 
     function resize($image, $group_id, $type = 'products', $watermark = true) {
-      if (osc_empty(CFG_APP_IMAGEMAGICK_CONVERT) || !file_exists(CFG_APP_IMAGEMAGICK_CONVERT)) {
-        return $this->resizeWithGD($image, $group_id, $type, $watermark);
-      }
-
-      if (!file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'])) {
-        mkdir(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code']);
-        @chmod(DIR_FS_CATALOG . DIR_WS_IMAGES . $type . '/' . $this->_groups[$group_id]['code'], 0777);
-      }
-
-      exec(escapeshellarg(CFG_APP_IMAGEMAGICK_CONVERT) . ' -resize ' . (int)$this->_groups[$group_id]['size_width'] . 'x' . (int)$this->_groups[$group_id]['size_height'] . (($this->_groups[$group_id]['force_size']) == '1' ? '!' : '') . ' ' . escapeshellarg(DIR_FS_CATALOG . DIR_WS_IMAGES . $file . $this->_groups[1]['code'] . '/' . $image) . ' ' . escapeshellarg(DIR_FS_CATALOG . DIR_WS_IMAGES . $file . $this->_groups[$group_id]['code'] . '/' . $image));
-      @chmod(DIR_FS_CATALOG . DIR_WS_IMAGES . $file . $this->_groups[$group_id]['code'] . '/' . $image, 0777);
+      return $this->resizeWithGD($image, $group_id, $type, $watermark);
     }
 
     function hasGDSupport() {

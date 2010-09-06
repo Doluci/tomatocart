@@ -13,9 +13,9 @@
 
   class osC_Product {
     var $_data = array(),
-        $_customers_id = '',
-        $_customers_groups_id = '',
-        $_customer_group_discount = '';
+        $_customers_id = null,
+        $_customers_groups_id = null,
+        $_customer_group_discount = null;
 
     function osC_Product($id, $customers_id =null) {
       global $osC_Database, $osC_Services, $osC_Language, $osC_Image;
@@ -76,6 +76,15 @@
                                                   'description' => $Qattachments->value('attachments_description'));
           }
           
+          $Qaccessories = $osC_Database->query('select accessories_id from :table_products_accessories pa where pa.products_id =  :products_id');
+          $Qaccessories->bindTable(':table_products_accessories', TABLE_PRODUCTS_ACCESSORIES);
+          $Qaccessories->bindInt(":products_id", $this->_data['id']);
+          $Qaccessories->execute();
+          
+          while ($Qaccessories->next()) {
+            $this->_data['accessories'][] = $Qaccessories->value('accessories_id');
+          }
+          
           $this->iniProductVariants();
           
           $Qattributes = $osC_Database->query('select pav.name, pav.module, pav.value as selections, pa.value from :table_products_attributes pa, :table_products_attributes_values pav where pa.products_attributes_values_id = pav.products_attributes_values_id and pa.language_id = pav.language_id and pa.products_id = :products_id and pa.language_id = :language_id');
@@ -102,6 +111,23 @@
             $attributes[] = array('name' => $name, 'value' => $value);
           }
           $this->_data['attributes'] = $attributes;
+          
+          $Qcustomizations = $osC_Database->query('select cf.customization_fields_id, products_id, type, is_required, name from :table_customization_fields cf inner join :table_customization_fields_description cfd on cf.customization_fields_id = cfd.customization_fields_id where cf.products_id = :products_id and cfd.languages_id = :languages_id');
+          $Qcustomizations->bindTable(':table_customization_fields', TABLE_CUSTOMIZATION_FIELDS);
+          $Qcustomizations->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
+          $Qcustomizations->bindInt(':products_id', $this->_data['id']);
+          $Qcustomizations->bindInt(':languages_id', $osC_Language->getID());
+          $Qcustomizations->execute();
+          
+          $customizations = array();
+          while ($Qcustomizations->next()) {
+            $customizations[] = array('customization_fields_id' => $Qcustomizations->valueInt('customization_fields_id'),
+                                      'products_id' => $Qcustomizations->valueInt('products_id'),
+                                      'type' => $Qcustomizations->valueInt('type'),
+                                      'is_required' => $Qcustomizations->valueInt('is_required'),
+                                      'name' => $Qcustomizations->value('name'));
+          }
+          $this->_data['customizations'] = $customizations;
 
           if (is_object($osC_Services) && $osC_Services->isStarted('reviews')) {
             $Qavg = $osC_Database->query('select avg(reviews_rating) as rating from :table_reviews where products_id = :products_id and languages_id = :languages_id and reviews_status = 1');
@@ -207,17 +233,49 @@
         return false;
       }
     }
+    
+    function getVariantsComboboxArray() {
+      if ($this->hasVariants()) {
+        $combobox_array = array();
 
-    function iniProductVariants(){
-      global $osC_Database, $osC_Language;
+        foreach ($this->_data['variants_groups'] as $groups_id => $groups_name) {
+          $values = array();
+          foreach($this->_data['variants_groups_values'][$groups_id] as $values_id) {
+            $values[] = array('id' => $values_id, 'text' => $this->_data['variants_values'][$values_id]);
+          }
+          
+          $combobox_array[$groups_name] = osc_draw_pull_down_menu(
+            'variants[' . $groups_id . ']', 
+            $values, 
+            $this->_data['default_variant']['groups_id'][$groups_id]);
+        }
+        return $combobox_array;
+      }
+      
+      return false;
+    }
+    
+    function getDefaultVariant() {
+      if ($this->hasVariants()) {
+        return $this->_data['default_variant'];
+      }
+      
+      return false;
+    }
+
+    function iniProductVariants() {
+      global $osC_Database, $osC_Language, $osC_Currencies;
 
       $products_variants = array();
 
-      $Qvariants = $osC_Database->query('select * from :table_products_variants where products_id = :products_id');
+      $Qvariants = $osC_Database->query('select * from :table_products_variants where products_id = :products_id order by is_default DESC');
       $Qvariants->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
       $Qvariants->bindInt(':products_id', $this->getID());
       $Qvariants->execute();
 
+      $groups = array();
+      $values = array();
+      $groups_values = array();
       while ($Qvariants->next()) {
         $Qvalues = $osC_Database->query('select pve.products_variants_groups_id as groups_id, pve.products_variants_values_id as variants_values_id, pvg.products_variants_groups_name as groups_name, pvv.products_variants_values_name as variants_values_name from :table_products_variants_entries pve, :table_products_variants_groups pvg, :table_products_variants_values pvv where pve.products_variants_groups_id = pvg.products_variants_groups_id and pve.products_variants_values_id = pvv.products_variants_values_id and pvg.language_id = pvv.language_id and pvg.language_id = :language_id and pve.products_variants_id = :products_variants_id order by pve.products_variants_groups_id');
         $Qvalues->bindTable(':table_products_variants_entries', TABLE_PRODUCTS_VARIANTS_ENTRIES);
@@ -229,27 +287,57 @@
 
         $variants = array();
         $groups_name = array();
-        while ($Qvalues->next()){
+        while ($Qvalues->next()) {
           $variants[$Qvalues->value('groups_id')] = $Qvalues->value('variants_values_id');
           $groups_name[$Qvalues->value('groups_name')] = $Qvalues->value('variants_values_name');
+          
+          $groups[$Qvalues->value('groups_id')] = $Qvalues->value('groups_name');
+          $values[$Qvalues->value('variants_values_id')] = $Qvalues->value('variants_values_name');
+          
+          if (!is_array($groups_values[$Qvalues->value('groups_id')])) {
+            $groups_values[$Qvalues->value('groups_id')] = array();
+          }
+          
+          if (!in_array($Qvalues->value('variants_values_id'), $groups_values[$Qvalues->value('groups_id')])) {
+            $groups_values[$Qvalues->value('groups_id')][] = $Qvalues->value('variants_values_id');
+          }
         }
         $Qvalues->freeResult();
         $product_id_string = osc_get_product_id_string($this->getID(), $variants);
 
         $products_variants[$product_id_string]['variants_id'] = $Qvariants->valueInt('products_variants_id');
+        $products_variants[$product_id_string]['is_default'] = $Qvariants->valueInt('is_default');
         $products_variants[$product_id_string]['sku'] = $Qvariants->value('products_sku');
         $products_variants[$product_id_string]['price'] = $Qvariants->value('products_price');
-        $products_variants[$product_id_string]['status'] = $Qvariants->value('products_status');
+        $products_variants[$product_id_string]['display_price'] = $osC_Currencies->displayPrice($Qvariants->value('products_price'), $this->_data['tax_class_id']);
+        $products_variants[$product_id_string]['status'] = $Qvariants->valueInt('products_status');
         $products_variants[$product_id_string]['quantity'] = $Qvariants->value('products_quantity');
         $products_variants[$product_id_string]['weight'] = $Qvariants->value('products_weight');
+        $products_variants[$product_id_string]['image'] = $this->getImageByID($Qvariants->value('products_images_id'));
         $products_variants[$product_id_string]['groups_id'] = $variants;
         $products_variants[$product_id_string]['groups_name'] = $groups_name;
+        $products_variants[$product_id_string]['filename'] = $Qvariants->value('filename');
+        $products_variants[$product_id_string]['cache_filename'] = $Qvariants->value('cache_filename');
+        
+        if ($Qvariants->valueInt('is_default') == 1) {
+          $this->_data['default_variant'] = $products_variants[$product_id_string];
+          $this->_data['default_variant']['product_id_string'] = $product_id_string;
+        }
+        
+        if ($this->_data['type'] == PRODUCT_TYPE_DOWNLOADABLE) {
+          $products_variants[$product_id_string]['filename'] = $Qvariants->value('filename');
+          $products_variants[$product_id_string]['cache_filename'] = $Qvariants->value('cache_filename');
+        }
       }
+      
       $Qvariants->freeResult();
 
       $this->_data['variants'] = $products_variants;
+      $this->_data['variants_groups'] = $groups;
+      $this->_data['variants_values'] = $values;
+      $this->_data['variants_groups_values'] = $groups_values;
     }
-
+    
     function hasQuantityDiscount(){
       return (isset($this->_data['quantity_discount']) && !empty($this->_data['quantity_discount']));
     }
@@ -381,7 +469,13 @@
     
     function getSKU($variants = null) {
       if ($variants == null || empty($variants)) {
-        return $this->_data['sku'];
+        $sku = $this->_data['sku'];
+  
+        if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])){
+          $sku = $this->_data['default_variant']['sku'];
+        }
+        
+        return $sku;
       } else {
         $product_id_string = osc_get_product_id_string($this->getID(), $variants);
         
@@ -449,14 +543,20 @@
 
       //get product price
       $product_price = $this->_data['price'];
-      if (is_array($variants) && !empty($variants)){
+      if (is_array($variants) && !empty($variants)) {
         $product_id_string = osc_get_product_id_string($this->getID(), $variants);
         if (isset($this->_data['variants'][$product_id_string]))
           $product_price = $this->_data['variants'][$product_id_string]['price'];
+      } else {
+        if ($this->hasVariants()) {
+          if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])){
+              $product_price = $this->_data['default_variant']['price'];
+          }
+        }
       }
 
       $qty_discount = $this->getQuantityDiscount($quantity);
-      $customer_grp_discount = $this->_customer_group_discount;
+      $customer_grp_discount = is_numeric($this->_customer_group_discount) ? $this->_customer_group_discount : 0;
 
       $product_price = round($product_price * (1 - $qty_discount/100) * (1 - $customer_grp_discount/100), 2);
       return $product_price;
@@ -479,21 +579,6 @@
       return $price;
     }
     
-    function getPriceFormatedShow($with_special = false) {
-      global $osC_Services, $osC_Specials, $osC_Currencies, $osC_Customer;
-
-      $price = '';
-      if (ALLOW_DISPLAY_PRICE_TO_GUESTS == '1') {
-        $price = self::getPriceFormated($with_special);
-      } else {
-	      if ($osC_Customer->isLoggedOn() === true) {
-	        $price = self::getPriceFormated($with_special);
-	      }
-      }
-
-      return $price;
-    }
-
     function getCategoryID() {
       return $this->_data['category_id'];
     }
@@ -511,8 +596,35 @@
     }
 
     function getImage() {
+      $default_image = null;
+      $default_variant_image = null;
+      
       foreach ($this->_data['images'] as $image) {
+        //get variant default image
+        if ($this->hasVariants()) {
+          if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])){
+            if ($image['id'] == $this->_data['default_variant']['image']) {
+              $default_variant_image = $image['image'];
+            }
+          }
+        } 
+        
+        //get default image
         if ($image['default_flag'] == '1') {
+          $default_image = $image['image'];
+        }
+      }
+      
+      if ($default_variant_image != null) {
+        return $default_variant_image;
+      }
+      
+      return $default_image;
+    }
+    
+    function getImageByID($id) {
+      foreach ($this->_data['images'] as $image) {
+        if ($image['id'] == $id) {
           return $image['image'];
         }
       }
@@ -561,9 +673,15 @@
         if (isset($this->_data['variants'][$products_id_string])) {
           return $this->_data['variants'][$products_id_string]['quantity'];
         }
-      }
+      } else {
+        $quantity = $this->_data['quantity'];
+        
+        if (is_array($this->_data['default_variant']) && !empty($this->_data['default_variant'])) {
+          $quantity = $this->_data['default_variant']['quantity'];
+        }
 
-      return $this->_data['quantity'];
+        return $quantity;
+      }
     }
 
     function hasVariants() {
@@ -572,6 +690,26 @@
 
     function &getVariants() {
       return $this->_data['variants'];
+    }
+    
+    function hasCustomizations() {
+      return (isset($this->_data['customizations']) && !empty($this->_data['customizations']));
+    }
+
+    function &getCustomizations() {
+      return $this->_data['customizations'];
+    }
+    
+    function hasRequiredCustomizationFields() {
+      global $toC_Customization_Fields;
+      
+      foreach ($this->getCustomizations() as $field) {
+        if ($field['is_required'] == '1') {
+          return true;
+        }
+      }
+
+      return false;
     }
     
     function hasAttributes() {
@@ -588,6 +726,14 @@
     
     function getAttachments() {
       return $this->_data['attachments'];
+    }
+    
+    function hasAccessories(){
+      return (isset($this->_data['accessories']) && !empty($this->_data['accessories']));
+    }
+    
+    function getAccessories() {
+      return $this->_data['accessories'];
     }
     
     function checkEntry($id) {
@@ -678,53 +824,25 @@
       return $Qproducts;
     }
 
-    function renderVariantsTable() {
-      global $osC_Language, $osC_Currencies, $osC_Weight;
+    function renderCustomizationFieldsList() {
+      global $toC_Customization_Fields;
+      
+      $output = '<ul>';
+      foreach ($this->getCustomizations() as $field) {
+        $tmp = $toC_Customization_Fields->getCustomizationField($this->getID(), $field['customization_fields_id']);
+        $value = ($tmp === false) ? null : $tmp['customization_value'];
 
-      $has_header = false;
-
-      $output = '<table border="0" cellspacing="0" cellpadding="2" class="productVariantsTable">' . "\n";
-      foreach ($this->_data['variants'] as $product_id_string => $variants) {
-        if($has_header == false){
-          $output .= '<thead><tr>' . "\n";
-          foreach(array_keys($variants['groups_name']) as $group_name){
-            $output .= '    <th>' . $group_name . '</th>' . "\n";
-          }
-          $output .= '    <th align="center">' . $osC_Language->get('table_heading_sku') .'</th>' . "\n";
-          $output .= '    <th align="right">' . $osC_Language->get('table_heading_price') .'</th>' . "\n";
-          $output .= '    <th align="right">' . $osC_Language->get('table_heading_weight') .'</th>' . "\n";
-          $output .= '    <th align="right">&nbsp;</th>' . "\n";
-          $output .= '</tr></thead>' . "\n";
-          $has_header = true;
+        if ($field['type'] == 0) {
+          $output .= '<li>' . osc_draw_label($field['name'], 'customizations_' . $field['customization_fields_id'], $value, ($field['is_required'] == '1' ? true : false)) . osc_draw_file_field('customizations_' . $field['customization_fields_id'], true) . '<br /><span>' . $value . '</span></li>';
+        } else {
+          $output .= '<li>' . osc_draw_label($field['name'], 'customizations[' . $field['customization_fields_id'] . ']', null, ($field['is_required'] == '1' ? true : false)) . osc_draw_input_field('customizations[' . $field['customization_fields_id'] . ']', $value) . '</li>';
         }
-
-        $output .= '<tr>';
-        if($variants['status'] == 1){
-          $variants_values_names = array_values($variants['groups_name']);
-          foreach($variants_values_names as $variant_value_name){
-            $output .= '    <td align="center">' . $variant_value_name . '</td>' . "\n";
-          }
-          $output .= '    <td align="center">' . $variants['sku'] . '</td>' . "\n";
-
-          $product_price = round($variants['price'] * (1 - $this->_customer_group_discount/100), 2);
-
-          $param = $product_id_string;
-          if (is_numeric(strpos($product_id_string, '#'))) {
-            $tmp = explode('#', $product_id_string);
-            $param = $tmp[0] . '&variants=' . $tmp[1];
-          }
-          
-          $output .= '    <td align="right">' . $osC_Currencies->displayPrice($product_price, $this->_data['tax_class_id']) . '</td>' . "\n";
-          $output .= '    <td align="right">' . $osC_Weight->display($variants['weight'], $this->_data['products_weight_class']) . '</td>' . "\n";
-          $output .= '    <td align="right">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $param . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'))) . '</td>' . "\n";
-        }
-        $output .= '</tr>';
       }
-      $output .= '</table>';
+      $output .= '</ul>';
 
       return $output;
     }
-
+    
     function renderQuantityDiscountTable(){
       global $osC_Language;
 
@@ -843,7 +961,7 @@
 
             if ( !$osC_Database->isError() ) {
               if( $stock_left < 1 && STOCK_EMAIL_ALERT == '1') {
-                self::outstockAlert($Qstock->value('products_name'), $stock_left);
+                //self::outstockAlert($Qstock->value('products_name'), $stock_left);
               }
               
               if ((STOCK_ALLOW_CHECKOUT == '-1') && ($stock_left < 1)) {

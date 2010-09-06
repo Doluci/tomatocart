@@ -127,7 +127,7 @@ introduction_edit_folder_error = You can\'t edit this folder
 introduction_edit_folder_error = you can not select this
 introduction_new_folder = Enter the folder name:
 introduction_search = Subject or Sender 
-introduction_set_account = You didn\'t configure an e-mail account yet. Go to Start menu -> Customers -> Email -> settings to setup your first e-mail account.
+introduction_set_account = You didn\'t configure an e-mail account yet. Go to Start menu -> Customers -> Customer Emails -> Accounts to setup your first e-mail account.
 
 
 pop3_mailbox_inbox = Inbox

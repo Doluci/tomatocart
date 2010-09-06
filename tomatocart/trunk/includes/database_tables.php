@@ -41,7 +41,10 @@
   define('TABLE_CUSTOMERS_GROUPS', DB_TABLE_PREFIX . 'customers_groups');
   define('TABLE_CUSTOMERS_GROUPS_DESCRIPTION', DB_TABLE_PREFIX . 'customers_groups_description');
   define('TABLE_CUSTOMERS_RATINGS', DB_TABLE_PREFIX . 'customers_ratings');
-  define('TABLE_DEPARTMENT', DB_TABLE_PREFIX . 'department');
+  define('TABLE_CUSTOMIZATION_FIELDS', DB_TABLE_PREFIX . 'customization_fields');
+  define('TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION', DB_TABLE_PREFIX . 'customization_fields_description');
+  define('TABLE_DEPARTMENTS', DB_TABLE_PREFIX . 'departments');
+  define('TABLE_DEPARTMENTS_DESCRIPTION',DB_TABLE_PREFIX . 'departments_description');
   define('TABLE_EMAIL_ACCOUNTS', DB_TABLE_PREFIX . 'email_accounts');
   define('TABLE_EMAIL_FILTERS', DB_TABLE_PREFIX . 'email_filters');
   define('TABLE_EMAIL_FOLDERS', DB_TABLE_PREFIX . 'email_folders');
@@ -63,6 +66,8 @@
   define('TABLE_NEWSLETTERS_LOG', DB_TABLE_PREFIX . 'newsletters_log');
   define('TABLE_ORDERS', DB_TABLE_PREFIX . 'orders');
   define('TABLE_ORDERS_PRODUCTS', DB_TABLE_PREFIX . 'orders_products');
+  define('TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS', DB_TABLE_PREFIX . 'orders_products_customizations');
+  define('TABLE_ORDERS_PRODUCTS_CUSTOMIZATIONS_VALUES', DB_TABLE_PREFIX . 'orders_products_customizations_values');
   define('TABLE_ORDERS_PRODUCTS_VARIANTS', DB_TABLE_PREFIX . 'orders_products_variants');
   define('TABLE_ORDERS_REFUNDS', DB_TABLE_PREFIX . 'orders_refunds');
   define('TABLE_ORDERS_REFUNDS_PRODUCTS', DB_TABLE_PREFIX . 'orders_refunds_products');
@@ -78,6 +83,7 @@
   define('TABLE_PIWIK_SITE', DB_TABLE_PREFIX . 'piwik_site');
   define('TABLE_PIWIK_USER', DB_TABLE_PREFIX . 'piwik_user');
   define('TABLE_PRODUCTS', DB_TABLE_PREFIX . 'products');
+  define('TABLE_PRODUCTS_ACCESSORIES', DB_TABLE_PREFIX . 'products_accessories');
   define('TABLE_PRODUCTS_ATTACHMENTS', DB_TABLE_PREFIX . 'products_attachments');
   define('TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION', DB_TABLE_PREFIX . 'products_attachments_description');
   define('TABLE_PRODUCTS_ATTACHMENTS_TO_PRODUCTS', DB_TABLE_PREFIX . 'products_attachments_to_products');
@@ -127,4 +133,5 @@
   define('TABLE_ZONES', DB_TABLE_PREFIX . 'zones');
   define('TABLE_ZONES_TO_GEO_ZONES', DB_TABLE_PREFIX . 'zones_to_geo_zones');
   define('TABLE_ORDER_TRACK', DB_TABLE_PREFIX . 'order_track');
+  define('TABLE_ORDER_GOOGLE', DB_TABLE_PREFIX . 'google_orders');
 ?>

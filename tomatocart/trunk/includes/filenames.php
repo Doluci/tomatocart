@@ -22,4 +22,5 @@
   define('FILENAME_SEARCH', 'search.php');
   define('FILENAME_PDF', 'pdf.php');
   define('FILENAME_RSS', 'rss.php');
+    define('FILENAME_JSON', 'json.php');
 ?>

@@ -15,6 +15,7 @@ Logout = Logout
 btnSubmit = btnSubmit
 btnSave = Save
 btnClose = Close
+btnSaveAndContinue = Save and Continue Edit
 
 LoadWallpaper = Loading wallpaper ...
 

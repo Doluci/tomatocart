@@ -28,13 +28,14 @@
       
     function getZones(){
       global $toC_Json;
-      
       foreach (osC_Address::getZones() as $zone) {
-        $zones_array[] = array('id' => $zone['id'],
-                             'text' => $zone['name'],
-                             'group' => $zone['country_name']);
+        if($zone['country_id'] == STORE_COUNTRY) {
+	        $zones_array[] = array('id' => $zone['id'],
+	                             'text' => $zone['name'],
+	                             'group' => $zone['country_name']);
+        }
       }    
-      
+
       $response = array(EXT_JSON_READER_ROOT => $zones_array);                        
       echo $toC_Json->encode($response);
     }

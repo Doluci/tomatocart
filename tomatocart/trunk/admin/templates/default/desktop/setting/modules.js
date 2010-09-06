@@ -142,28 +142,24 @@ Toc.settings.ModulePanel = function(app) {
   var autorunCheck = new CheckColumn({
     header: TocLanguage.colAutorun,
     dataIndex: 'autorun',
-    menuDisabled: true,
     items:app
   });
     
   var quickstartCheck = new CheckColumn({
     header: TocLanguage.colQuickstart,
     dataIndex: 'quickstart',
-    menuDisabled: true,
     items:app
   });
 
   var shortcutCheck = new CheckColumn({
     header: TocLanguage.colShortcut,
     dataIndex: 'shortcut',
-    menuDisabled: true,
     items:app
   });
 
   var contextmenuCheck = new CheckColumn({
     header: TocLanguage.colContextmenu,
     dataIndex: 'contextmenu',
-    menuDisabled: true,
     items:app
   });
   
@@ -179,23 +175,23 @@ Toc.settings.ModulePanel = function(app) {
         sortInfo:{field: 'id', direction: "ASC"},
         groupField:'parent'
       }),
-       
-      columns: [
-        {header: "module", dataIndex: 'parent', hidden: true, menuDisabled: true},
-        {header: TocLanguage.colModule, dataIndex: 'text', menuDisabled: true},
-        autorunCheck,
-        quickstartCheck,
-        shortcutCheck,
-        contextmenuCheck
+
+        columns: [
+          {header: "module", dataIndex: 'parent', hidden: true},
+          {header: TocLanguage.colModule, dataIndex: 'text'},
+          autorunCheck,
+          quickstartCheck,
+          shortcutCheck,
+          contextmenuCheck
         ],
-       
-      view: new Ext.grid.GroupingView({
-        forceFit:true,
-        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})' 
-      }),
-      region: 'center',
-      plugins: [autorunCheck, quickstartCheck, shortcutCheck, contextmenuCheck],
-      iconCls: 'icon-grid'
+
+        view: new Ext.grid.GroupingView({
+          forceFit:true,
+          groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})' 
+        }),
+        region: 'center',
+        plugins: [autorunCheck, quickstartCheck, shortcutCheck, contextmenuCheck],
+        iconCls: 'icon-grid'
   });
 
   Toc.settings.ModulePanel.superclass.constructor.call(this, {

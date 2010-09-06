@@ -25,7 +25,7 @@ Toc.orders.OrdersEditDialog = function(config) {
   config.autoScroll = true;
   config.modal = true;
   config.iconCls = 'icon-orders-win';
-  config.items = this.buildForm(config.ordersId);
+  config.items = this.buildForm(config.ordersId, config.outStockProduct);
   
   config.buttons = [
     {
@@ -39,9 +39,9 @@ Toc.orders.OrdersEditDialog = function(config) {
 }
 
 Ext.extend(Toc.orders.OrdersEditDialog, Ext.Window, {
-  buildForm: function(ordersId) {
+  buildForm: function(ordersId, outStockProduct) {
     pnlOrdersStatus = new Toc.orders.OrdersStatusPanel({ordersId: ordersId, owner: this}); 
-    this.frmOrderEdit = new Toc.orders.OrdersEditPanel({ordersId: ordersId, owner: this});
+    this.frmOrderEdit = new Toc.orders.OrdersEditPanel({ordersId: ordersId, outStockProduct: outStockProduct, owner: this});
     
     this.tabOrders = new Ext.TabPanel({
       activeTab: 0,

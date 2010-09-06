@@ -275,6 +275,10 @@
           include('../admin/includes/modules/order_total/store_credit.php');
           $module = new osC_OrderTotal_store_credit();
           $module->install();
+          
+          include('../admin/includes/modules/order_total/gift_wrapping.php');
+          $module = new osC_OrderTotal_gift_wrapping();
+          $module->install();
         }
 
         if ( ($osC_Database->isError() === false) && ($db['DB_DATABASE_CLASS'] == 'mysql_innodb') ) {

@@ -27,6 +27,7 @@
   include('orders_dialog.php');
   include('orders_edit_panel.php');
   include('orders_edit_dialog.php');
+  include('reorder_dialog.php');
 ?>
 
 Ext.override(TocDesktop.OrdersWindow, {
@@ -151,5 +152,21 @@ Ext.override(TocDesktop.OrdersWindow, {
     }
 
     return dlg;
-  }
+  },
+  
+  createReorderDialog: function(config) {
+    var desktop = this.app.getDesktop();
+    var dlg = desktop.getWindow('reorder-dialog-win');
+    
+    if (!dlg) {
+      config.owner = this;
+      dlg = desktop.createWindow(config, Toc.orders.ReorderDialog);
+      
+      dlg.on('saveSuccess', function(feedback) {
+        this.app.showNotification({title: TocLanguage.msgSuccessTitle, html: feedback});
+      }, this);
+    }
+    
+    return dlg;
+  }, 
 });

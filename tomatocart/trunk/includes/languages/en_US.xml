@@ -127,7 +127,7 @@
     </definition>           
     <definition>
       <key>save_cart_status_error</key>
-      <value><![CDATA[ERROR: bad status setted. Only collapse or expand status of the blockcart module are availabe.]]></value>
+      <value><![CDATA[ERROR: bad status setted. Only collapse or expand status of the blockcart module are available.]]></value>
       <group>general</group>
     </definition>
     <definition>
@@ -573,6 +573,11 @@
     <definition>
       <key>section_heading_products_attachments</key>
       <value><![CDATA[Attachments]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>section_heading_products_accessories</key>
+      <value><![CDATA[Accessories]]></value>
       <group>general</group>
     </definition>
     <definition>
@@ -1351,6 +1356,11 @@
       <group>account</group>
     </definition>
     <definition>
+      <key>gift_wrapping_message_heading</key>
+      <value><![CDATA[Gift Wrapping Mssage]]></value>
+      <group>account</group>
+    </definition>
+    <definition>
       <key>order_history_heading</key>
       <value><![CDATA[Order History]]></value>
       <group>account</group>
@@ -1656,6 +1666,11 @@ Note: If you did not request this action via our password forgotten page, please
     <definition>
       <key>breadcrumb_checkout</key>
       <value><![CDATA[Checkout]]></value>
+      <group>checkout</group>
+    </definition>
+    <definition>
+      <key>alternative_checkout_methods</key>
+      <value><![CDATA[- OR -]]></value>
       <group>checkout</group>
     </definition>
     <definition>
@@ -2344,7 +2359,7 @@ Note: If you did not request this action via our password forgotten page, please
       <group>info</group>
     </definition>
     <definition>
-      <key>contact_department_title</key>
+      <key>contact_departments_title</key>
       <value><![CDATA[Department:]]></value>
       <group>info</group>
     </definition>
@@ -2564,6 +2579,11 @@ Note: If you did not request this action via our password forgotten page, please
       <group>products</group>
     </definition>
     <definition>
+      <key>section_heading_customizations</key>
+      <value><![CDATA[Customizations]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>section_heading_reviews</key>
       <value><![CDATA[Reviews]]></value>
       <group>products</group>
@@ -2651,6 +2671,11 @@ Note: If you did not request this action via our password forgotten page, please
     <definition>
       <key>out_of_stock</key>
       <value><![CDATA[Out Of Stock]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>not_available</key>
+      <value><![CDATA[Not Available]]></value>
       <group>products</group>
     </definition> 
     <definition>
@@ -2775,7 +2800,22 @@ Note: If you did not request this action via our password forgotten page, please
     </definition>
     <definition>
       <key>error_message_open_gift_certificate_amount</key>
-      <value><![CDATA[The gift certificate amount should be large than %s and less than %s.]]></value>
+      <value><![CDATA[Please specify a correct value for the gift certificate amount.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>error_customization_field_must_be_specified</key>
+      <value><![CDATA[Please specify a value for the customization field: %s.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>error_gift_certificate_data_missing</key>
+      <value><![CDATA[Please specify the data for the gift certificate.]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
+      <key>error_customization_fields_missing</key>
+      <value><![CDATA[Please specify the value for customization fields before adding the product to shopping cart.]]></value>
       <group>products</group>
     </definition>
     <definition>
@@ -3157,6 +3197,11 @@ Your friend, %s, thought that you would be interested in %s from %s.]]></value>
       <group>products</group>
     </definition>
     <definition>
+      <key>js_customization_file_size</key>
+      <value><![CDATA[The filesize must small than %s .]]></value>
+      <group>products</group>
+    </definition>
+    <definition>
       <key>js_no_payment_module_selected</key>
       <value><![CDATA[* Please select a payment method for your order.]]></value>
       <group>checkout</group>
@@ -3434,7 +3479,42 @@ Your friend, %s, thought that you would be interested in %s from %s.]]></value>
       <key>maximum_file_upload_size</key>
       <value><![CDATA[(Max: %s)]]></value>
       <group>general</group>
-    </definition>    
+    </definition>
+    <definition>
+      <key>field_concat_captcha_check_error</key>
+      <value><![CDATA[ERROR: Please specify the correct captcha text]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_customer_name_error</key>
+      <value><![CDATA[ERROR: Please specify the name]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_customer_concat_email_error</key>
+      <value><![CDATA[ERROR: Please specify the correct customer e-mail]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_departments_email_error</key>
+      <value><![CDATA[ERROR: Please specify the correct department e-mail address]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_customer_name_required</key>
+      <value><![CDATA[ERROR: Please specify the name]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_enquiry_error</key>
+      <value><![CDATA[ERROR: Please specify the enquiry]]></value>
+      <group>general</group>
+    </definition>
+    <definition>
+      <key>field_telephone_error</key>
+      <value><![CDATA[ERROR: Please specify the telephone]]></value>
+      <group>general</group>
+    </definition>
   </definitions>
   <tables>
     <table>

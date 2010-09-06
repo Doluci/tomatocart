@@ -13,7 +13,7 @@
 
   class osC_Services_core {
     function start() {
-      global $osC_Customer, $osC_Tax, $osC_Weight, $osC_ShoppingCart, $osC_NavigationHistory, $osC_Image, $toC_Wishlist, $toC_Compare_Products;
+      global $osC_Customer, $osC_Tax, $osC_Weight, $osC_ShoppingCart, $osC_NavigationHistory, $osC_Image, $toC_Wishlist, $toC_Compare_Products, $toC_Customization_Fields, $toC_Json;
 
       include('includes/classes/template.php');
       include('includes/classes/modules.php');
@@ -42,12 +42,18 @@
       
       include('includes/classes/compare_products.php');
       $toC_Compare_Products = new toC_Compare_Products();
+      
+      include('includes/classes/customization_fields.php');
+      $toC_Customization_Fields = new toC_Customization_Fields();
 
       include('includes/classes/navigation_history.php');
       $osC_NavigationHistory = new osC_NavigationHistory(true);
 
       include('includes/classes/image.php');
       $osC_Image = new osC_Image();
+      
+      include('includes/classes/json.php');
+      $toC_Json = new toC_Json();
 
       return true;
     }

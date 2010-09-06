@@ -31,6 +31,8 @@ parameter_true = True
 parameter_false = False
 parameter_optional = Optional
 parameter_none = -- None --
+parameter_yes = Yes
+parameter_no = No
 
 table_action_legend = Legend
 batch_results_number_of_entries = Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> entries)
@@ -139,6 +141,7 @@ configuration_download_title = Download
 configuration_regulations_title = Regulations
 configuration_credit_cards_title = Credit Cards
 configuration_program_locations_title = Program Locations
+configuration_store_front_title = Store Front
 
 init_system = Initializing System ...
 

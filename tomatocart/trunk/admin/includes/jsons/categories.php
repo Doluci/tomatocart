@@ -50,7 +50,7 @@
         $records[] = array('categories_id' => $Qcategories->value('categories_id'),
                            'categories_name' => $Qcategories->value('categories_name'),
                            'status' => $Qcategories->valueInt('categories_status'),
-                           'path' => $osC_CategoryTree->buildBreadcrumb($Qcategories->valueInt('categories_id')),); 
+                           'path' => $osC_CategoryTree->buildBreadcrumb($Qcategories->valueInt('categories_id'))); 
       }
         
       $response = array(EXT_JSON_READER_TOTAL => $Qcategories->getBatchSize(),

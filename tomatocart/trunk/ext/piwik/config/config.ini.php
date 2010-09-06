@@ -2,16 +2,16 @@
 ; file automatically generated or modified by Piwik; you can manually override the default values in global.ini.php by redefining them in this file.
 
 [superuser]
-login = ""
-password = ""
-email = ""
-salt = ""
+login = "toc_piwik_admin"
+password = "21232f297a57a5a743894a0e4a801fc3"
+email = "jack.yin1982@gmail.com"
+salt = "9972ea44371657d9f9c4913d47120412"
 
 [database]
-host = ""
-username = ""
+host = "localhost"
+username = "root"
 password = ""
-dbname = ""
+dbname = "bugfix"
 tables_prefix = "toc_piwik_"
 adapter = "MYSQLI"
 port = 3306

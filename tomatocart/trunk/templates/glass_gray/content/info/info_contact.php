@@ -10,6 +10,16 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
+
+ $departments =array();
+ 
+ $Qlisting = toC_Departments::getListing();
+ while($Qlisting->next()) {
+   $departments[] = array('id' => $Qlisting->value('departments_email_address'),
+                         'text' => $Qlisting->value('departments_title'));
+   
+   $departments_description[$Qlisting->value('departments_email_address')] = $Qlisting->value('departments_description');
+ }
 ?>
 
 <h1><?php echo $osC_Template->getPageTitle(); ?></h1>
@@ -25,7 +35,7 @@
 <p><?php echo $osC_Language->get('contact_email_sent_successfully'); ?></p>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_link_object(osc_href_link(FILENAME_INFO), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
+  <?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
 </div>
 
 <?php
@@ -56,9 +66,17 @@
   <h6></h6>
   <div class="content contact">
     <ol>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_name_title'), 'name') . osc_draw_input_field('name'); ?></li>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_email_address_title'), 'email') . osc_draw_input_field('email'); ?></li>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_enquiry_title'), 'enquiry') . osc_draw_textarea_field('enquiry', null, 38, 10); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_departments_title'), 'eamil') . osc_draw_pull_down_menu('department_email', $departments); ?></li><span id="departments_description"></span>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_name_title'), 'name') . osc_draw_input_field('name', $osC_Customer->getName(), 'size=30'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_telephone_title'), 'telphone') . osc_draw_input_field('telephone', '', 'size=30'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_email_address_title'), 'email') . osc_draw_input_field('email', $osC_Customer->getEmailAddress(), 'size=30'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_enquiry_title'), 'enquiry') . osc_draw_textarea_field('enquiry', null, 38, 5); ?></li>
+
+    <?php if( ACTIVATE_CAPTCHA == '1') {?>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'code') . osc_draw_input_field('concat_code', '', 'size=30'); ?> </li>
+      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage"/></li>
+    <?php } ?>
+    
     </ol>
   </div>
 </div>
@@ -69,6 +87,25 @@
 
 </form>
 
+<script type="text/javascript">
+  window.addEvent("domready", function() {
+    var description = {};
+  <?php
+    foreach($departments_description as $key => $description) {
+  ?>
+  
+    description['<?php echo $key; ?>'] = '<?php echo $description; ?>';
+  
+  <?php } ?>
+      
+    $('departments_description').set('html', description[$('department_email').get('value')]);
+      
+    $('department_email').addEvent('change', function() {
+      $('departments_description').set('html', description[this.value]);
+    });
+  });
+
+</script>
 <?php
   }
 ?>

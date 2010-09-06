@@ -26,7 +26,6 @@
 
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.css" />
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/stylesheet.css" />
-
 <?php
   if ($osC_Template->hasPageTags()) {
     echo $osC_Template->getPageTags();

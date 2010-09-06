@@ -98,8 +98,27 @@ Toc.orders.OrdersEditProductsGrid = function(config) {
     return value;
   };
   
+  var outStockProducts = config.outStockProduct;
+  var i = 0;
+   
   config.cm = new Ext.grid.ColumnModel([
-    {id: 'orders_edit_products', header: '<?php echo $osC_Language->get('table_heading_products');?>', dataIndex: 'products'},
+    {
+      id: 'orders_edit_products', 
+      header: '<?php echo $osC_Language->get('table_heading_products');?>', 
+      dataIndex: 'products', 
+      renderer: function(val) {
+        if(outStockProducts != null && outStockProducts.length > 0) {
+          var products_id = config.ds.getAt(i++).data['products_id'];
+          for(var j = 0; j < outStockProducts.length; j++) {
+		        if(outStockProducts[j] == products_id) { 
+		          return val + '<br/><span style="color:red;"><?php echo $osC_Language->get('table_heading_out_products_stock');?></span>';
+		        }       
+          }
+        }
+        
+        return val;
+      }
+    },
     {header: '<?php echo $osC_Language->get('table_heading_product_sku');?>', dataIndex: 'sku', width: 80, align: 'right', editor: new Ext.form.TextField()},
     {header: '<?php echo $osC_Language->get('table_heading_product_qty');?>', dataIndex: 'quantity', width: 60, align: 'center', editor: new Ext.form.NumberField({allowNegative: false, allowDecimals: false})},
     {header: '<?php echo $osC_Language->get('table_heading_tax');?>', dataIndex: 'tax', width: 50, align: 'center'},

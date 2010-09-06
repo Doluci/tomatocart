@@ -255,6 +255,28 @@
 
       return $selection_array;
     }
+    
+    function checkout_initialization_method() {
+      return false;
+    }
+    
+    function get_checkout_initialization_methods() {
+      $initialize_array = array();
+
+      if (is_array($this->_modules)) {
+        reset($this->_modules);
+        
+        foreach($this->_modules as $module) {
+          $module_class = 'osC_Payment_' . $module;
+          
+          if ($GLOBALS[$module_class]->isEnabled() && method_exists($GLOBALS[$module_class], 'checkout_initialization_method')) {
+            $initialize_array[] = $GLOBALS[$module_class]->checkout_initialization_method();
+          }
+        }
+      }
+
+      return $initialize_array;
+    }
 
     function pre_confirmation_check() {
       if (is_array($this->_modules)) {

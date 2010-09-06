@@ -23,10 +23,11 @@
                             '%%to_name%%',
                             '%%to_email_address%%',
                             '%%message%%',
-                            '%%contents%%',
+                            '%%product_name%%',
                             '%%store_name%%',
                             '%%store_address%%',
-                            '%%store_owner_email_address%%');
+                            '%%store_owner_email_address%%',
+                            '%%product_link%%',);
 
 /* Class constructor */
 
@@ -37,20 +38,21 @@
 
 /* Private methods */
 
-  function setData($from_name, $from_email_address, $to_name, $to_email_address, $message, $contents){
+  function setData($from_name, $from_email_address, $to_name, $to_email_address, $message, $product_name, $product_link){
       $this->_from_name = $from_name;
       $this->_from_email_address = $from_email_address;
       $this->_to_name = $to_name;
       $this->_to_email_address = $to_email_address;
       $this->_message = $message;
-      $this->_contents = $contents;
+      $this->product_name = $product_name;
+      $this->product_link = $product_link;
       
 
       $this->addRecipient($this->_to_name, $this->_to_email_address);
     }
 
     function buildMessage() {
-      $replaces = array($this->_from_name, $this->_from_email_address, $this->_to_name, $this->_to_email_address, $this->_message, $this->_contents, STORE_NAME, HTTP_SERVER . DIR_WS_CATALOG, STORE_OWNER_EMAIL_ADDRESS);
+      $replaces = array($this->_from_name, $this->_from_email_address, $this->_to_name, $this->_to_email_address, $this->_message, $this->product_name, STORE_NAME, HTTP_SERVER . DIR_WS_CATALOG, STORE_OWNER_EMAIL_ADDRESS, $this->product_link);
 
       $this->_title = str_replace($this->_keywords, $replaces, $this->_title);
       $this->_email_text = str_replace($this->_keywords, $replaces, $this->_content);

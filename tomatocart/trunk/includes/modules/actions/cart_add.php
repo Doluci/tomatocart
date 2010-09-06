@@ -13,7 +13,7 @@
 
   class osC_Actions_cart_add {
     function execute() {
-      global $osC_Session, $osC_ShoppingCart, $osC_Product;
+      global $osC_Session, $osC_ShoppingCart, $osC_Product, $osC_Language, $messageStack, $toC_Customization_Fields;
 
       if (!isset($osC_Product)) {
         $id = false;
@@ -32,6 +32,15 @@
       }
 
       if (isset($osC_Product)) {
+        //customization fields check
+        if ($osC_Product->hasRequiredCustomizationFields()) {
+          if ( !$toC_Customization_Fields->exists($osC_Product->getID()) ) {
+            $messageStack->add_session('products', $osC_Language->get('error_customization_fields_missing'), 'error');
+            
+            osc_redirect(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()));  
+          }
+        }
+        
         $variants = null;
         
         if (isset($_POST['variants']) && is_array($_POST['variants'])) {
@@ -66,7 +75,7 @@
           $quantity = $_POST['quantity'];
         }
         
-        if (($osC_Product->hasVariants() && empty($variants)) || ($osC_Product->isGiftCertificate() && ($gift_certificate_data == null))) {
+        if ( $osC_Product->isGiftCertificate() && ($gift_certificate_data == null) ) {
           osc_redirect(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()));
           
           return false;

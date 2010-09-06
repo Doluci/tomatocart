@@ -137,6 +137,10 @@
   background-image: url(../../images/icons/16x16/delete.png) !important;
 }
 
+.icon-copy-record {
+  background-image: url(../../images/icons/16x16/copy.png) !important;
+}
+
 .icon-delete-gray-record {
   background-image: url(../../images/icons/16x16/delete-gray.png) !important;
 }
@@ -191,6 +195,10 @@
 
 .icon-packaging-slip-record {
   background-image: url(../../images/icons/16x16/shipping-pdf.png) !important;
+}
+
+.icon-reorder-record {
+  background-image: url(../../images/icons/16x16/orders.png) !important;
 }
 
 .icon-store-credit-record{

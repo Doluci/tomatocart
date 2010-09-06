@@ -28,9 +28,9 @@
 
 // include server parameters
   require('includes/configure.php');
-
+  
 // include tomatocart constants
-  require('includes/toc_constants.php');
+  require('includes/toc_constants.php');  
 
 // redirect to the installation module if DB_SERVER is empty
   if (strlen(DB_SERVER) < 1) {
@@ -40,7 +40,7 @@
   }
 
 // define the project version
-  define('PROJECT_VERSION', 'TomatoCart v1.0.1');
+  define('PROJECT_VERSION', 'TomatoCart v1.01');
 
 // set the type of request (secure or not)
   $request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on')) ? 'SSL' : 'NONSSL';
@@ -104,21 +104,21 @@
     //login maintenance mode
     if (isset($_GET['maintenance']) && ($_GET['maintenance'] == 'login')) {
       require('includes/classes/administrators.php');
-
+      
       if (toC_Administrators::login($_POST['user_name'], $_POST['user_password']) === false ) {
         $messageStack->add('maintenance', $osC_Language->get('error_admin_login_no_match'));
       } else {
         osc_redirect(osc_href_link(FILENAME_DEFAULT));
       }
-    }
+    } 
 
     //logoff maintenance mode
     if (isset($_GET['maintenance']) && ($_GET['maintenance'] == 'logoff')) {
       unset($_SESSION['admin']);
-
+      
       osc_redirect(osc_href_link(FILENAME_DEFAULT));
     }
-
+  
     if ( !isset($_SESSION['admin']) || empty($_SESSION['admin']) ) {
       require('templates/system/offline.php');
       exit;

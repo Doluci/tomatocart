@@ -58,8 +58,8 @@
 
       $records = array();
       foreach ( ($osC_DirectoryListing->getFiles()) as $file ) {
-        $file_owner = posix_getpwuid($file['user_id']);
-        $group_owner = posix_getgrgid($file['group_id']);
+        $file_owner = function_exists('posix_getpwuid') ? posix_getpwuid($file['user_id']) : '-?-';
+        $group_owner = function_exists('posix_getgrgid') ? posix_getgrgid($file['group_id']) : '-?-';
 
         if ( $file['is_directory'] === true ) {
           $entry_icon = osc_icon('folder_red.png');
