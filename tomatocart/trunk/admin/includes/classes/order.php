@@ -737,10 +737,10 @@
           $Qupdate->setLogging($_SESSION['module'], $orders_id);
           $Qupdate->execute();      
             
-          //send notification email
-          $email->setData($customers_name, $customers_email_address, $Qproducts->value('products_name'));
-          $email->buildMessage();
-          $email->sendEmail();
+//          //send notification email
+//          $email->setData($customers_name, $customers_email_address, $Qproducts->value('products_name'));
+//          $email->buildMessage();
+//          $email->sendEmail();
         }
       }
     }
