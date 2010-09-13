@@ -269,17 +269,6 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
     dlg.show();
   },
   
-  onReorder: function(record) {
-    var dlg = this.owner.createReorderDialog({ordersId: record.get("orders_id")});
-    dlg.setTitle(record.get('orders_id') + ': ' + record.get('customers_name'));
-    
-    dlg.on('saveSuccess', function() {
-      this.onRefresh();
-    }, this);
-    
-    dlg.show();
-  },
-  
   onInvoice: function(record) {
     var ordersId = record.get('orders_id');
     
@@ -359,7 +348,7 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
   },
   
   onPrintOrder: function(record) {
-    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=orders&pdf=order&orders_id=' + record.get('orders_id'), 900, 500);
+    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=orders&pdf=order&orders_id=' + record.get('orders_id') + '&token=' + token, 900, 500);
   },
     
   onRowAction:function(grid, record, action, row, col) {
@@ -376,9 +365,6 @@ Ext.extend(Toc.orders.OrdersGrid, Ext.grid.EditorGridPanel, {
       case 'icon-edit-record':
         this.onEdit(record);
         break;
-      case 'icon-reorder-record':
-        this.onReorder(record);
-        break;  
       case 'icon-delete-record':
         this.onDelete(record);
         break;
