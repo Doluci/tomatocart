@@ -121,11 +121,6 @@
           $action[] = array('class' => 'icon-view-record', 'qtip' => $osC_Language->get('tip_view_order'));
           $action[] = array('class' => 'icon-invoice-record', 'qtip' => $osC_Language->get('tip_create_invoice'));                    
           $action[] = array('class' => 'icon-edit-record', 'qtip' => $osC_Language->get('tip_edit_order'));
-
-          if(ALLOW_RECORDER == 1) {
-            $action[] = array('class' => 'icon-reorder-record', 'qtip' => $osC_Language->get('tip_reorder'));
-          }
-
           $action[] = array('class' => 'icon-delete-record', 'qtip' => $osC_Language->get('tip_delete_order'));
         } else {
           $action[] = array('class' => 'icon-order-pdf-record', 'qtip' => $osC_Language->get('tip_print_order'));
@@ -1596,20 +1591,6 @@
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed')); 
       }
       
-      echo $toC_Json->encode($response);
-    }
-    
-    function createReorder() {
-      global $toC_Json, $osC_Language;
-      
-      $return = osC_Order::createReorder($_REQUEST['orders_id'], $_REQUEST['reorders_Id']);
-      
-      if($return === false) {
-        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed')); 
-      } else {
-	      $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'), 'out_stock_product' => $return);
-      }
-
       echo $toC_Json->encode($response);
     }
     
