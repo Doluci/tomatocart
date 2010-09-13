@@ -158,11 +158,11 @@ Ext.extend(Toc.invoices.InvoicesGrid, Ext.grid.GridPanel, {
   },
   
   onInvoice: function(record){
-    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=invoices&pdf=invoice&orders_id=' + record.get('orders_id'), 900, 500);
+    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=invoices&pdf=invoice&orders_id=' + record.get('orders_id') + '&token=' + token, 900, 500);
   },
   
   onPackagingSlip: function(record) {
-    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=invoices&pdf=packagingslip&orders_id=' + record.get('orders_id'), 900, 500);
+    this.openWin('<?php echo osc_href_link_admin(FILENAME_PDF); ?>' + '?module=invoices&pdf=packagingslip&orders_id=' + record.get('orders_id') + '&token=' + token, 900, 500);
   },
   
   onCreateCreditSlip: function(record) {
