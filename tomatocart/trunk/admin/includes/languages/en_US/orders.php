@@ -139,7 +139,6 @@ button_update = Update
 create_invoice_confirmation = Are you going to create an invoice for this order?
 restock_products_confirmation = Do you want to restock the product(s) in this order?
 
-tip_reorder = Reorder
 tip_create_invoice = Create Invoice
 tip_print_order = Print Order
 tip_view_order = View Order
