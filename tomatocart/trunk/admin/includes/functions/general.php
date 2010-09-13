@@ -364,7 +364,6 @@
     }
     
     $watermark = imagecreatetruecolor($watermark_image_width, $watermark_image_height);
-    imagealphablending($watermark, false);
     $col = imagecolorallocate($watermark, 255, 255, 255);
     imagecolortransparent($watermark, $col);
     imagefilledrectangle($watermark, 0, 0, $watermark_image_width, $watermark_image_height, $col);
@@ -582,5 +581,23 @@
     }
 
     return $res;
+  }
+
+/**
+ * Generate a token to prevent cross-site request forgery
+ */
+  function toc_generate_token() {
+    $_SESSION["token"] = md5(uniqid(rand(), true)); 
+    
+    return $_SESSION["token"];
+  }
+  
+/**
+ * Verify the given token with the token in session
+ */
+  function toc_verify_token() {
+    if ( !(isset($_SESSION["token"]) && isset($_REQUEST["token"]) && ($_SESSION["token"] == $_REQUEST["token"])) ) {
+      die ("Invalid Token");
+    }
   }
 ?>
