@@ -30,8 +30,16 @@
   header('Cache-Control: no-cache, must-revalidate');
   header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
   header('Content-Type: application/x-javascript');  
+  
+  $token = toc_generate_token(); 
 ?>
 
+var token = '<?php echo $token ?>';
+
+Ext.Ajax.extraParams = {token: token};
+Ext.data.Connection.prototype.extraParams = {token: token};
+Ext.data.ScriptTagProxy.prototype.extraParams = {token: token};
+    
 var tocCurrenciesFormatter = Ext.util.Format.CurrencyFactory(parseInt('<?php echo $osC_Currencies->getDecimalPlaces(); ?>'), '<?php echo $osC_Language->getNumericDecimalSeparator(); ?>', '<?php echo $osC_Language->getNumericThousandsSeparator(); ?>', '<?php echo $osC_Currencies->getSymbolLeft(); ?>', '<?php echo $osC_Currencies->getSymbolRight(); ?>');
 
 /*

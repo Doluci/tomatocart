@@ -20,6 +20,8 @@
   require('includes/application_top.php');
   require('includes/classes/toc_pdf.php');
   
+  toc_verify_token();
+  
   $dir_fs_www_root = dirname(__FILE__);
   
   if (isset($_SESSION['admin'])) {
