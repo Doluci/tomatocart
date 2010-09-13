@@ -40,10 +40,7 @@
         <td width="100" align="center">
           <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'orders=' . $Qhistory->valueInt('orders_id') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'SSL'), osc_draw_image_button('small_view.gif', $osC_Language->get('button_view'))); ?></div>
           <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_PDF, 'module=account&pdf=print_order&orders_id=' . $Qhistory->valueInt('orders_id')), osc_draw_image_button('button_print.png', $osC_Language->get('button_print')), "target=_blank"); ?></div>
-          <?php  if(ALLOW_RECORDER == 1) { ?>
-            <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qhistory->valueInt('orders_id') . '&action=reorder'), osc_draw_image_button('button_reorder.png', $osC_Language->get('button_reorder'))); ?></div>
-          <?php } ?>        
-          <?php 
+        <?php 
           if (($Qhistory->valueInt('returns_flag') == 1) && (ALLOW_RETURN_REQUEST == 1)) { 
             $order = new osC_Order($Qhistory->valueInt('orders_id'));
             
