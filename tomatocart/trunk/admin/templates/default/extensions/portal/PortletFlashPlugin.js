@@ -26,6 +26,11 @@ Ext.ux.PortletFlashPlugin = function() {
                     tempflashvars[key] = tempflashvars[key].call(this, true);
                   } 
               };
+              
+              if (!Ext.isEmpty(tempflashvars.data) && !Ext.isEmpty(token)) {
+                  tempflashvars.data += '&token=' + token;
+              }
+                
               this.computedflashvars = Ext.urlEncode(tempflashvars);
           }
           

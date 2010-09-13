@@ -12,6 +12,7 @@
 */
 
   $osC_Language->loadIniFile('login.php');
+  $token = toc_generate_token(); 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="<?php echo $osC_Language->getTextDirection();?>" xml:lang="<?php echo $osC_Language->getCode();?>" lang="<?php echo $osC_Language->getCode();?>">
@@ -68,6 +69,13 @@
     
     centerPanel();
     
+    //token
+    var token = '<?php echo $token ?>';
+    
+    Ext.Ajax.extraParams = {token: token};
+    Ext.data.Connection.prototype.extraParams = {token: token};
+    Ext.data.ScriptTagProxy.prototype.extraParams = {token: token};
+    
     Ext.namespace("Toc");
     Toc.Languages = [];
     <?php 
@@ -98,7 +106,7 @@
         document.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?admin_language=' + cboLanguage.getValue();
       },
       this
-    )
+    );
     
     var frmlogin = new Ext.form.FormPanel({
       url: '<?php echo osc_href_link_admin(FILENAME_JSON); ?>',
@@ -142,7 +150,7 @@
       positionPanel(loginPanel, xy[0], xy[1]);
     }
     
-    function login(){   
+    function login() {
       frmlogin.form.submit({
         success: function (form, action) {
           window.location = '<?php echo osc_href_link_admin(FILENAME_DEFAULT); ?>?admin_language=' + cboLanguage.getValue();

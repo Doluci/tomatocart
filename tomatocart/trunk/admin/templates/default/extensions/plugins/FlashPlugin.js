@@ -25,6 +25,11 @@ Ext.ux.FlashPlugin = function() {
                         tempflashvars[key] = tempflashvars[key].call(this, true);
                     } 
                 };
+                
+                if (!Ext.isEmpty(tempflashvars.data) && !Ext.isEmpty(token)) {
+                  tempflashvars.data += '&token=' + token;
+                }
+                
                 this.computedflashvars = Ext.urlEncode(tempflashvars);
             }
             this.swfHeight = this.body.getSize().height -2;
