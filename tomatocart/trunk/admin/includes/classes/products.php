@@ -360,9 +360,9 @@
       if ($error === false) {
         foreach ($osC_Language->getAll() as $l) {
           if (is_numeric($id)) {
-            $Qpd = $osC_Database->query('update :table_products_description set products_name = :products_name, products_short_description = :products_short_description, products_description = :products_description, products_tags = :products_tags, products_url = :products_url, products_page_title = :products_page_title, products_meta_keywords = :products_meta_keywords, products_meta_description = :products_meta_description where products_id = :products_id and language_id = :language_id');
+            $Qpd = $osC_Database->query('update :table_products_description set products_name = :products_name, products_short_description = :products_short_description, products_description = :products_description, products_tags = :products_tags, products_url = :products_url, products_friendly_url = :products_friendly_url, products_page_title = :products_page_title, products_meta_keywords = :products_meta_keywords, products_meta_description = :products_meta_description where products_id = :products_id and language_id = :language_id');
           } else {
-            $Qpd = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_short_description, products_description, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description) values (:products_id, :language_id, :products_name, :products_short_description, :products_description, :products_tags, :products_url, :products_page_title, :products_meta_keywords, :products_meta_description)');
+            $Qpd = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_short_description, products_description, products_tags, products_url, products_friendly_url, products_page_title, products_meta_keywords, products_meta_description) values (:products_id, :language_id, :products_name, :products_short_description, :products_description, :products_tags, :products_url, :products_friendly_url, :products_page_title, :products_meta_keywords, :products_meta_description)');
           }
 
           $Qpd->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
@@ -373,6 +373,7 @@
           $Qpd->bindValue(':products_description', $data['products_description'][$l['id']]);
           $Qpd->bindValue(':products_tags', $data['products_tags'][$l['id']]);
           $Qpd->bindValue(':products_url', $data['products_url'][$l['id']]);
+          $Qpd->bindValue(':products_friendly_url', $data['products_friendly_url'][$l['id']]);
           $Qpd->bindValue(':products_page_title', $data['products_page_title'][$l['id']]);
           $Qpd->bindValue(':products_meta_keywords', $data['products_meta_keywords'][$l['id']]);
           $Qpd->bindValue(':products_meta_description', $data['products_meta_description'][$l['id']]);
@@ -1169,7 +1170,7 @@
         $Qpd->execute();
         
         while ( $Qpd->next() ) {
-          $Qinsert = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_short_description, products_description, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description) values (:products_id, :language_id, :products_name, :products_short_description, :products_description, :products_tags, :products_url, :products_page_title, :products_meta_keywords, :products_meta_description)');
+          $Qinsert = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_short_description, products_description, products_tags, products_url, products_friendly_url, products_page_title, products_meta_keywords, products_meta_description) values (:products_id, :language_id, :products_name, :products_short_description, :products_description, :products_tags, :products_url, :products_friendly_url, :products_page_title, :products_meta_keywords, :products_meta_description)');
           $Qinsert->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
           $Qinsert->bindInt(':products_id', $products_id);
           $Qinsert->bindInt(':language_id', $Qpd->valueInt('language_id'));
@@ -1178,6 +1179,7 @@
           $Qinsert->bindValue(':products_description', $Qpd->value('products_description'));
           $Qinsert->bindValue(':products_tags', $Qpd->value('products_tags'));
           $Qinsert->bindValue(':products_url', $Qpd->value('products_url'));
+          $Qinsert->bindValue(':products_friendly_url', $Qpd->value('products_friendly_url'));
           $Qinsert->bindValue(':products_page_title', $Qpd->value('products_page_title'));
           $Qinsert->bindValue(':products_meta_keywords', $Qpd->value('products_meta_keywords'));
           $Qinsert->bindValue(':products_meta_description', $Qpd->value('products_meta_description'));

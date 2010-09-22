@@ -374,17 +374,18 @@
           }
           
           if ($error === false) {
-            $Qcategories = $osC_Database->query('select categories_id, categories_name from :table_categories_description where language_id = :language_id');
+            $Qcategories = $osC_Database->query('select categories_id, categories_name, categories_url from :table_categories_description where language_id = :language_id');
             $Qcategories->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
             $Qcategories->bindInt(':language_id', $default_language_id);
             $Qcategories->execute();
 
             while ($Qcategories->next()) {
-              $Qinsert = $osC_Database->query('insert into :table_categories_description (categories_id, language_id, categories_name) values (:categories_id, :language_id, :categories_name)');
+              $Qinsert = $osC_Database->query('insert into :table_categories_description (categories_id, language_id, categories_name, categories_url) values (:categories_id, :language_id, :categories_name, :categories_url)');
               $Qinsert->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
               $Qinsert->bindInt(':categories_id', $Qcategories->valueInt('categories_id'));
               $Qinsert->bindInt(':language_id', $language_id);
               $Qinsert->bindValue(':categories_name', $Qcategories->value('categories_name'));
+              $Qinsert->bindValue(':categories_url', $Qcategories->value('categories_url'));
               $Qinsert->execute();
 
               if ($osC_Database->isError()) {
@@ -395,13 +396,13 @@
           }
 
           if ($error === false) {
-            $Qproducts = $osC_Database->query('select products_id, products_name, products_description, products_keyword, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description, products_viewed from :table_products_description where language_id = :language_id');
+            $Qproducts = $osC_Database->query('select products_id, products_name, products_description, products_keyword, products_tags, products_url, products_friendly_url, products_page_title, products_meta_keywords, products_meta_description, products_viewed from :table_products_description where language_id = :language_id');
             $Qproducts->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
             $Qproducts->bindInt(':language_id', $default_language_id);
             $Qproducts->execute();
 
             while ($Qproducts->next()) {
-              $Qinsert = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_description, products_keyword, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description, products_viewed) values (:products_id, :language_id, :products_name, :products_description, :products_keyword, :products_tags, :products_url, :products_page_title, :products_meta_keywords, :products_meta_description, :products_viewed)');
+              $Qinsert = $osC_Database->query('insert into :table_products_description (products_id, language_id, products_name, products_description, products_keyword, products_tags, products_url, products_friendly_url, products_page_title, products_meta_keywords, products_meta_description, products_viewed) values (:products_id, :language_id, :products_name, :products_description, :products_keyword, :products_tags, :products_url, :products_friendly_url, :products_page_title, :products_meta_keywords, :products_meta_description, :products_viewed)');
               $Qinsert->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
               $Qinsert->bindInt(':products_id', $Qproducts->valueInt('products_id'));
               $Qinsert->bindInt(':language_id', $language_id);
@@ -410,6 +411,7 @@
               $Qinsert->bindValue(':products_keyword', $Qproducts->value('products_keyword'));
               $Qinsert->bindValue(':products_tags', $Qproducts->value('products_tags'));
               $Qinsert->bindValue(':products_url', $Qproducts->value('products_url'));
+              $Qinsert->bindValue(':products_friendly_url', $Qproducts->value('products_friendly_url'));
               $Qinsert->bindValue(':products_page_title', $Qproducts->value('products_page_title'));
               $Qinsert->bindValue(':products_meta_keywords', $Qproducts->value('products_meta_keywords'));
               $Qinsert->bindValue(':products_meta_description', $Qproducts->value('products_meta_description'));
@@ -487,17 +489,18 @@
           }
 
           if ($error === false) {
-            $Qmanufacturers = $osC_Database->query('select manufacturers_id, manufacturers_url from :table_manufacturers_info where languages_id = :languages_id');
+            $Qmanufacturers = $osC_Database->query('select manufacturers_id, manufacturers_url, manufacturers_friendly_url from :table_manufacturers_info where languages_id = :languages_id');
             $Qmanufacturers->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
             $Qmanufacturers->bindInt(':languages_id', $default_language_id);
             $Qmanufacturers->execute();
 
             while ($Qmanufacturers->next()) {
-              $Qinsert = $osC_Database->query('insert into :table_manufacturers_info (manufacturers_id, languages_id, manufacturers_url) values (:manufacturers_id, :languages_id, :manufacturers_url)');
+              $Qinsert = $osC_Database->query('insert into :table_manufacturers_info (manufacturers_id, languages_id, manufacturers_url, manufacturers_friendly_url) values (:manufacturers_id, :languages_id, :manufacturers_url, :manufacturers_friendly_url)');
               $Qinsert->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
               $Qinsert->bindInt(':manufacturers_id', $Qmanufacturers->valueInt('manufacturers_id'));
               $Qinsert->bindInt(':languages_id', $language_id);
               $Qinsert->bindValue(':manufacturers_url', $Qmanufacturers->value('manufacturers_url'));
+              $Qinsert->bindValue(':manufacturers_friendly_url', $Qmanufacturers->value('manufacturers_friendly_url'));
               $Qinsert->execute();
 
               if ($osC_Database->isError()) {
@@ -581,18 +584,19 @@
           }          
 
           if ($error === false) {
-            $Qfaqs = $osC_Database->query('select faqs_id, faqs_question, faqs_answer from :table_faqs_description where language_id = :language_id');
+            $Qfaqs = $osC_Database->query('select faqs_id, faqs_question, faqs_url, faqs_answer from :table_faqs_description where language_id = :language_id');
             $Qfaqs->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
             $Qfaqs->bindInt(':language_id', $default_language_id);
             $Qfaqs->execute();
 
             while ($Qfaqs->next()) {
-              $Qinsert = $osC_Database->query('insert into :table_faqs_description (faqs_id, language_id, faqs_question, faqs_answer) values (:faqs_id, :language_id, :faqs_question, :faqs_answer)');
+              $Qinsert = $osC_Database->query('insert into :table_faqs_description (faqs_id, language_id, faqs_question, faqs_answer, faqs_url) values (:faqs_id, :language_id, :faqs_question, :faqs_answer, :faqs_url)');
               $Qinsert->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
               $Qinsert->bindInt(':faqs_id', $Qfaqs->valueInt('faqs_id'));
               $Qinsert->bindInt(':language_id', $language_id);
               $Qinsert->bindValue(':faqs_question', $Qfaqs->value('faqs_question'));
               $Qinsert->bindValue(':faqs_answer', $Qfaqs->value('faqs_answer'));
+              $Qinsert->bindValue(':faqs_url', $Qfaqs->value('faqs_url'));
               $Qinsert->execute();
 
               if ($osC_Database->isError()) {
@@ -625,17 +629,41 @@
           }
 
           if ($error === false) {
-            $Qcategories = $osC_Database->query('select articles_categories_id, articles_categories_name from :table_articles_categories_description where language_id = :language_id');
+            $Qarticles = $osC_Database->query('select articles_id, articles_name, articles_description, articles_url from :table_articles_description where language_id = :language_id');
+            $Qarticles->bindTable(':table_articles_categories_description', TABLE_ARTICLES_DESCRIPTION);
+            $Qarticles->bindInt(':language_id', $default_language_id);
+            $Qarticles->execute();
+
+            while ($Qarticles->next()) {
+              $Qinsert = $osC_Database->query('insert into :table_articles_description (articles_id, language_id, articles_name, articles_description, articles_url) values (:articles_id, :language_id, :articles_name, :articles_description, :articles_url)');
+              $Qinsert->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
+              $Qinsert->bindInt(':articles_id', $Qarticles->valueInt('articles_id'));
+              $Qinsert->bindInt(':language_id', $language_id);
+              $Qinsert->bindValue(':articles_name', $Qarticles->value('articles_name'));
+              $Qinsert->bindValue(':articles_description', $Qarticles->value('articles_description'));
+              $Qinsert->bindValue(':articles_url', $Qarticles->value('articles_url'));
+              $Qinsert->execute();
+
+              if ($osC_Database->isError()) {
+                $error = true;
+                break;
+              }
+            }
+          }
+          
+          if ($error === false) {
+            $Qcategories = $osC_Database->query('select articles_categories_id, articles_categories_name, articles_categories_url from :table_articles_categories_description where language_id = :language_id');
             $Qcategories->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
             $Qcategories->bindInt(':language_id', $default_language_id);
             $Qcategories->execute();
 
             while ($Qcategories->next()) {
-              $Qinsert = $osC_Database->query('insert into :table_articles_categories_description (articles_categories_id, language_id, articles_categories_name) values (:articles_categories_id, :language_id, :articles_categories_name)');
+              $Qinsert = $osC_Database->query('insert into :table_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url) values (:articles_categories_id, :language_id, :articles_categories_name, :articles_categories_url)');
               $Qinsert->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
               $Qinsert->bindInt(':articles_categories_id', $Qcategories->valueInt('articles_categories_id'));
               $Qinsert->bindInt(':language_id', $language_id);
               $Qinsert->bindValue(':articles_categories_name', $Qcategories->value('articles_categories_name'));
+              $Qinsert->bindValue(':articles_categories_url', $Qcategories->value('articles_categories_url'));
               $Qinsert->execute();
 
               if ($osC_Database->isError()) {

@@ -54,13 +54,14 @@
       
       $data = toC_Faqs_Admin::getData($_REQUEST['faqs_id']);
   
-      $Qad = $osC_Database->query('select faqs_question, faqs_answer, language_id from :table_faqs_description where faqs_id = :faqs_id');
+      $Qad = $osC_Database->query('select faqs_question, faqs_url, faqs_answer, language_id from :table_faqs_description where faqs_id = :faqs_id');
       $Qad->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
       $Qad->bindInt(':faqs_id', $_REQUEST['faqs_id']);
       $Qad->execute();
       
       while ($Qad->next()) {
         $data['faqs_question[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('faqs_question');
+        $data['faqs_url[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('faqs_url');
         $data['faqs_answer[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('faqs_answer');
       }
 
@@ -72,7 +73,22 @@
     function saveFaq() {
       global $osC_Language, $toC_Json;
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['faqs_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['faqs_question'][$languages_id]);
+          }
+
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('faqs_question' => $_REQUEST['faqs_question'],
+                    'faqs_url' => $formatted_urls,
                     'faqs_answer' => $_REQUEST['faqs_answer'],
                     'faqs_order' => $_REQUEST['faqs_order'],
                     'faqs_status' => $_REQUEST['faqs_status']);

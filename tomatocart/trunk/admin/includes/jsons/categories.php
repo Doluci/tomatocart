@@ -159,6 +159,7 @@
       
       while ($Qcategories->next()) {
         $data['categories_name[' . $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_name');
+        $data['categories_url[' . $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_url');
         $data['page_title['. $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_page_title');
         $data['meta_keywords['. $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_meta_keywords');
         $data['meta_description[' . $Qcategories->ValueInt('language_id') . ']'] = $Qcategories->Value('categories_meta_description');
@@ -175,11 +176,26 @@
       
       $parent_id = isset($_REQUEST['parent_category_id']) ? end(explode('_', $_REQUEST['parent_category_id'])) : null;
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['categories_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['categories_name'][$languages_id]);
+          }
+          
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('parent_id' => $parent_id, 
                     'sort_order' => $_REQUEST['sort_order'],
                     'image' => $_FILES['image'],  
                     'categories_status'  => $_REQUEST['categories_status'],
                     'name' => $_REQUEST['categories_name'],
+                    'url' => $formatted_urls,
                     'page_title' => $_REQUEST['page_title'],
                     'meta_keywords' => $_REQUEST['meta_keywords'],
                     'meta_description' => $_REQUEST['meta_description'],

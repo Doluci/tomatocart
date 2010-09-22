@@ -17,6 +17,7 @@ table_heading_action = Action
 table_heading_categories_order = Sort Order
 
 field_name = Name:
+field_url = Friendly URL:
 field_sort_order = Sort Order:
 field_publish = Publish:
 field_articles_order = Order:

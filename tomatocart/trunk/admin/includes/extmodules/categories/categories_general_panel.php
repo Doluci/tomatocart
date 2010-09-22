@@ -90,7 +90,8 @@ Ext.extend(Toc.categories.GeneralPanel, Ext.Panel, {
         layout: 'form',
         border: false,
         items: [{fieldLabel: '&nbsp;<?php echo $osC_Language->get('status_disabled'); ?>', boxLabel: '<?php echo $osC_Language->get('status_disabled'); ?>', xtype:'radio', name: 'categories_status', hideLabel: true, inputValue: '0'}]
-      }]}); 
+      }]});
+    
     items.push({xtype: 'numberfield', fieldLabel: '&nbsp;<?php echo $osC_Language->get("field_sort_order"); ?>', name: 'sort_order'});
     
     return items;    

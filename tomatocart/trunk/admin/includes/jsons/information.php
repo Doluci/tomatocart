@@ -19,7 +19,7 @@
     function listArticles() {
       global $toC_Json, $osC_Language, $osC_Database;
       
-      $Qarticles = $osC_Database->query('select a.articles_id, a.articles_status, a.articles_order, ad.articles_name, acd.articles_categories_name from :table_articles a, :table_articles_description ad, :articles_categories_description acd where acd.articles_categories_id = a.articles_categories_id and acd.language_id = ad.language_id and a.articles_id = ad.articles_id and ad.language_id = :language_id');
+      $Qarticles = $osC_Database->query('select a.articles_id, a.articles_status, a.articles_order, ad.articles_name, acd.articles_categories_name from :table_articles a, :table_articles_description ad, :articles_categories_description acd where acd.articles_categories_id = a.articles_categories_id and acd.language_id = ad.language_id and a.articles_id = ad.articles_id and acd.articles_categories_id = 1 and ad.language_id = :language_id');
 
       $Qarticles->appendQuery('order by a.articles_id ');
       $Qarticles->bindTable(':table_articles', TABLE_ARTICLES);
@@ -48,13 +48,14 @@
       
       $data = toC_Articles_Admin::getData($_REQUEST['articles_id']);
       
-      $Qad = $osC_Database->query('select articles_name, articles_description,articles_head_desc_tag, articles_head_keywords_tag, language_id from :table_articles_description where articles_id = :articles_id');
+      $Qad = $osC_Database->query('select articles_name, articles_url, articles_description,articles_head_desc_tag, articles_head_keywords_tag, language_id from :table_articles_description where articles_id = :articles_id');
       $Qad->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
       $Qad->bindInt(':articles_id', $_REQUEST['articles_id']);
       $Qad->execute();
       
       while ($Qad->next()) {
         $data['articles_name[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_name');
+        $data['articles_url[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_url');
         $data['articles_description[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_description');
         $data['articles_head_desc_tag[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_head_desc_tag');
         $data['articles_head_keywords_tag[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_head_keywords_tag');
@@ -70,7 +71,22 @@
       
       $osC_Image = new osC_Image_Admin();
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['articles_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['articles_name'][$languages_id]);
+          }
+          
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('articles_name' => $_REQUEST['articles_name'],
+                    'articles_url' => $formatted_urls,
                     'articles_description' => $_REQUEST['articles_description'],
                     'articles_head_desc_tag' => $_REQUEST['articles_head_desc_tag'],
                     'articles_head_keywords_tag' => $_REQUEST['articles_head_keywords_tag'],

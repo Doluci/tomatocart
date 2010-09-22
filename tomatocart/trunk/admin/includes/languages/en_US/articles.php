@@ -26,6 +26,7 @@ field_order = Order:
 field_image = Image:
 field_article_category = Category:
 field_article_name = Name:
+field_article_url = Friendly URL:
 filed_article_description = Description:
 filed_articles_head_desc_tag = Tag:
 filed_articles_head_keywords_tag = Keywords:

@@ -96,6 +96,7 @@ Ext.extend(Toc.faqs.FaqsDialog, Ext.Window, {
           },
           items: [
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_faq_question') . '\', name: \'faqs_question[' . $l['id'] . ']\', allowBlank: false},
+            {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_faq_url') . '\', name: \'faqs_url[' . $l['id'] . ']\'},
             {xtype: \'htmleditor\', fieldLabel: \'' . $osC_Language->get('filed_faq_answer') . '\', name: \'faqs_answer[' . $l['id'] . ']\', height: \'auto\'}
             ]
         });

@@ -176,4 +176,12 @@
 
     return $customers_id;
   }
+  
+  function toc_format_friendly_url($string) {
+    $url = strtolower($string);
+    $url = preg_replace('#[^0-9a-z]+#i', '-', $url);
+    $url = trim($url, '-');
+    
+    return $url;
+  }
 ?>

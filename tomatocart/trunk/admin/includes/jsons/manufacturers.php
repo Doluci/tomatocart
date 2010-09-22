@@ -51,13 +51,14 @@
      
       $data = osC_Manufacturers_Admin::getData($_REQUEST['manufacturers_id']);
       
-      $Qmanufacturer = $osC_Database->query('select languages_id, manufacturers_url from :table_manufacturers_info where manufacturers_id = :manufacturers_id');
+      $Qmanufacturer = $osC_Database->query('select languages_id, manufacturers_url, manufacturers_friendly_url from :table_manufacturers_info where manufacturers_id = :manufacturers_id');
       $Qmanufacturer->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
       $Qmanufacturer->bindInt(':manufacturers_id', $_REQUEST['manufacturers_id']);
       $Qmanufacturer->execute();
       
       while ($Qmanufacturer->next()) {
-        $data['manufacturers_url[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_url');
+        $data['manufacturers_url[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_url');  
+        $data['manufacturers_friendly_url[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_friendly_url');
       }
       $Qmanufacturer->freeResult();
       
@@ -69,7 +70,22 @@
     function saveManufacturer() {
       global $toC_Json, $osC_Language;
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['manufacturers_friendly_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['manufacturers_name']);
+          }
+          
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('name' => $_REQUEST['manufacturers_name'],
+                    'friendly_url' => $formatted_urls,
                     'url' => $_REQUEST['manufacturers_url']);
      
       if ( osC_Manufacturers_Admin::save(isset($_REQUEST['manufacturers_id']) ? $_REQUEST['manufacturers_id'] : null, $data) ) {

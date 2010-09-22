@@ -658,6 +658,20 @@
       
       $osC_Image = new osC_Image_Admin();
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['products_friendly_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['products_name'][$languages_id]);
+          }
+          
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('products_type' => $_REQUEST['products_type'],
                     'quantity' => isset($_REQUEST['products_quantity']) ? $_REQUEST['products_quantity'] : 0,
                     'products_moq' => $_REQUEST['products_moq'],
@@ -679,6 +693,7 @@
                     'products_model' => $_REQUEST['products_model'],
                     'products_tags' => $_REQUEST['products_tags'],
                     'products_url' => $_REQUEST['products_url'],
+                    'products_friendly_url' => $formatted_urls,
                     'products_page_title' => $_REQUEST['products_page_title'],
                     'products_meta_keywords' => $_REQUEST['products_meta_keywords'],
                     'products_meta_description' => $_REQUEST['products_meta_description'],
@@ -766,8 +781,6 @@
           if ($data['products_type'] == PRODUCT_TYPE_DOWNLOADABLE) {
             $data['variants_cache_filename'][$variants[0]] = $variants[2];
           }
-          
-          //$data['variants_change'][$variants[0]] = $variants[3];
         }
       }
       
@@ -789,10 +802,18 @@
         }
       }
       
+      //search engine friendly urls
+      $return_urls = array();
+      if (is_array($formatted_urls) && !empty($formatted_urls)) {
+        foreach($formatted_urls as $languages_id => $url) {
+          $return_urls[] = array('languages_id' => $languages_id, 'url' => $url); 
+        }
+      }
+      
       $products_id = osC_Products_Admin::save((isset($_REQUEST['products_id']) && (is_numeric($_REQUEST['products_id']) && ($_REQUEST['products_id'] != '-1')) ? $_REQUEST['products_id'] : null), $data);
       
       if ($products_id) {
-        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'),  'productsId' => $products_id);
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'),  'productsId' => $products_id, 'urls' => $return_urls);
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
       }      
@@ -953,23 +974,18 @@
         $data['open_amount_max_value'] = $Qcertifcate->valueInt('open_amount_max_value');
       }
       
-      $Qpd = $osC_Database->query('select products_name, products_short_description, products_description, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description, language_id from :table_products_description where products_id = :products_id');
+      $Qpd = $osC_Database->query('select products_name, products_short_description, products_description, products_tags, products_url, products_friendly_url, products_page_title, products_meta_keywords, products_meta_description, language_id from :table_products_description where products_id = :products_id');
       $Qpd->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
       $Qpd->bindInt(':products_id', $_REQUEST['products_id']);
       $Qpd->execute();
 
-      $products_name = array();
-      $products_description = array();
-      $products_model = array();
-      $products_tags = array();
-      $products_url = array();
-  
       while ($Qpd->next()) {
         $data['products_name[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_name');
         $data['products_short_description[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_short_description');
         $data['products_description[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_description');
         $data['products_tags[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_tags');
         $data['products_url[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_url');
+        $data['products_friendly_url[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_friendly_url');
         $data['products_page_title[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_page_title');
         $data['products_meta_keywords[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_meta_keywords');
         $data['products_meta_description[' . $Qpd->valueInt('language_id') . ']'] = $Qpd->value('products_meta_description');

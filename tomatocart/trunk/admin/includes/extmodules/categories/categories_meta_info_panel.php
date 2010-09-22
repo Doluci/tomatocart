@@ -42,8 +42,14 @@ Ext.extend(Toc.categories.MetaInfoPanel, Ext.TabPanel, {
           items: [
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_page_title') . '\', name: \'page_title[' . $l['id'] . ']\'},
             {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_meta_keywords') . '\', name: \'meta_keywords[' . $l['id'] . ']\'},
-            {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_meta_description') . '\', name: \'meta_description[' . $l['id'] . ']\'}            
-            ]
+            {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_meta_description') . '\', name: \'meta_description[' . $l['id'] . ']\'},
+            {
+              xtype: \'textfield\', 
+              fieldLabel: \'' . $osC_Language->get('field_url') . '\', 
+              labelStyle: \'background: url(../images/worldflags/"' . $l['country_iso'] . '.png) no-repeat right center !important;\',
+              name: \'categories_url[' . $l['id'] . ']\'
+            }
+          ]
         });
         
         panels.push(lang' . $l['code'] . ');
