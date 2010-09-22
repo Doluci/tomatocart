@@ -32,7 +32,7 @@
 
     if ($Qfilterlist->numberOfRows() > 1) {
 
-      echo '<p><form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . $osC_Language->get('filter_show') . '&nbsp;';
+      echo '<form name="filter" action="' . osc_href_link(FILENAME_DEFAULT) . '" method="get">' . $osC_Language->get('filter_show') . '&nbsp;';
       if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
         echo osc_draw_hidden_field('manufacturers', $_GET['manufacturers']);
         $options = array(array('id' => '', 'text' => $osC_Language->get('filter_all_categories')));
@@ -49,7 +49,7 @@
         $options[] = array('id' => $Qfilterlist->valueInt('id'), 'text' => $Qfilterlist->value('name'));
       }
       echo osc_draw_pull_down_menu('filter', $options, (isset($_GET['filter']) ? $_GET['filter'] : null), 'onchange="this.form.submit()"');
-      echo osc_draw_hidden_session_id_field() . '</form></p>' . "\n";
+      echo osc_draw_hidden_session_id_field() . '</form>' . "\n";
     }
   }
 
