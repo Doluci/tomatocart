@@ -35,7 +35,7 @@
                     '<span class="quantity"></span> ' . $osC_Language->get('text_items') .
                   '</div>' .
                   '<div id="ajaxCartContentLong" class="expanded">' .
-                    '<ul class="products collapsed" id="ajaxCartContentProducts"></ul>' .
+                    '<ul class="products collapsed" id="ajaxCartContentProducts"><li></li></ul>' .
                     '<p id="ajaxCartContentNoProducts" class="collapsed">' . $osC_Language->get('No products') . '</p>' .
                     '<div id="ajaxCartButtons">' .
                       osc_link_object(osc_href_link(FILENAME_CHECKOUT), osc_draw_image_button('button_ajax_cart.png'), 'style="margin-right:30px;"') .
