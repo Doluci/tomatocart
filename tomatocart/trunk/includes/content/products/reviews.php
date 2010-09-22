@@ -36,56 +36,30 @@
         $breadcrumb->add($osC_Language->get('breadcrumb_reviews'), osc_href_link(FILENAME_PRODUCTS, $this->_module));
       }
 
-      if (is_numeric($_GET[$this->_module])) {
-        if (osC_Reviews::exists($_GET[$this->_module])) {
-          $id = osC_Reviews::getProductID($_GET[$this->_module]);
-
-          osc_redirect(osc_href_link(FILENAME_PRODUCTS, $id . '&tab=tabReviews'));
-        } else {
-          $this->_page_contents = 'reviews_not_found.php';
+      if ($_GET[$this->_module] == 'new') {
+        if ( ($osC_Customer->isLoggedOn() === false ) && (SERVICE_REVIEW_ENABLE_REVIEWS == 1) ) {
+          $osC_NavigationHistory->setSnapshot();
+      
+          osc_redirect(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'));
         }
-      } else {
-        $counter = 0;
+        
+        $products_id = null;
         foreach ($_GET as $key => $value) {
-          $counter++;
-
-          if ($counter < 2) {
-            continue;
+          if (is_numeric($key)  && ($key != $osC_Session->getName())) {
+            $products_id = $key;
+            
+            break;
           }
-
-          if ( (ereg('^[0-9]+(#?([0-9]+:?[0-9]+)+(;?([0-9]+:?[0-9]+)+)*)*$', $key) || ereg('^[a-zA-Z0-9 -_]*$', $key)) && ($key != $osC_Session->getName()) ) {
-            if (osC_Product::checkEntry($key) === false) {
-              $this->_page_contents = 'info_not_found.php';
-            } elseif ($_GET[$this->_module] == 'new') {
-              if ( ($osC_Customer->isLoggedOn() === false ) && (SERVICE_REVIEW_ENABLE_REVIEWS == 1) ) {
-                $osC_NavigationHistory->setSnapshot();
-
-                osc_redirect(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'));
-              }
-
-              $osC_Product = new osC_Product($key);
-
-              if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
-                $this->_process($osC_Product->getID());
-              }
-            } else {
-              $osC_Product = new osC_Product($key);
-
-              osc_redirect(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&tab=tabReviews'));
-            }
-          }
-
-          break;
         }
-
-        if ($counter < 2) {
-          if (osC_Reviews::exists() === false) {
-            $this->_page_contents = 'reviews_not_found.php';
+        
+        if ($products_id != null) {
+          if (isset($_GET['action']) && ($_GET['action'] == 'process')) {
+            $this->_process($products_id);
           }
         }
       }
     }
-
+  
 /* Private methods */
 
     function _process($id) {
