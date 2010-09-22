@@ -49,7 +49,7 @@
 ?>
 
   <div class="listingPageLinks">
-    <span style="float: right;"><?php echo $Qarticles->getBatchPageLinks(); ?></span>
+    <span style="float: right;"><?php echo $Qarticles->getBatchPageLinks('page', osc_get_all_get_params(array('x', 'y'))); ?></span>
   
     <?php echo $Qarticles->getBatchTotalPages($osC_Language->get('result_set_number_of_articles')); ?>
   </div>
