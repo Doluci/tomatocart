@@ -31,7 +31,7 @@
       $output .= 'piwikTracker.enableLinkTracking();' . "\n";
       $output .= '} catch( err ) {}' . "\n";
       $output .= '</script>' . "\n";
-      $output .= '<noscript><p><img src="http://www.tocext.com/ext/piwik/piwik.php?idsite=1" style="border:0" alt=""/></p></noscript>' . "\n";
+      $output .= '<noscript><p><img src="' . HTTPS_SERVER . DIR_WS_HTTP_CATALOG . 'ext/piwik/piwik.php?idsite=1" style="border:0" alt=""/></p></noscript>' . "\n";
       $output .= '<!-- End Piwik Tag -->' . "\n";
 
       return $output;
