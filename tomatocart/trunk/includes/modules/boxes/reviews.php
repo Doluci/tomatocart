@@ -71,18 +71,12 @@
 
         $this->_content = '';
 
-        if (empty($data)) {
-          if (isset($osC_Product) && is_a($osC_Product, 'osC_Product') && $osC_Product->isValid()) {
-            $this->_content = '<div style="float: left; width: 55px;">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID()), osc_image(DIR_WS_IMAGES . 'box_write_review.png', $osC_Language->get('button_write_review'))) . '</div>' .
-                              osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=new&' . $osC_Product->getID()), $osC_Language->get('box_reviews_write')) .
-                              '<div style="clear: both;"></div>';
-          }
-        } else {
+        if (!empty($data)) {
           if (!empty($data['image'])) {
-            $this->_content = '<div align="center">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=' . $data['reviews_id']), $osC_Image->show($data['image'], $data['products_name'])) . '</div>';
+            $this->_content = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $data['products_id']), $osC_Image->show($data['image'], $data['products_name']));
           }
 
-          $this->_content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=' . $data['reviews_id']), wordwrap(osc_output_string_protected($data['reviews_text']), 15, '&shy;') . ' ..') . '<br /><div align="center">' . osc_image(DIR_WS_IMAGES . 'stars_' . $data['reviews_rating'] . '.png' , sprintf($osC_Language->get('box_reviews_stars_rating'), $data['reviews_rating'])) . '</div>';
+          $this->_content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $data['products_id']), wordwrap(osc_output_string_protected($data['reviews_text']), 15, '&shy;') . ' ..') . '<br />' . osc_image(DIR_WS_IMAGES . 'stars_' . $data['reviews_rating'] . '.png' , sprintf($osC_Language->get('box_reviews_stars_rating'), $data['reviews_rating']));
         }
       }
     }
