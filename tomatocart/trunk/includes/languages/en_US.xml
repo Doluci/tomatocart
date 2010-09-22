@@ -431,11 +431,6 @@
       <group>general</group>
     </definition>
     <definition>
-      <key>button_reorder</key>
-      <value><![CDATA[Reorder]]></value>
-      <group>general</group>
-    </definition>    
-    <definition>
       <key>button_view</key>
       <value><![CDATA[View]]></value>
       <group>general</group>
