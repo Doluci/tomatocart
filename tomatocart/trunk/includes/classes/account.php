@@ -233,7 +233,7 @@
       $Qab->bindValue(':entry_state', $address['state']);
       $Qab->bindInt(':entry_country_id', $address['country_id']);
       $Qab->bindInt(':entry_zone_id', $address['zone_id']);
-      $Qab->bindValue(':entry_telephone', $address['ship_to_this_address']);
+      $Qab->bindValue(':entry_telephone', $address['telephone_number']);
       $Qab->bindValue(':entry_fax', $address['fax']);
       $Qab->execute();
       
