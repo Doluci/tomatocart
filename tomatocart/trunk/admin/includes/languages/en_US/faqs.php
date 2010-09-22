@@ -25,6 +25,7 @@ field_publish_no = No
 field_order = Order:
 field_faq_category = Category:
 field_faq_question = Question:
+field_faq_url = Friendly Url:
 filed_faq_answer = Answer:
 
 action_heading_batch_delete_faq = Batch Delete FAQs

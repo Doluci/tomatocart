@@ -82,15 +82,16 @@ class toC_Faqs_Admin {
     if ( $error === false ) {
       foreach ($osC_Language->getAll() as $l) {
         if ( is_numeric($id) ) {
-          $Qfd = $osC_Database->query('update :table_faqs_description set faqs_question = :faqs_question, faqs_answer = :faqs_answer  where faqs_id = :faqs_id and language_id = :language_id');
+          $Qfd = $osC_Database->query('update :table_faqs_description set faqs_question = :faqs_question, faqs_url = :faqs_url, faqs_answer = :faqs_answer  where faqs_id = :faqs_id and language_id = :language_id');
         } else {
-          $Qfd = $osC_Database->query('insert into :table_faqs_description (faqs_id, language_id, faqs_question, faqs_answer) values (:faqs_id, :language_id, :faqs_question, :faqs_answer)');
+          $Qfd = $osC_Database->query('insert into :table_faqs_description (faqs_id, language_id, faqs_question, faqs_url, faqs_answer) values (:faqs_id, :language_id, :faqs_question, :faqs_url, :faqs_answer)');
         }
 
         $Qfd->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
         $Qfd->bindInt(':faqs_id', $faqs_id);
         $Qfd->bindInt(':language_id', $l['id']);
         $Qfd->bindValue(':faqs_question', $data['faqs_question'][$l['id']]);
+        $Qfd->bindValue(':faqs_url', $data['faqs_url'][$l['id']]);
         $Qfd->bindValue(':faqs_answer', $data['faqs_answer'][$l['id']]);
         $Qfd->setLogging($_SESSION['module'], $faqs_id);
         $Qfd->execute();

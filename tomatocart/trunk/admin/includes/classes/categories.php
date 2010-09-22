@@ -80,15 +80,16 @@
 
         foreach ($osC_Language->getAll() as $l) {
           if ( is_numeric($id) ) {
-            $Qcd = $osC_Database->query('update :table_categories_description set categories_name = :categories_name, categories_page_title = :categories_page_title, categories_meta_keywords = :categories_meta_keywords, categories_meta_description = :categories_meta_description where categories_id = :categories_id and language_id = :language_id');
+            $Qcd = $osC_Database->query('update :table_categories_description set categories_name = :categories_name, categories_url = :categories_url, categories_page_title = :categories_page_title, categories_meta_keywords = :categories_meta_keywords, categories_meta_description = :categories_meta_description where categories_id = :categories_id and language_id = :language_id');
           } else {
-            $Qcd = $osC_Database->query('insert into :table_categories_description (categories_id, language_id, categories_name, categories_page_title, categories_meta_keywords, categories_meta_description) values (:categories_id, :language_id, :categories_name, :categories_page_title, :categories_meta_keywords, :categories_meta_description)');
+            $Qcd = $osC_Database->query('insert into :table_categories_description (categories_id, language_id, categories_name, categories_url, categories_page_title, categories_meta_keywords, categories_meta_description) values (:categories_id, :language_id, :categories_name, :categories_url, :categories_page_title, :categories_meta_keywords, :categories_meta_description)');
           }
 
           $Qcd->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
           $Qcd->bindInt(':categories_id', $category_id);
           $Qcd->bindInt(':language_id', $l['id']);
           $Qcd->bindValue(':categories_name', $data['name'][$l['id']]);
+          $Qcd->bindValue(':categories_url', ($data['url'][$l['id']] == '') ? $data['name'][$l['id']] : $data['url'][$l['id']]);
           $Qcd->bindValue(':categories_page_title', $data['page_title'][$l['id']]);
           $Qcd->bindValue(':categories_meta_keywords', $data['meta_keywords'][$l['id']]);
           $Qcd->bindValue(':categories_meta_description', $data['meta_description'][$l['id']]);

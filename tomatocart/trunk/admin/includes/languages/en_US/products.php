@@ -71,6 +71,7 @@ field_sku = SKU:
 field_keyword = Keyword:
 field_tags = Tags:
 field_url = URL:
+field_friendly_url = Friendly URL:
 field_page_title = Page Title:
 field_meta_keywords = Meta Keywords:
 field_meta_description = Meta Description:

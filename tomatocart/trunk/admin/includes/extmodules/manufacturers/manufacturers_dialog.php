@@ -124,6 +124,25 @@ Ext.extend(Toc.manufacturers.ManufacturersDialog, Ext.Window, {
     <?php
         $i = 1;
         foreach ( $osC_Language->getAll() as $l ) {
+          echo 'this.friendlyUrl' . $l['id'] . ' = new Ext.form.TextField({name: "manufacturers_friendly_url[' . $l['id'] . ']",';
+          
+          if ($i == 1)
+            echo 'fieldLabel:"' . $osC_Language->get('field_manufacturer_url') . '",';
+          else
+            echo 'fieldLabel: "&nbsp;",';  
+          
+          echo 'labelWidth: 50,';
+          echo "labelStyle: 'background: url(../images/worldflags/" . $l['country_iso'] . ".png) no-repeat right center !important;', ";
+          echo 'width: 300});';
+          echo 'this.frmManufacturer.add(this.friendlyUrl' . $l['id'] . ');';
+          
+          $i++;
+        }
+    ?>
+    
+    <?php
+        $i = 1;
+        foreach ( $osC_Language->getAll() as $l ) {
           echo 'this.lang' . $l['id'] . ' = new Ext.form.TextField({name: "manufacturers_url[' . $l['id'] . ']",';
           
           if ($i == 1)

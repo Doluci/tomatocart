@@ -30,6 +30,7 @@ action_heading_batch_move_categories = Batch Move Categories
 field_parent_category = Parent Category:
 field_products_extra_fields_group = Products Extra Fields Group:
 field_name = Name:
+field_url = Friendly URL:
 field_image = Image:
 field_sort_order = Sort Order:
 field_status = Status:

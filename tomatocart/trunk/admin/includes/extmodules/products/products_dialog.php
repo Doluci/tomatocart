@@ -19,7 +19,7 @@ Toc.products.ProductDialog = function(config) {
   config.title = 'New Product';
   config.layout = 'fit';
   config.width = 870;
-  config.height = 550;
+  config.height = 540;
   config.modal = true;
   config.iconCls = 'icon-products-win';
   config.productsId = config.products_id || null;
@@ -82,7 +82,7 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
       deferredRender: false,
       items: [
         new Toc.products.GeneralPanel(), 
-        new Toc.products.MetaPanel(),
+        this.pnlMeta = new Toc.products.MetaPanel(),
         this.pnlData,
         this.pnlCategories = new Toc.products.CategoriesPanel({productsId: productsId}),
         this.pnlImages,
@@ -190,6 +190,10 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
             this.flagContinueEdit = false;  
             
             Ext.MessageBox.alert(TocLanguage.msgSuccessTitle, action.result.feedback);
+            
+            Ext.each(action.result.urls, function(url) {
+              this.pnlMeta.txtProductUrl[url.languages_id].setValue(url.url);
+            }, this);
           } else {
             this.close();
           }

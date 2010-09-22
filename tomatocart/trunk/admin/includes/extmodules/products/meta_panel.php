@@ -27,6 +27,7 @@ Toc.products.MetaPanel = function(config) {
 Ext.extend(Toc.products.MetaPanel, Ext.TabPanel, {
   buildForm: function() {
     var panels = [];
+    this.txtProductUrl = [];
     
     <?php
       foreach ($osC_Language->getAll() as $l) {
@@ -43,8 +44,9 @@ Ext.extend(Toc.products.MetaPanel, Ext.TabPanel, {
           items: [
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_page_title') . '\', name: \'products_page_title[' . $l['id'] . ']\'},
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_meta_keywords') . '\', name: \'products_meta_keywords[' . $l['id'] . ']\'},
-            {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_meta_description') . '\', name: \'products_meta_description[' . $l['id'] . ']\', height: 200}
-            ]
+            {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_meta_description') . '\', name: \'products_meta_description[' . $l['id'] . ']\', height: 200},
+            this.txtProductUrl[' . $l['id'] . '] = new Ext.form.TextField({fieldLabel: \'' . $osC_Language->get('field_friendly_url') . '\', name: \'products_friendly_url[' . $l['id'] . ']\'})
+          ]
         });
         
         panels.push(lang' . $l['code'] . ');

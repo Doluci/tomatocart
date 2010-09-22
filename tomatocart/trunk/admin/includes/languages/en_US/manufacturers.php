@@ -18,6 +18,7 @@ action_heading_new_manufacturer = New Manufacturer
 action_heading_batch_delete_manufacturers = Batch Delete Manufacturers
 
 field_name = Name:
+field_manufacturer_url = Friendly Url:
 field_image = Image:
 field_url = URL Address:
 field_delete_image = Delete image?

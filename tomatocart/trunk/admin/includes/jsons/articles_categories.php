@@ -48,13 +48,14 @@
       
       $data = toC_Articles_Categories_Admin::getData($_REQUEST['articles_categories_id']);
       
-      $Qcd = $osC_Database->query('select language_id, articles_categories_name from :table_articles_categories_description where articles_categories_id = :articles_categories_id');
+      $Qcd = $osC_Database->query('select language_id, articles_categories_name, articles_categories_url from :table_articles_categories_description where articles_categories_id = :articles_categories_id');
       $Qcd->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
       $Qcd->bindInt(':articles_categories_id', $_REQUEST['articles_categories_id']);
       $Qcd->execute();
       
       while ($Qcd->next()) {
         $data['articles_categories_name[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_name');
+        $data['articles_categories_url[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_url');
       }
       
       $response = array('success' => true, 'data' => $data);
@@ -65,10 +66,25 @@
     function saveArticlesCategory() {
       global $toC_Json, $osC_Language;
       
+      //search engine friendly urls
+      $formatted_urls = array();
+      $urls = $_REQUEST['articles_categories_url'];
+      if (is_array($urls) && !empty($urls)) {
+        foreach($urls as $languages_id => $url) {
+          $url = toc_format_friendly_url($url);
+          if (empty($url)) {
+            $url = toc_format_friendly_url($_REQUEST['articles_categories_name'][$languages_id]);
+          }
+          
+          $formatted_urls[$languages_id] = $url;
+        }
+      }
+      
       $data = array('name' => $_REQUEST['articles_categories_name'],
+                    'url' => $formatted_urls,
                     'status' => $_REQUEST['articles_categories_status'],
                     'articles_order' => $_REQUEST['articles_categories_order']);
-  
+
       if ( toC_Articles_Categories_Admin::save((isset($_REQUEST['articles_categories_id']) && is_numeric($_REQUEST['articles_categories_id'] ) ? $_REQUEST['articles_categories_id'] : null), $data) ) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
       } else {

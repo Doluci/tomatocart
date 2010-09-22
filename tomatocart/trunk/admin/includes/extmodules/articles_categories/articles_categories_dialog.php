@@ -144,6 +144,24 @@ Ext.extend(Toc.articles_categories.ArticlesCategoriesDialog, Ext.Window, {
       ]
     };
     this.frmArticlesCategory.add(pnlPublish);
+        
+    <?php
+      $i = 1; 
+      foreach ( $osC_Language->getAll() as $l ) {
+        echo 'var txtLang' . $l['id'] . ' = new Ext.form.TextField({name: "articles_categories_url[' . $l['id'] . ']",';
+        
+        if ($i != 1 ) 
+          echo ' fieldLabel:"&nbsp;", ';
+        else
+          echo ' fieldLabel:"' . $osC_Language->get('field_url') . '", ';
+          
+        echo 'labelWidth: 70,';
+        echo "labelStyle: 'background: url(../images/worldflags/" . $l['country_iso'] . ".png) no-repeat right center !important;'});";
+        echo 'this.frmArticlesCategory.add(txtLang' . $l['id'] . ');';
+        $i++;
+      }     
+    ?>
+    
     this.frmArticlesCategory.add({xtype: 'numberfield', id: 'articles_categories_order', name: 'articles_categories_order', fieldLabel: '<?php echo $osC_Language->get('field_articles_order'); ?>', allowBlank: false});
     
     return this.frmArticlesCategory;

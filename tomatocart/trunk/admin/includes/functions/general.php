@@ -588,6 +588,7 @@
  */
   function toc_generate_token() {
     $_SESSION["token"] = md5(uniqid(rand(), true)); 
+    $_SESSION['token_time'] = time();
     
     return $_SESSION["token"];
   }

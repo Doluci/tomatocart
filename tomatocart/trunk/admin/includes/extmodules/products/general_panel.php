@@ -64,7 +64,7 @@ Ext.extend(Toc.products.GeneralPanel, Ext.TabPanel, {
         } else {
           $editor = '{xtype: \'htmleditor\', fieldLabel: \'' . $osC_Language->get('field_description') . '\', name: \'products_description[' . $l['id'] . ']\', height: 230}';
         }
-             
+           
         echo 'var lang' . $l['code'] . ' = new Ext.Panel({
           title:\'' . $l['name'] . '\',
           iconCls: \'icon-' . $l['country_iso'] . '-win\',
@@ -80,7 +80,7 @@ Ext.extend(Toc.products.GeneralPanel, Ext.TabPanel, {
             {xtype: \'textarea\', fieldLabel: \'' . $osC_Language->get('field_short_description') . '\', name: \'products_short_description[' . $l['id'] . ']\', height: \'50\'},
             ' . $editor . ',  
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_url') . '\', name: \'products_url[' . $l['id'] . ']\'}
-            ]
+          ]
         });
         
         panels.push(lang' . $l['code'] . ');

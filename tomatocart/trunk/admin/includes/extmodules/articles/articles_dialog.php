@@ -20,7 +20,7 @@ Toc.articles.ArticlesDialog = function(config) {
   config.title = '<?php echo $osC_Language->get('heading_title_new_article'); ?>';
   config.layout = 'fit';
   config.width = 850;
-  config.height = 580;
+  config.height = 620;
   config.modal = true;
   config.iconCls = 'icon-articles-win';
   config.items = this.buildForm();
@@ -139,6 +139,7 @@ Ext.extend(Toc.articles.ArticlesDialog, Ext.Window, {
           },
           items: [
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_article_name') . '\', name: \'articles_name[' . $l['id'] . ']\', allowBlank: false},
+            {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_article_url') . '\', name: \'articles_url[' . $l['id'] . ']\'},
             ' . $editor . ',
             {
               layout: \'column\',
