@@ -93,6 +93,7 @@ CREATE TABLE toc_articles_categories_description (
   articles_categories_id int(11) NOT NULL,
   language_id int(11) NOT NULL,
   articles_categories_name varchar(255) NOT NULL,
+  articles_categories_url varchar(255) NOT NULL,
   PRIMARY KEY  (articles_categories_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -102,6 +103,7 @@ CREATE TABLE toc_articles_description (
   articles_id int(11) NOT NULL,
   language_id int(11) NOT NULL,
   articles_name varchar(255) NOT NULL,
+  articles_url varchar(255) NOT NULL,
   articles_description text NOT NULL,
   articles_head_desc_tag varchar(255) NOT NULL,
   articles_head_keywords_tag varchar(255) NOT NULL,
@@ -157,6 +159,7 @@ CREATE TABLE toc_categories_description (
   categories_id int(11) NOT NULL,
   language_id int(11) NOT NULL,
   categories_name varchar(32) NOT NULL,
+  categories_url varchar(32) NOT NULL,
   categories_page_title varchar(255) NOT NULL,
   categories_meta_keywords varchar(255) NOT NULL,
   categories_meta_description varchar(255) NOT NULL,
@@ -522,6 +525,7 @@ CREATE TABLE toc_faqs_description (
   faqs_id int(11) NOT NULL,
   language_id int(11) NOT NULL,
   faqs_question varchar(255) NOT NULL,
+  faqs_url varchar(255) NOT NULL,
   faqs_answer text NOT NULL,
   PRIMARY KEY  (faqs_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -641,6 +645,7 @@ CREATE TABLE toc_manufacturers_info (
   manufacturers_id int(11) NOT NULL,
   languages_id int(11) NOT NULL,
   manufacturers_url varchar(255) NOT NULL,
+  manufacturers_friendly_url varchar(64) NOT NULL,
   url_clicked int(5) NOT NULL default '0',
   date_last_click datetime default NULL,
   PRIMARY KEY  (manufacturers_id,languages_id)
@@ -1312,6 +1317,7 @@ CREATE TABLE toc_products_description (
   products_keyword varchar(64) default NULL,
   products_tags varchar(255) default NULL,
   products_url varchar(255) default NULL,
+  products_friendly_url varchar(255) default NULL,
   products_page_title varchar(255) NOT NULL,
   products_meta_keywords varchar(255) NOT NULL,
   products_meta_description varchar(255) NOT NULL,
@@ -1820,7 +1826,6 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow gift certificate return', 'ALLOW_GIFT_CERTIFICATE_RETURN', '-1', 'Do you want to allow customer return gift certificates?', '11', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow downloadable return', 'ALLOW_DOWNLOADABLE_RETURN', '-1', 'Do you want to allow customer return downloadable products?', '11', '4', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow return request', 'ALLOW_RETURN_REQUEST', '1', 'Do you want to allow customer return product?', '11', '5', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow Reorder', 'ALLOW_RECORDER', '-1', 'Do you want to allow customer to reorder?', '11', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Download by redirect', 'DOWNLOAD_BY_REDIRECT', '-1', 'Use browser redirection for download. Disable on non-Unix systems.', '11', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('E-Mail Transport Method', 'EMAIL_TRANSPORT', 'sendmail', 'Defines if this server uses a local connection to sendmail or uses an SMTP connection via TCP/IP. Servers running on Windows and MacOS should change this setting to SMTP.', '12', '1', 'osc_cfg_set_boolean_value(array(\'sendmail\', \'smtp\'))', now());
@@ -6995,7 +7000,7 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 
 # Articles Categories
 INSERT INTO toc_articles_categories (articles_categories_id, articles_categories_status, articles_categories_order) VALUES (1, 1, 1);
-INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name) VALUES (1, 1, 'Information');
+INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url) VALUES (1, 1, 'Information', 'information');
 
 # Articles
 INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, articles_order, articles_date_added, articles_last_modified, articles_image) VALUES
@@ -7005,12 +7010,12 @@ INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, 
 (4, 1, 1, 4, now(), now(), NULL),
 (5, 1, 1, 5, now(), now(), NULL);
 
-INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_description, articles_head_desc_tag, articles_head_keywords_tag) VALUES
-(1, 1, 'About Us', 'Put here the required information.', '', ''),
-(2, 1, 'Shipping & Returns', 'Put here the required information.', '', ''),
-(3, 1, 'Privacy Notice', 'Put here the required information.', '', ''),
-(4, 1, 'Conditions of Use', 'Put here the required information.', '', ''),
-(5, 1, 'Imprint', 'Put here the required information.', '', '');
+INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_head_desc_tag, articles_head_keywords_tag) VALUES
+(1, 1, 'About Us', 'about-us', 'Put here the required information.', '', ''),
+(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.', '', ''),
+(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.', '', ''),
+(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.', '', ''),
+(5, 1, 'Imprint', 'imprint', 'Put here the required information.', '', '');
 
 
 #piwik
