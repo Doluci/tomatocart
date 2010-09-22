@@ -54,7 +54,7 @@
 <?php
     for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
       $lc_key = false;
-      $lc_align = '';
+      $lc_align = 'center';
 
       switch ($column_list[$col]) {
         case 'PRODUCT_LIST_SKU':
