@@ -46,7 +46,7 @@
         if ($osC_Cache->read('category_tree-' . $osC_Language->getCode(), 720)) {
           $this->data = $osC_Cache->getCache();
         } else {
-          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id and c.categories_status = 1 order by c.parent_id, c.sort_order, cd.categories_name');
+          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_url, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id and c.categories_status = 1 order by c.parent_id, c.sort_order, cd.categories_name');
           $Qcategories->bindTable(':table_categories', TABLE_CATEGORIES);
           $Qcategories->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
           $Qcategories->bindInt(':language_id', $osC_Language->getID());
@@ -55,7 +55,7 @@
           $this->data = array();
 
           while ($Qcategories->next()) {
-            $this->data[$Qcategories->valueInt('parent_id')][$Qcategories->valueInt('categories_id')] = array('name' => $Qcategories->value('categories_name'), 'page_title' => $Qcategories->value('categories_page_title'), 'meta_keywords' => $Qcategories->value('categories_meta_keywords'), 'meta_description' => $Qcategories->value('categories_meta_description'), 'image' => $Qcategories->value('categories_image'), 'count' => 0);
+            $this->data[$Qcategories->valueInt('parent_id')][$Qcategories->valueInt('categories_id')] = array('name' => $Qcategories->value('categories_name'), 'url' => $Qcategories->value('categories_url'), 'page_title' => $Qcategories->value('categories_page_title'), 'meta_keywords' => $Qcategories->value('categories_meta_keywords'), 'meta_description' => $Qcategories->value('categories_meta_description'), 'image' => $Qcategories->value('categories_image'), 'count' => 0);
           }
 
           $Qcategories->freeResult();
@@ -427,8 +427,25 @@
       }
     }
 
-    function getCategoryName($cPath){
+    function getCategoryUrl($cPath) {
+      $cPath = $this->getFullcPath($cPath);
+      $categories = @explode('_', $cPath);
 
+      if(sizeof($categories) > 1){
+        $category_id = end($categories);
+        $parent_id = $categories[sizeof($categories)-2];
+      }else{
+        $category_id = $cPath;
+        $parent_id = $this->root_category_id;
+      }
+
+      $category_url = $this->data[$parent_id][$category_id]['url'];
+      
+      return $category_url;
+    }
+    
+    function getCategoryName($cPath){
+      $cPath = $this->getFullcPath($cPath);
       $categories = @explode('_', $cPath);
 
       if(sizeof($categories) > 1){
@@ -538,8 +555,8 @@
     function buildCompleteBranch($categories, $level = 0) {
       $result = ($level == 0) ? '<ul id="categoriesTree">' : '<ul>';
       
-      foreach($categories as $parent_id => $category) {
-        $category_link = $parent_id;
+      foreach($categories as $categories_id => $category) {
+        $category_link = $categories_id;
         
         $result .= $this->child_start_string;     
                
@@ -555,8 +572,8 @@
           $result .= osc_link_object(osc_href_link(FILENAME_DEFAULT, 'cPath=' . $category_link), $this->leading_string . $link_title);
         }       
         
-        if(in_array($parent_id, array_keys($this->data))) {
-          $result .= $this->buildCompleteBranch($this->data[$parent_id], $level + 1);
+        if(in_array($categories_id, array_keys($this->data))) {
+          $result .= $this->buildCompleteBranch($this->data[$categories_id], $level + 1, $categories_id);
         }
         
         $result .= $this->child_end_string;
