@@ -23,18 +23,18 @@
 <div class="moduleBox">
   <h6>
     <span style="float: right; margin-right: 5px"><?php echo osC_DateTime::getShort($Qreviews->value('date_added')); ?></span>
-    <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=' . $Qreviews->valueInt('reviews_id')), $Qreviews->value('products_name')); ?> (<?php echo sprintf($osC_Language->get('reviewed_by'), $Qreviews->valueProtected('customers_name')); ?>)
+    <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qreviews->valueInt('products_id')), $Qreviews->value('products_name')); ?> (<?php echo sprintf($osC_Language->get('reviewed_by'), $Qreviews->valueProtected('customers_name')); ?>)
   </h6>
 
   <div class="content">
 
 <?php
     if (!osc_empty($Qreviews->value('image'))) {
-      echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews=' . $Qreviews->valueInt('reviews_id') . '&' . $Qreviews->value('products_name')), $osC_Image->show($Qreviews->value('image'), $Qreviews->value('products_name'), 'style="float: left;"'));
+      echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qreviews->valueInt('products_id')), $osC_Image->show($Qreviews->value('image'), $Qreviews->value('products_name'), 'style="float: left"'));
     }
 ?>
 
-    <p style="padding-left: 100px;"><?php echo wordwrap($Qreviews->valueProtected('reviews_text'), 60, '&shy;') . ((strlen($Qreviews->valueProtected('reviews_text')) >= 100) ? '..' : '') . '<br /><br /><i>' . sprintf($osC_Language->get('review_rating'), osc_image(DIR_WS_IMAGES . 'stars_' . $Qreviews->valueInt('reviews_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))), sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))) . '</i>'; ?></p>
+    <p style="padding-left: 120px;"><?php echo wordwrap($Qreviews->valueProtected('reviews_text'), 60, '&shy;') . ((strlen($Qreviews->valueProtected('reviews_text')) >= 100) ? '..' : '') . '<br /><br /><i>' . sprintf($osC_Language->get('review_rating'), osc_image(DIR_WS_IMAGES . 'stars_' . $Qreviews->valueInt('reviews_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))), sprintf($osC_Language->get('rating_of_5_stars'), $Qreviews->valueInt('reviews_rating'))) . '</i>'; ?></p>
 
     <div style="clear: both;"></div>
   </div>
