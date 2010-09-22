@@ -161,10 +161,10 @@ A:hover {
   height: 155px;
 }
 
-#pageWrapper {
+#pageWrapper, #slideShow {
   width: 960px;
   height: auto;
-  margin: 0px auto;
+  margin: 10px auto;
 }
 
 #pageBlockLeft {
@@ -932,10 +932,8 @@ SPAN.markProductError {
   color: #FF0000;
 }
 
-.boxReview a {
-  display: block;
-  height: 45px;
-}
+.boxReview {text-align: center}
+.boxReview a {text-algin: center; display: block}
 
 #productInfoTab a {
   border-top: 1px solid #DDDDDD;

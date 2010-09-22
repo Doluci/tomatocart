@@ -68,7 +68,7 @@
     <?php } ?>
       <li id="bookmark"></li>    
       <li class="cart">
-        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<div id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . '<span id="popupCartItems">' . $osC_ShoppingCart->numberOfItems() . '</span>' . '<span>' . $osC_Language->get('text_items') . '</span></div>') ; ?>
+        <?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), '<span id="popupCart">' . osc_image('templates/' . $osC_Template->getCode() . '/images/shopping_cart_icon.png') . '<span id="popupCartItems">' . $osC_ShoppingCart->numberOfItems() . '</span>' . '<span>' . $osC_Language->get('text_items') . '</span></span>') ; ?>
       </li>
 
     </ul>
@@ -81,24 +81,23 @@
     <div id="navigationInner">
       <ul id="navigation">
         <?php
-          echo '<li ' . ($osC_Template->getGroup() == 'index' && $osC_Template->getModule() == 'index' ? 'class="navVisited"' : null) . '><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'index'), $osC_Language->get('home')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>' .
-               '<li ' . ($osC_Template->getGroup() == 'products' && $osC_Template->getModule() == 'new' ? 'class="navVisited"' : null) . '><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'new'), $osC_Language->get('new_products')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>';
+          echo '<li ' . ($osC_Template->getGroup() == 'index' && $osC_Template->getModule() == 'index' ? 'class="navVisited"' : null) . '><span class="navLeftHook">&nbsp;</span>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'index'), $osC_Language->get('home')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>' .
+               '<li ' . ($osC_Template->getGroup() == 'products' && $osC_Template->getModule() == 'new' ? 'class="navVisited"' : null) . '><span class="navLeftHook">&nbsp;</span>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'new'), $osC_Language->get('new_products')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>';
   
           if ($osC_Customer->isLoggedOn()) {
-            echo '<li><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'logoff', 'SSL'), $osC_Language->get('sign_out')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>';
+            echo '<li><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'logoff', 'SSL'), $osC_Language->get('sign_out')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>';
           }
   
-          echo '<li ' . ($osC_Template->getGroup() == 'account' ? 'class="navVisited"' : null) . '><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('my_account')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>' .
-               '<li ' . ($osC_Template->getGroup() == 'checkout' ? 'class="navVisited"' : null) . '><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>' .
-               '<li ' . ($osC_Template->getGroup() == 'info' && $osC_Template->getModule() == 'contact' ? 'class="navVisited"' : null) . '><span class="navLeftHook"></span>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span class="navHoverDownHook"></span><span class="navRightHook"></span></li>';
+          echo '<li ' . ($osC_Template->getGroup() == 'account' ? 'class="navVisited"' : null) . '><span class="navLeftHook">&nbsp;</span>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('my_account')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>' .
+               '<li ' . ($osC_Template->getGroup() == 'checkout' ? 'class="navVisited"' : null) . '><span class="navLeftHook">&nbsp;</span>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>' .
+               '<li ' . ($osC_Template->getGroup() == 'info' && $osC_Template->getModule() == 'contact' ? 'class="navVisited"' : null) . '><span class="navLeftHook">&nbsp;</span>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span class="navHoverDownHook">&nbsp;</span><span class="navRightHook">&nbsp;</span></li>';
         ?>
       </ul>
       
       <div style="float: right;width: 206px">
         <form name="search" action="<?php echo osc_href_link(FILENAME_SEARCH, null, 'NONSSL', false);?>" method="get">
           <p class="keywords"><?php echo osc_draw_input_field('keywords', null, 'maxlength="20"') ?></p>
-          <p><input type="image" src="<?php echo 'templates/' . $osC_Template->getCode() . '/images/button_quick_find.png'; ?>" alt="<?php echo $osC_Language->get('box_search_heading'); ?>" title="<?php echo $osC_Language->get('box_search_heading'); ?>" id="quickSearch" /></p>
-          <p><?php echo osc_draw_hidden_session_id_field(); ?></p>
+          <p><input type="image" src="<?php echo 'templates/' . $osC_Template->getCode() . '/images/button_quick_find.png'; ?>" alt="<?php echo $osC_Language->get('box_search_heading'); ?>" title="<?php echo $osC_Language->get('box_search_heading'); ?>" id="quickSearch" /><?php echo osc_draw_hidden_session_id_field(); ?></p>
         </form>
       </div>  
     </div>
@@ -127,7 +126,7 @@
 }
 ?>
 
-<div id="pageWrapper">
+<div id="slideShow">
   <?php 
     foreach ($osC_Template->getContentModules('slideshow') as $box) {
       $osC_Box = new $box();
@@ -354,15 +353,15 @@
   <div id="pageFooter">
     <ul>
       <?php
-        echo '<li>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'index'), $osC_Language->get('home')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'specials'), $osC_Language->get('specials')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'new'), $osC_Language->get('new_products')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('my_account')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'wishlist', 'SSL'), $osC_Language->get('my_wishlist')) . '<span>|<span></li>' .     
-             '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('cart_contents')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span>|<span></li>' .
-             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span>|<span></li>'.
-             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), $osC_Language->get('Guest Book')) . '<span>|<span></li>' .
+        echo '<li>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'index'), $osC_Language->get('home')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'specials'), $osC_Language->get('specials')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'new'), $osC_Language->get('new_products')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('my_account')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'wishlist', 'SSL'), $osC_Language->get('my_wishlist')) . '<span>|</span></li>' .     
+             '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('cart_contents')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span>|</span></li>'.
+             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), $osC_Language->get('Guest Book')) . '<span>|</span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'rss'), osc_image(DIR_WS_IMAGES . 'rss16x16.png') . '<span>RSS</span>') . '</li>';
       ?>
     </ul>
