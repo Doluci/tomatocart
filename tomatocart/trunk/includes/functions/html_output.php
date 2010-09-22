@@ -102,6 +102,8 @@
       global $toC_Sefu;
       $link = $toC_Sefu->generateURL($link, $page, $parameters);
     }
+    
+    $link = str_replace('&', '&amp;', $link);
 
     return $link;
   }
