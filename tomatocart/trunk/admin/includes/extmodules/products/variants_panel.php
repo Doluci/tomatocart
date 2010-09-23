@@ -379,7 +379,7 @@ Ext.extend(Toc.products.VariantsPanel, Ext.Panel, {
       variants_groups: groups, 
       variants_values_name: names.join('; '),
       data: data, 
-      default: (store.getCount() > 0) ? 0 : 1
+      'default': ((store.getCount() > 0) ? 0 : 1)
     }));
     
     this.pnlVariantDataContainer.add(this.buildVariantDataCard(variants_values, data));
