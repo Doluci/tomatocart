@@ -455,7 +455,7 @@ Ext.extend(Toc.products.DataPanel, Ext.TabPanel, {
   },  
   
   updateCboTaxClass: function (type) {
-    if (type == '<? echo PRODUCT_TYPE_GIFT_CERTIFICATE; ?>') {
+    if (type == '<?php echo PRODUCT_TYPE_GIFT_CERTIFICATE; ?>') {
       this.cboTaxClass.setValue('0');
       this.cboTaxClass.disable();
     } else {
