@@ -142,6 +142,7 @@ configuration_regulations_title = Regulations
 configuration_credit_cards_title = Credit Cards
 configuration_program_locations_title = Program Locations
 configuration_store_front_title = Store Front
+configuration_content_management_system_title = Content Management System
 
 init_system = Initializing System ...
 
