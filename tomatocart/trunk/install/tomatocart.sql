@@ -158,8 +158,8 @@ DROP TABLE IF EXISTS toc_categories_description;
 CREATE TABLE toc_categories_description (
   categories_id int(11) NOT NULL,
   language_id int(11) NOT NULL,
-  categories_name varchar(32) NOT NULL,
-  categories_url varchar(32) NOT NULL,
+  categories_name varchar(64) NOT NULL,
+  categories_url varchar(64) NOT NULL,
   categories_page_title varchar(255) NOT NULL,
   categories_meta_keywords varchar(255) NOT NULL,
   categories_meta_description varchar(255) NOT NULL,
