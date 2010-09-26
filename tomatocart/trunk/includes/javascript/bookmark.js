@@ -45,11 +45,13 @@ var TocBookmark = new Class({
   
   onBookmarkClicked: function() {
     if (window.sidebar) {
-        window.sidebar.addPanel(this.options.title, this.options.url,"");
-    } else if( window.external ) {
-         window.external.AddFavorite( this.options.url, this.options.title); 
+      window.sidebar.addPanel(this.options.title, this.options.url,"");
+    } else if(document.all) {
+      window.external.AddFavorite( this.options.url, this.options.title); 
     }  if (window.opera && window.print) {
-      return false;
+      alert('Press ctrl+D to bookmark (Command+D for macs) after you click Ok');
+    } else if (window.chrome) {
+      alert('Press ctrl+D to bookmark (Command+D for macs) after you click Ok');
     }
   }
 });
