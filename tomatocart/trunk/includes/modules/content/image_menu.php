@@ -54,17 +54,16 @@
         $interval = MODULE_CONTENT_IMAGE_MENU_INTERVAL;
         $duration = MODULE_CONTENT_IMAGE_MENU_DURATION;
 
-        $this->_content .= "\n\n" .
-          '<style type="text/css">' . "\n" .
-            '#imageMenu {position: relative;width:' . $width . 'px;height:' . $height . 'px;overflow: hidden;}' . "\n" .
-            '#imageMenu ul {list-style: none;margin: 0px;display: block;height: ' . $height . 'px;width: 1000px;padding:0px}' . "\n" .
-            '#imageMenu ul li {float: left;}' . "\n" .
-            '#imageMenu ul li a {text-indent: -1000px;background:#FFFFFF none repeat scroll 0%;border-right: ' . $border_width . 'px solid #fff;cursor:pointer;display:block;overflow:hidden;width:' . $cosed_width . 'px;height:' . $height . 'px;}' . "\n" .
+        $css = '#imageMenu {position: relative;width:' . $width . 'px;height:' . $height . 'px;overflow: hidden;}' . "\n" .
+               '#imageMenu ul {list-style: none;margin: 0px;display: block;height: ' . $height . 'px;width: 1000px;padding:0px}' . "\n" .
+               '#imageMenu ul li {float: left;}' . "\n" .
+               '#imageMenu ul li a {text-indent: -1000px;background:#FFFFFF none repeat scroll 0%;border-right: ' . $border_width . 'px solid #fff;cursor:pointer;display:block;overflow:hidden;width:' . $cosed_width . 'px;height:' . $height . 'px;}' . "\n" .
             $css . "\n" .
-            '#imageMenu ul li.imageMenu0 a {width:' . $opened_width . 'px;}' . "\n" .
-          '</style>' . "\n\n";
+            '#imageMenu ul li.imageMenu0 a {width:' . $opened_width . 'px;}';
 
-        $this->_content .= $osC_Template->ouputJavascriptFile('ext/image_menu/imageMenu.js') . "\n\n";
+        $osC_Template->addStyleDeclaration($css);
+        $osC_Template->addJavascriptFilename('ext/image_menu/imageMenu.js');
+
         $this->_content .=
             '<script type="text/javascript">' . "\n" .
               'var myMenu = new ImageMenu($$(\'#imageMenu a\'),{openWidth:' . $opened_width . ', closeWidth:' . $cosed_width . ', interval:' . $interval . ', border:' . $border_width . ', duration:' . $duration . '});' . "\n" .

@@ -61,7 +61,7 @@
 
         $image = $Qproducts->value('image');
         if (empty($image) === false) {
-          $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->valueInt('products_id')), $osC_Image->show($image, $Qproducts->value('products_name'), 'hspace="5" vspace="5"', 'product_info')) . '<br />';
+          $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->valueInt('products_id')), $osC_Image->show($image, $Qproducts->value('products_name'), 'hspace="5" vspace="5"', 'thumbnails')) . '<br />';
         }
 
         $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->valueInt('products_id')), $Qproducts->value('products_name')) . '<br />' . $products_price;
@@ -77,16 +77,15 @@
       $duration = MODULE_BOX_PRODUCTS_SCROLLER_DURATION;
       $interval = MODULE_BOX_PRODUCTS_SCROLLER_INTERVAL;
 
-      $num_of_images = floor($height / ($osC_Image->getHeight('product_info') + 40));
+      $num_of_images = floor($height / ($osC_Image->getHeight('thumbnails') + 40));
       $image_height = floor($height / $num_of_images);
 
-      $css = '<style type="text/css">' . "\n" .
-             '#productsScrollerWrapper {position:relative;width:' . $width . 'px;height:' . $height . 'px;overflow:hidden;}' . "\n" .
+      $css = '#productsScrollerWrapper {position:relative;width:' . $width . 'px;height:' . $height . 'px;overflow:hidden;}' . "\n" .
              '#productsScroller {position:absolute;text-align:center;width:' . $width . 'px;}' . "\n" .
-             '#productsScroller span {display:block;height:' . $image_height . 'px}' . "\n" .
-             '</style>' . "\n\n";
+             '#productsScroller span {display:block;height:' . $image_height . 'px}';
 
-      $js = $osC_Template->ouputJavascriptFile('ext/noobslide/noobslide.js') . "\n\n";
+      $osC_Template->addStyleDeclaration($css);
+      $osC_Template->addJavascriptFilename('ext/noobslide/noobslide.js');
 
       $js .= '<script type="text/javascript">
               window.addEvent(\'domready\',function(){
@@ -100,7 +99,7 @@
                   });
               });
               </script>';
-      $this->_content = $css . "\n" . $js . "\n" . $content;
+      $this->_content = $js . "\n" . $content;
     }
 
       function install() {

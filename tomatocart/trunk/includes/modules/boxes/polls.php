@@ -67,8 +67,7 @@
       
       $this->_content .= '</form></div>';
       
-      $js = $osC_Template->ouputJavascriptFile('includes/javascript/polls.js') . "\n\n";
-
+      $osC_Template->addJavascriptFilename('includes/javascript/polls.js');
       $js .= '<script type="text/javascript">
               window.addEvent(\'domready\',function(){
                 var polls = new Polls();
