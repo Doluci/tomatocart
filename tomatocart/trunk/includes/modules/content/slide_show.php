@@ -84,16 +84,14 @@
 
 
 
-        $this->_content .=
-          '<style type="text/css">' . "\n" .
-            '#slideWrapper{position:relative; width:' . MODULE_CONTENT_SLIDE_SHOW_WIDTH . 'px; height:' . MODULE_CONTENT_SLIDE_SHOW_HEIGHT . 'px; overflow:hidden;}' . "\n" .
-            '#slideItems{position:absolute;}' . "\n" .
-            '#slideItems span{display:block; float:left;}' . "\n" .
-            '#slideItems span img{display:block;border:none;}' . "\n" .
-            $info_css .
-            '</style>' . "\n\n";
+        $css = '#slideWrapper{position:relative; width:' . MODULE_CONTENT_SLIDE_SHOW_WIDTH . 'px; height:' . MODULE_CONTENT_SLIDE_SHOW_HEIGHT . 'px; overflow:hidden;}' . chr(13) .
+               '#slideItems{position:absolute;}' . chr(13) .
+               '#slideItems span{display:block; float:left;}' . chr(13) .
+               '#slideItems span img{display:block;border:none;}' . chr(13) .
+               $info_css;
 
-        $this->_content .= $osC_Template->ouputJavascriptFile('ext/noobslide/noobslide.js') . "\n\n";
+        $osC_Template->addStyleDeclaration($css);
+        $osC_Template->addJavascriptFilename('ext/noobslide/noobslide.js');
 
         $size = (MODULE_CONTENT_SLIDE_SHOW_MODE == 'horizontal') ? MODULE_CONTENT_SLIDE_SHOW_WIDTH : MODULE_CONTENT_SLIDE_SHOW_HEIGHT;
         $this->_content .=

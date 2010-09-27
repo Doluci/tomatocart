@@ -47,31 +47,30 @@
                   '</div>' .
                  '</div>';
                       
-      $css = '<style type="text/css">' . "\n" .
-              '#ajaxCartContent {overflow: hidden;}' .
-              '.boxTitle #ajaxCartCollapse, .boxTitle #ajaxCartExpand {cursor:pointer;position:relative;top:3px;}' .
-              '.hidden {display: none;}' .
-              '.expanded {display: block;}' .
-              '.collapsed {display: none;}' .
-              '.strike {text-decoration:line-through;}' .
-              '#ajaxCartContentShort span{ padding: 0 2px;}' .
-              '#ajaxCartButtons {margin-top:10px;}' .
-              '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' .
-              '#ajaxCartOrderTotals span.orderTotalText {float: right}' .
-              '#ajaxCartContentLong ul.products {text-align: left;}' . 
-              '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;line-height:16px;}' .
-              '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:8px;}' .
-              '#ajaxCartContentLong ul.products .removeProduct {cursor: pointer;display: block;width: 11px;height: 13px;position: absolute;right: 0;top: 8px;background: url(includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_ajax_cart_delete.gif) no-repeat left top;}' .
-              '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' .
-              '#ajaxCartOrderTotals {padding:5px 0;border-top: 1px dashed #CCCCCC;}' .
-              '#ajaxCartContentLong #ajaxCartOrderTotals li {padding: 2px;font-size: 11px}' .
-              '#ajaxCartContentLong p{color: #616060;font-size: 10px;margin: 0}' .
-              '#ajaxCartContentLong p.variants, #ajaxCartContentLong p.customizations { padding: 2px;margin: 0 0 0 5px; }' .
-              '#ajaxCartContentShort span.cartTotal {float:right; font-weight: bold}' .
-              '#ajaxCartContentProducts dd span {display:block;padding-left:32px;}' .  
-             '</style>' . "\n\n";                                 
-                      
-      $js = $osC_Template->ouputJavascriptFile('includes/javascript/ajax_shopping_cart.js') . "\n\n";
+      $css = '#ajaxCartContent {overflow: hidden;}' . chr(13) . 
+             '.boxTitle #ajaxCartCollapse, .boxTitle #ajaxCartExpand {cursor:pointer;position:relative;top:3px;}' . chr(13) .
+             '.hidden {display: none;}' . chr(13) .
+             '.expanded {display: block;}' . chr(13) .
+             '.collapsed {display: none;}' . chr(13) .
+             '.strike {text-decoration:line-through;}' . chr(13) .
+             '#ajaxCartContentShort span{ padding: 0 2px;}' . chr(13) .
+             '#ajaxCartButtons {margin-top:10px;}' . chr(13) .
+             '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' . chr(13) .
+             '#ajaxCartOrderTotals span.orderTotalText {float: right}' . chr(13) .
+             '#ajaxCartContentLong ul.products {text-align: left;}' .  chr(13) .
+             '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;line-height:16px;}' . chr(13) .
+             '#ajaxCartContentLong ul.products span.price {display:block;position:absolute;right:15px;top:8px;}' . chr(13) .
+             '#ajaxCartContentLong ul.products .removeProduct {cursor: pointer;display: block;width: 11px;height: 13px;position: absolute;right: 0;top: 8px;background: url(includes/languages/' . $osC_Language->getCode() . '/images/buttons/button_ajax_cart_delete.gif) no-repeat left top;}' . chr(13) .
+             '#ajaxCartContentLong #ajax_cart_prices {padding: 5px 0;border-top : 1px dashed #777F7D;}' . chr(13) .
+             '#ajaxCartOrderTotals {padding:5px 0;border-top: 1px dashed #CCCCCC;}' . chr(13) .
+             '#ajaxCartContentLong #ajaxCartOrderTotals li {padding: 2px;font-size: 11px}' . chr(13) .
+             '#ajaxCartContentLong p{color: #616060;font-size: 10px;margin: 0}' . chr(13) .
+             '#ajaxCartContentLong p.variants, #ajaxCartContentLong p.customizations { padding: 2px;margin: 0 0 0 5px; }' . chr(13) .
+             '#ajaxCartContentShort span.cartTotal {float:right; font-weight: bold}' . chr(13) .
+             '#ajaxCartContentProducts dd span {display:block;padding-left:32px;}' . "\n\n";                                 
+      
+      $osC_Template->addStyleDeclaration($css);
+      $osC_Template->addJavascriptFilename('includes/javascript/ajax_shopping_cart.js');
       
       $js .= '<script type="text/javascript">
                 window.addEvent("domready",function() {
@@ -87,7 +86,7 @@
                 });
               </script>';
       
-      $this->_content = $css . "\n" . $content . "\n" . $js;
+      $this->_content = $content . "\n" . $js;
     }
   }
 ?>

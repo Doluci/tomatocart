@@ -39,8 +39,8 @@
         
         $this->_content = '<ul>' . $osC_CategoryTree->buildTree() . '</ul>';
       } else {
-        $js = $osC_Template->ouputJavascriptFile('ext/menumatic/MenuMatic_0.68.3.js') . "\n\n";
-        $js .= '<script type="text/javascript">
+        $osC_Template->addJavascriptFilename('ext/menumatic/MenuMatic_0.68.3.js');
+        $js = '<script type="text/javascript">
           window.addEvent(\'domready\',function(){
             var myMenu = new MenuMatic({ id: "categoriesTree", effect: "' . BOX_CATEGORIES_DROP_DOWN_MENU_EFFECT . '", duration: ' . BOX_CATEGORIES_DROP_DOWN_MENU_DURATION . ', orientation:"vertical" });
           });

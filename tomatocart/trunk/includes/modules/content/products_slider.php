@@ -84,18 +84,17 @@
       $num_of_images = floor($wrapper_width / ($osC_Image->getWidth('thumbnails') + 30));
       $image_width = floor($wrapper_width / $num_of_images);
 
-      $css = '<style type="text/css">' . "\n" .
-             '#sliderLeft, #sliderRight {height:' . $height . 'px;line-height:' . $height . 'px;width:30px;float:left;vertical-align:middle}' . "\n" .
+      $css = '#sliderLeft, #sliderRight {height:' . $height . 'px;line-height:' . $height . 'px;width:30px;float:left;vertical-align:middle}' . "\n" .
              '#sliderLeft a {background:#fff url(images/arrow_left_gray.gif) no-repeat center center;display:block;width:30px;}' . "\n" .
              '#sliderLeft a:hover {background:#fff url(images/arrow_left_blue.gif) no-repeat center center; text-decoration:none}' . "\n" .
              '#sliderRight a {background:#fff url(images/arrow_right_gray.gif) no-repeat center center;display:block;width:30px;}' . "\n" .
              '#sliderRight a:hover {background:#fff url(images/arrow_right_blue.gif) no-repeat center center; text-decoration:none}' . "\n" .
              '#productsSliderWrapper {position:relative;background:#fff;width:' . $wrapper_width . 'px;height:' . $height . 'px;overflow:hidden;;float:left;}' . "\n" .
              '#productsSlider {position:absolute;text-align:center}' . "\n" .
-             '#productsSlider span {display:block; float:left;width:' . $image_width . 'px}' . "\n" .
-             '</style>' . "\n\n";
+             '#productsSlider span {display:block; float:left;width:' . $image_width . 'px}';
 
-      $js = $osC_Template->ouputJavascriptFile('ext/noobslide/noobslide.js') . "\n\n";
+      $osC_Template->addStyleDeclaration($css);
+      $osC_Template->addJavascriptFilename('ext/noobslide/noobslide.js');
 
       $js .= '<script type="text/javascript">
               window.addEvent(\'domready\',function(){
