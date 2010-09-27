@@ -10,7 +10,7 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
-
+  global $osC_Database, $osC_Language, $osC_Currencies, $osC_Image;
 ?>
 
 <!-- module new_products start //-->
@@ -54,7 +54,7 @@
 
           $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), $osC_Image->show($Qproducts->value('image'), $Qproducts->value('products_name')), 'id="productImage' . $Qproducts->value('products_id') . '"');
           $content .= '<span style="display:block; padding: 3px; text-align: center">' . $osC_Product->getPriceFormated(true) . '</span>';
-          $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->valueInt('products_id') . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" pid="' . $Qproducts->value('products_id') . '"'));
+          $content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->valueInt('products_id') . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" id="ac_newproductsmodule_' . $Qproducts->value('products_id') . '"'));
           
           $content .= '</div>';
           
