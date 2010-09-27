@@ -21,11 +21,23 @@
 <meta http-equiv="x-ua-compatible" content="ie=7" />
 <link rel="shortcut icon" href="templates/<?php echo $osC_Template->getCode(); ?>/images/tomatocart.ico" type="image/x-icon" />
 
-<title><?php echo STORE_NAME . ($osC_Template->hasPageTitle() ? ': ' . $osC_Template->getPageTitle() : ''); ?></title>
+<title><?php echo STORE_NAME . ($osC_Template->hasMetaPageTitle() ? ': ' . $osC_Template->getMetaPageTitle() : ''); ?></title>
 <base href="<?php echo osc_href_link(null, null, 'AUTO', false); ?>" />
 
-<link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.css" />
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/stylesheet.css" />
+<link rel="stylesheet" type="text/css" href="ext/autocompleter/Autocompleter.css" />
+
+<!--[if IE]>
+<style type="text/css">
+  #productInfoTab a {
+    top:11px;
+  }
+  
+  #productInfoTab a.unselect {
+    top:13px;
+  }
+</style>
+<![endif]-->
 <?php
   if ($osC_Template->hasPageTags()) {
     echo $osC_Template->getPageTags();
@@ -33,6 +45,10 @@
 
   if ($osC_Template->hasJavascript()) {
     $osC_Template->getJavascript();
+  }
+  
+  if ($osC_Template->hasStyleSheet()) {
+    $osC_Template->getStyleSheet();
   }
 ?>
 
@@ -128,23 +144,9 @@
 
 <div id="slideShow">
   <?php 
-    foreach ($osC_Template->getContentModules('slideshow') as $box) {
-      $osC_Box = new $box();
-      $osC_Box->initialize();
-    
-      if ($osC_Box->hasContent()) {
-        if ($osC_Template->getCode() == DEFAULT_TEMPLATE) {
-          include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-        } else {
-          if (file_exists('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php')) {
-            include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-          } else {
-            include('templates/' . DEFAULT_TEMPLATE . '/modules/content/' . $osC_Box->getCode() . '.php');
-          }
-        }
-      }
-    
-      unset($osC_Box);
+    $slideshow = $osC_Template->getContentGroup('slideshow');
+    if ($slideshow !== false) {
+      echo $slideshow;
     }
   ?>
 </div>
@@ -152,33 +154,7 @@
 <div id="pageWrapper">
   <div id="pageBlockLeft">
   <?php
-    $content_left = '';
-
-    if ($osC_Template->hasPageBoxModules()) {
-      ob_start();
-
-      foreach ($osC_Template->getBoxModules('left') as $box) {
-        $osC_Box = new $box();
-        $osC_Box->initialize();
-
-        if ($osC_Box->hasContent()) {
-          if ($osC_Template->getCode() == DEFAULT_TEMPLATE) {
-            include('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-          } else {
-            if (file_exists('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php')) {
-              include('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-            } else {
-              include('templates/' . DEFAULT_TEMPLATE . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-            }
-          }
-        }
-
-        unset($osC_Box);
-      }
-
-      $content_left = ob_get_contents();
-      ob_end_clean();
-    }
+    $content_left = $osC_Template->getBoxGroup('left');
 
     if (!empty($content_left)) {
   ?>
@@ -215,23 +191,9 @@
             $$service[0]->$service[1]();
           }
 
-          foreach ($osC_Template->getContentModules('before') as $box) {
-            $osC_Box = new $box();
-            $osC_Box->initialize();
-
-            if ($osC_Box->hasContent()) {
-              if ($osC_Template->getCode() == DEFAULT_TEMPLATE) {
-                include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-              } else {
-                if (file_exists('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php')) {
-                  include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-                } else {
-                  include('templates/' . DEFAULT_TEMPLATE . '/modules/content/' . $osC_Box->getCode() . '.php');
-                }
-              }
-            }
-
-            unset($osC_Box);
+          $content_before = $osC_Template->getContentGroup('before');
+          if (!empty($content_before)) {
+            echo $content_before;
           }
         }
 
@@ -253,24 +215,10 @@
           foreach ($osC_Services->getCallAfterPageContent() as $service) {
             $$service[0]->$service[1]();
           }
-
-          foreach ($osC_Template->getContentModules('after') as $box) {
-            $osC_Box = new $box();
-            $osC_Box->initialize();
-
-            if ($osC_Box->hasContent()) {
-              if ($osC_Template->getCode() == DEFAULT_TEMPLATE) {
-                include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-              } else {
-                if (file_exists('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php')) {
-                  include('templates/' . $osC_Template->getCode() . '/modules/content/' . $osC_Box->getCode() . '.php');
-                } else {
-                  include('templates/' . DEFAULT_TEMPLATE . '/modules/content/' . $osC_Box->getCode() . '.php');
-                }
-              }
-            }
-
-            unset($osC_Box);
+        
+          $content_after = $osC_Template->getContentGroup('after');
+          if (!empty($content_after)) {
+            echo $content_after;
           }
         }
       ?>
@@ -279,33 +227,7 @@
   </div>
 
 <?php
-    $content_right = '';
-
-    if ($osC_Template->hasPageBoxModules()) {
-      ob_start();
-
-      foreach ($osC_Template->getBoxModules('right') as $box) {
-        $osC_Box = new $box();
-        $osC_Box->initialize();
-
-        if ($osC_Box->hasContent()) {
-          if ($osC_Template->getCode() == DEFAULT_TEMPLATE) {
-            include('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-          } else {
-            if (file_exists('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php')) {
-              include('templates/' . $osC_Template->getCode() . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-            } else {
-              include('templates/' . DEFAULT_TEMPLATE . '/modules/boxes/' . $osC_Box->getCode() . '.php');
-            }
-          }
-        }
-
-        unset($osC_Box);
-      }
-
-      $content_right = ob_get_contents();
-      ob_end_clean();
-    }
+    $content_right = $osC_Template->getBoxGroup('right');
   ?>
   <?php
     if (!empty($content_right)) {
@@ -380,11 +302,11 @@
   }
 ?>
 
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Autocompleter.Request.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/ext/autocompleter/Observer.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode();?>/javascript/auto_completer/auto_completer.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode();?>/javascript/popup_cart/popup_cart.js"></script>
+<script type="text/javascript" src="ext/autocompleter/Autocompleter.js"></script>
+<script type="text/javascript" src="ext/autocompleter/Autocompleter.Request.js"></script>
+<script type="text/javascript" src="ext/autocompleter/Observer.js"></script>
+<script type="text/javascript" src="includes/javascript/auto_completer.js"></script>
+<script type="text/javascript" src="includes/javascript/popup_cart.js"></script>
 <script type="text/javascript" src="includes/javascript/bookmark.js"></script>
 
 <script type="text/javascript">
