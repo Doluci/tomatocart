@@ -15,10 +15,12 @@
     var $_data = array();
 
     function osC_Manufacturer($id) {
-      global $osC_Database;
+      global $osC_Database, $osC_Language;
 
-      $Qmanufacturer = $osC_Database->query('select manufacturers_id as id, manufacturers_name as name, manufacturers_image as image from :table_manufacturers where manufacturers_id = :manufacturers_id');
+      $Qmanufacturer = $osC_Database->query('select m.manufacturers_id as id, m.manufacturers_name as name, m.manufacturers_image as image, mi.manufacturers_page_title as page_title, mi.manufacturers_meta_keywords as meta_keywords, mi.manufacturers_meta_description as meta_description from :table_manufacturers m, :table_manufacturers_info mi where m.manufacturers_id = mi.manufacturers_id and m.manufacturers_id = :manufacturers_id and mi.languages_id = :languages_id');
       $Qmanufacturer->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
+      $Qmanufacturer->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
+      $Qmanufacturer->bindInt(':languages_id', $osC_Language->getID());
       $Qmanufacturer->bindInt(':manufacturers_id', $id);
       $Qmanufacturer->execute();
 
@@ -49,6 +51,18 @@
       }
 
       return false;
+    }
+    
+    function getPageTitle() {
+      return $this->_data['page_title'];    
+    }
+    
+    function getMetaKeywords() {
+      return $this->_data['meta_keywords'];
+    }
+    
+    function getMetaDescription() {
+      return $this->_data['meta_description'];
     }
   }
 ?>
