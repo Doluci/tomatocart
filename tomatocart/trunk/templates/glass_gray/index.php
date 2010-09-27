@@ -21,7 +21,7 @@
 <meta http-equiv="x-ua-compatible" content="ie=7" />
 <link rel="shortcut icon" href="templates/<?php echo $osC_Template->getCode(); ?>/images/tomatocart.ico" type="image/x-icon" />
 
-<title><?php echo STORE_NAME . ($osC_Template->hasMetaPageTitle() ? ': ' . $osC_Template->getMetaPageTitle() : ''); ?></title>
+<title><?php echo ($osC_Template->hasMetaPageTitle() ? $osC_Template->getMetaPageTitle() . ' - ' : '') . STORE_NAME; ?></title>
 <base href="<?php echo osc_href_link(null, null, 'AUTO', false); ?>" />
 
 <link rel="stylesheet" type="text/css" href="templates/<?php echo $osC_Template->getCode(); ?>/stylesheet.css" />
@@ -325,8 +325,8 @@
     });
   });
   new TocBookmark({
-  	bookmark: 'bookmark',
-  	text: '<?php echo $osC_Language->get('bookmark'); ?>',
+    bookmark: 'bookmark',
+    text: '<?php echo $osC_Language->get('bookmark'); ?>',
     img: '<?php echo 'images/bookmark.png'; ?>'
   });  
 </script>
