@@ -52,7 +52,16 @@
  */
 
     var $_group;
+    
+/**
+ * Holds the meta page title
+ *
+ * @var string
+ * @access private
+ */
 
+    var $_meta_page_title;
+    
 /**
  * Holds the title of the page
  *
@@ -79,7 +88,25 @@
  */
 
     var $_page_contents;
+    
+/**
+ * Holds the content of the box module groups
+ *
+ * @var string
+ * @access private
+ */
 
+    var $_module_boxes = array();
+    
+/**
+ * Holds the content of the content module groups
+ *
+ * @var string
+ * @access private
+ */
+
+    var $_module_content = array();
+    
 /**
  * Holds the meta tags of the page
  *
@@ -87,7 +114,7 @@
  * @access private
  */
 
-    var $_page_tags = array('generator' => array('TomatoCart Open Source Shopping Cart Solutions'));
+    var $_page_tags = array('generator' => array('TomatoCart -- Open Source Shopping Cart Solution'));
 
 /**
  * Holds javascript filenames to be included in the page
@@ -121,6 +148,24 @@
  */
 
     var $_javascript_blocks = array();
+
+/**
+ * Holds style declarations to embedd into the page head
+ *
+ * @var array
+ * @access private
+ */
+
+    var $_styles = array();
+
+/**
+ * Holds style sheet files to be included in the page
+ *
+ * @var array
+ * @access private
+ */
+
+    var $_style_sheets = array();
 
 /**
  * Defines if the requested page has a header
@@ -175,6 +220,8 @@
  */
 
     function &setup($module) {
+      global $osC_Template;
+      
       $group = basename($_SERVER['SCRIPT_FILENAME']);
 
       if (($pos = strrpos($group, '.')) !== false) {
@@ -193,14 +240,120 @@
       include('includes/content/' . $group . '/' . $module . '.php');
 
       $_page_module_name = 'osC_' . ucfirst($group) . '_' . ucfirst($module);
-      $object = new $_page_module_name();
+      $osC_Template = new $_page_module_name();
+      $osC_Template->iniModules();
 
       require('includes/classes/actions.php');
       osC_Actions::parse();
-
-      return $object;
+      
+      return $osC_Template;
     }
+    
+/**
+ * Initialize Modules and preload all modules content
+ *
+ * @access public
+ */
+    
+    function iniModules () {
+      require_once('templates/' . $this->getCode() . '/template.php');
+      
+      $_template_info = 'osC_Template_' . $this->getCode();
+      $object = new $_template_info();
+      
+      //initialize box modules
+      $this->osC_Modules_Boxes = new osC_Modules('boxes');
+      $groups = $object->getGroups('boxes');
+      if (is_array($groups) && !empty($groups)) {
+        foreach ($groups as $group) {
+          $content = $this->_iniGroupModules('boxes', $group);
+          $this->_module_boxes[$group] = trim($content);
+        }
+      }
+      
+      //initialize content modules
+      $this->osC_Modules_Content = new osC_Modules('content');
+      $groups = $object->getGroups('content');
+      if (is_array($groups) && !empty($groups)) {
+        foreach ($groups as $group) {
+          $content = $this->_iniGroupModules('content', $group);
+          
+          $this->_module_content[$group] = trim($content);
+        }
+      }
+    }
+    
+/**
+ * Load the group modules and store the content of the specified group
+ * 
+ * @param string $type module type "boxes" or "cotent"
+ * @param string $group module group name  
+ * @return string the content of the module group 
+ */
+    
+    function _iniGroupModules($type, $group) {
+      if ($type == 'boxes') {
+        $modules = $this->osC_Modules_Boxes->getGroup($group);
+      } else {
+        $modules = $this->osC_Modules_Content->getGroup($group);
+      }
 
+      ob_start();
+      foreach ($modules as $module) {
+        $osC_Box = new $module();
+        $osC_Box->initialize();
+
+        if ($osC_Box->hasContent()) {
+          if ($this->getCode() == DEFAULT_TEMPLATE) {
+            include('templates/' . $this->getCode() . '/modules/' . $type . '/' . $osC_Box->getCode() . '.php');
+          } else {
+            if (file_exists('templates/' . $this->getCode() . '/modules/' . $type . '/' . $osC_Box->getCode() . '.php')) {
+              include('templates/' . $this->getCode() . '/modules/' . $type . '/' . $osC_Box->getCode() . '.php');
+            } else {
+              include('templates/' . DEFAULT_TEMPLATE . '/modules/' . $type . '/' . $osC_Box->getCode() . '.php');
+            }
+          }
+        }
+
+        unset($osC_Box);
+      }
+
+      $content = ob_get_contents();
+      ob_end_clean();
+      
+      return $content;
+    }
+    
+/**
+ * Return the content of the specified box Group
+ * 
+ * @param string $group module group name
+ * @return string the content of the box group 
+ */
+    
+    function getBoxGroup($group) {
+      if (isset($this->_module_boxes[$group]) && !empty($this->_module_boxes[$group])) {
+        return $this->_module_boxes[$group];
+      }
+      
+      return false;
+    }
+    
+/**
+ * Return the content of the specified content Group
+ * 
+ * @param string $group module group name
+ * @return string the content of the content group 
+ */
+   
+    function getContentGroup($group) {
+      if (isset($this->_module_content[$group]) && !empty($this->_module_content[$group])) {
+        return $this->_module_content[$group];
+      }
+      
+      return false;
+    }
+    
 /**
  * Returns the template ID
  *
@@ -281,9 +434,25 @@
         }
       }
       $directory->close();
+      
       return DIR_WS_IMAGES . 'store_logo.png';
     }
+  
+/**
+ * Returns the meta page title
+ *
+ * @access public
+ * @return string
+ */
 
+    function getMetaPageTitle() {
+      if (!empty($this->_meta_page_title)) {
+        return $this->_meta_page_title;
+      }
+      
+      return $this->_page_title;
+    }
+    
 /**
  * Returns the title of the page
  *
@@ -384,7 +553,24 @@
         echo $this->_getJavascriptBlocks();
       }
     }
+  
+/**
+ * Returns the style sheet to link from or embedd to on the page
+ *
+ * @access public
+ * @return string
+ */
 
+    function getStyleSheet() {
+      if (!empty($this->_style_sheets)) {
+        echo $this->getStyleSheets();
+      }
+
+      if (!empty($this->_styles)) {
+        echo $this->getStyleDeclaration();
+      }
+    }
+    
 /**
  * Return all templates in an array
  *
@@ -410,6 +596,17 @@
 
       return $templates;
     }
+      
+/**
+ * Checks to see if the page has a meta_page title
+ *
+ * @access public
+ * @return boolean
+ */
+
+    function hasMetaPageTitle() {
+      return !(empty($this->_meta_page_title) && empty($this->_page_title));
+    }
 
 /**
  * Checks to see if the page has a title set
@@ -421,7 +618,7 @@
     function hasPageTitle() {
       return !empty($this->_page_title);
     }
-
+    
 /**
  * Checks to see if the page has a meta tag set
  *
@@ -443,7 +640,18 @@
     function hasJavascript() {
       return (!empty($this->_javascript_filenames) || !empty($this->_javascript_php_filenames) || !empty($this->_javascript_blocks));
     }
+    
+/**
+ * Checks to see if the page has style sheet to link to or embedd from
+ *
+ * @access public
+ * @return boolean
+ */
 
+    function hasStyleSheet() {
+      return (!empty($this->_style_sheets) || !empty($this->_styles));
+    }
+    
 /**
  * Checks to see if the page has a footer defined
  *
@@ -535,7 +743,18 @@
       $this->_template_id =& $_SESSION['template']['id'];
       $this->_template =& $_SESSION['template']['code'];
     }
+    
+/**
+ * Sets the meta page title
+ *
+ * @param string $title The title of the page
+ * @access public
+ */
 
+    function setMetaPageTitle($title) {
+      $this->_meta_page_title = $title;
+    }
+    
 /**
  * Sets the title of the page
  *
@@ -546,7 +765,7 @@
     function setPageTitle($title) {
       $this->_page_title = $title;
     }
-
+    
 /**
  * Sets the image of the page
  *
@@ -615,7 +834,63 @@
     function addJavascriptBlock($javascript) {
       $this->_javascript_blocks[] = $javascript;
     }
+  
+  /**
+   * Adds a stylesheet to the page
+   *
+   * @param string  $url  URL to the style sheet
+   */
+  function addStyleSheet($url) {
+    if ( !in_array($url, $this->_style_sheets) ) {
+      $this->_style_sheets[] = $url;
+    }
+  }
+  
+  /**
+   * Return the stylesheet linked to the page
+   *
+   * @return string
+   */
+  function getStyleSheets() {
+    $css_files = '';
 
+    if ( !empty($this->_style_sheets) ) {
+      foreach ($this->_style_sheets as $style_sheet) {
+        $css_files .= '<link rel="stylesheet" type="text/css" href="' . $style_sheet . '" />' . "\n";
+      }
+    }
+    
+    return $css_files;
+  }
+  
+  /**
+   * Adds a stylesheet declaration to the page
+   *
+   * @param string  $content   Style declarations
+   */
+  function addStyleDeclaration($content) {
+    if ( !in_array($content, $this->_styles) ) {
+      $this->_styles[] = $content;
+    }
+  }
+    
+  /**
+   * Return the stylesheet declaration
+   *
+   * @return string
+   */
+  function getStyleDeclaration() {
+    $css = '<style type="text/css">' . "\n";
+    
+    if ( !empty($this->_styles) ) {
+      $css .= implode("\n", $this->_styles);
+    }
+    
+    $css .= '</style>' . "\n";
+    
+    return $css;
+  }
+  
 /**
  * Returns the javascript filenames to link to on the page
  *
@@ -654,23 +929,6 @@
 
     function _getJavascriptBlocks() {
       return implode("\n", $this->_javascript_blocks);
-    }
-
-/**
- * this method is used by module to output included Javascript. This method will check whether the
- * javascript file is already included.
- *
- * @access public
- * @return string
- */
-    function ouputJavascriptFile($filename) {
-      if(!in_array($filename, $this->_javascript_filenames)){
-        $this->_javascript_filenames[] = $filename;
-
-        return '<script language="javascript" type="text/javascript" src="' . $filename . '"></script>' . "\n";
-      }else{
-        return '';
-      }
     }
   }
 ?>
