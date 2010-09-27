@@ -77,7 +77,29 @@
       
       if ( !$osC_Database->isError() ) {
         $category_id = (is_numeric($id)) ? $id : $osC_Database->nextID();
-
+        
+        if(is_numeric($id)) {
+          if($data['categories_status']){
+            $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+	          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+	          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+	          $Qpstatus->bindInt(":categories_id", $id);
+	          $Qpstatus->execute(); 
+          }else{
+            if($data['flag']) {
+              $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+	            $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+	            $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+	            $Qpstatus->bindInt(":categories_id", $id);
+	            $Qpstatus->execute();
+            }          
+          }
+        }
+        
+        if($osC_Database->isError()){
+          $error = true;
+        }
+        
         foreach ($osC_Language->getAll() as $l) {
           if ( is_numeric($id) ) {
             $Qcd = $osC_Database->query('update :table_categories_description set categories_name = :categories_name, categories_url = :categories_url, categories_page_title = :categories_page_title, categories_meta_keywords = :categories_meta_keywords, categories_meta_description = :categories_meta_description where categories_id = :categories_id and language_id = :language_id');
@@ -345,8 +367,10 @@
       return true;
     }
     
-    function setStatus($id, $flag) {
+    function setStatus($id, $flag, $product_flag) {
       global $osC_Database;
+      
+      $error = false;
       
       $Qstatus = $osC_Database->query('update :table_categories set categories_status = :categories_status where categories_id = :categories_id');
       $Qstatus->bindTable(':table_categories', TABLE_CATEGORIES);
@@ -354,14 +378,38 @@
       $Qstatus->bindValue(":categories_status", $flag);
       $Qstatus->execute();
       
-      if( !$osC_Database->isError() ) {
-        osC_Cache::clear('categories');
-        osC_Cache::clear('category_tree');
-        osC_Cache::clear('also_purchased');
-        osC_Cache::clear('sefu-products');
-        osC_Cache::clear('new_products');
-        
-        return true;
+      $error = $osC_Database->isError();
+      
+      if( !$error ) {
+        if($flag) {
+          $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+          $Qpstatus->bindInt(":categories_id", $id);
+          $Qpstatus->execute();    
+
+          $error = $osC_Database->isError();
+        } else {
+          if($product_flag) {
+	          $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+	          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
+	          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+	          $Qpstatus->bindInt(":categories_id", $id);
+	          $Qpstatus->execute();
+	          
+	          $error = $osC_Database->isError();
+	        }        
+        }
+
+	      if(!$error) {
+	        osC_Cache::clear('categories');
+	        osC_Cache::clear('category_tree');
+	        osC_Cache::clear('also_purchased');
+	        osC_Cache::clear('sefu-products');
+	        osC_Cache::clear('new_products');
+	        
+	        return true;
+	      }
       }
       return false;
     }

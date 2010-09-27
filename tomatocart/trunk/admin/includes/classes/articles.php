@@ -117,9 +117,9 @@
       if ( $error === false ) {
         foreach ($osC_Language->getAll() as $l) {
           if ( is_numeric($id) ) {
-            $Qad = $osC_Database->query('update :table_articles_description set articles_name = :articles_name, articles_url = :articles_url, articles_description = :articles_description, articles_head_desc_tag = :articles_head_desc_tag, articles_head_keywords_tag = :articles_head_keywords_tag where articles_id = :articles_id and language_id = :language_id');
+            $Qad = $osC_Database->query('update :table_articles_description set articles_name = :articles_name, articles_url = :articles_url, articles_description = :articles_description, articles_page_title = :articles_page_title, articles_meta_keywords = :articles_meta_keywords, articles_meta_description = :articles_meta_description where articles_id = :articles_id and language_id = :language_id');
           } else {
-            $Qad = $osC_Database->query('insert into :table_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_head_desc_tag, articles_head_keywords_tag) values (:articles_id, :language_id, :articles_name, :articles_url, :articles_description, :articles_head_desc_tag, :articles_head_keywords_tag)');
+            $Qad = $osC_Database->query('insert into :table_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_page_title, articles_meta_keywords, articles_meta_description) values (:articles_id, :language_id, :articles_name, :articles_url, :articles_description, :articles_page_title, :articles_meta_keywords, :articles_meta_description)');
           }
 
           $Qad->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
@@ -128,8 +128,9 @@
           $Qad->bindValue(':articles_name', $data['articles_name'][$l['id']]);
           $Qad->bindValue(':articles_url', ($data['articles_url'][$l['id']] == '') ? $data['articles_name'][$l['id']] : $data['articles_url'][$l['id']]);
           $Qad->bindValue(':articles_description', $data['articles_description'][$l['id']]);
-          $Qad->bindValue(':articles_head_desc_tag', $data['articles_head_desc_tag'][$l['id']]);
-          $Qad->bindValue(':articles_head_keywords_tag', $data['articles_head_keywords_tag'][$l['id']]);
+          $Qad->bindValue(':articles_page_title', $data['page_title'][$l['id']]);
+          $Qad->bindValue(':articles_meta_keywords', $data['meta_keywords'][$l['id']]);
+          $Qad->bindValue(':articles_meta_description', $data['meta_description'][$l['id']]);
           $Qad->setLogging($_SESSION['module'], $articles_id);
           $Qad->execute();
 

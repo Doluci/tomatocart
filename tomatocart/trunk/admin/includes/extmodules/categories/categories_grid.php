@@ -323,24 +323,43 @@ Ext.extend(Toc.categories.CategoriesGrid, Ext.grid.GridPanel, {
         
         switch(action) {
           case 'status-off':
+            flag = (action == 'status-on') ? 1 : 0;
+            product_flag = 1;
+            
+            Ext.MessageBox.confirm(
+              TocLanguage.msgWarningTitle, 
+              TocLanguage.msgDisableProducts, 
+              function (btn) {
+                if (btn == 'no') {
+                  product_flag = 0;
+                  this.onAction(module, categoriesId, flag, product_flag);
+                } else{
+                  this.onAction(module, categoriesId, flag, product_flag);
+                }
+              }, 
+              this
+            );  
+            
+            break;               
           case 'status-on':
             flag = (action == 'status-on') ? 1 : 0;
-            this.onAction(module, categoriesId, flag);
-
-            break;
+            
+			      this.onAction(module, categoriesId, flag, 0);
+			      break;         
         }
       }
     }
   },
   
-  onAction: function(action, categoriesId, flag) {
+  onAction: function(action, categoriesId, flag, product_flag) {
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {
         module: 'categories',
         action: action,
         categories_id: categoriesId,
-        flag: flag
+        flag: flag,
+        product_flag: product_flag
       },
       callback: function(options, success, response) {
         var result = Ext.decode(response.responseText);

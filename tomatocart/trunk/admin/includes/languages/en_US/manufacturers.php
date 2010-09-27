@@ -25,6 +25,13 @@ field_delete_image = Delete image?
 field_delete_products = Delete products?
 field_batch_delete_images = Delete images?
 
+section_general = General
+section_meta = Meta Info
+
+field_page_title = Page Title:
+field_meta_keywords = Keywords:
+field_meta_description = Description:
+
 total_entries = %s Products
 
 introduction_new_manufacturer = Please fill in the following information for the new manufacturer.

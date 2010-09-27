@@ -15,6 +15,8 @@
   
   include('articles_categories_dialog.php');
   include('articles_categories_grid.php');
+  include('articles_categories_general_panel.php');
+  include('articles_categories_meta_info_panel.php');
 ?>
 
 Ext.override(TocDesktop.ArticlesCategoriesWindow, {

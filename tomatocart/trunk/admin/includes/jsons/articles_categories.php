@@ -48,7 +48,7 @@
       
       $data = toC_Articles_Categories_Admin::getData($_REQUEST['articles_categories_id']);
       
-      $Qcd = $osC_Database->query('select language_id, articles_categories_name, articles_categories_url from :table_articles_categories_description where articles_categories_id = :articles_categories_id');
+      $Qcd = $osC_Database->query('select language_id, articles_categories_name, articles_categories_url, articles_categories_page_title, articles_categories_meta_keywords, articles_categories_meta_description from :table_articles_categories_description where articles_categories_id = :articles_categories_id');
       $Qcd->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
       $Qcd->bindInt(':articles_categories_id', $_REQUEST['articles_categories_id']);
       $Qcd->execute();
@@ -56,6 +56,9 @@
       while ($Qcd->next()) {
         $data['articles_categories_name[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_name');
         $data['articles_categories_url[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_url');
+        $data['page_title[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_page_title');
+        $data['meta_keywords[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_meta_keywords');
+        $data['meta_description[' . $Qcd->ValueInt('language_id') . ']'] = $Qcd->Value('articles_categories_meta_description');
       }
       
       $response = array('success' => true, 'data' => $data);
@@ -83,7 +86,10 @@
       $data = array('name' => $_REQUEST['articles_categories_name'],
                     'url' => $formatted_urls,
                     'status' => $_REQUEST['articles_categories_status'],
-                    'articles_order' => $_REQUEST['articles_categories_order']);
+                    'articles_order' => $_REQUEST['articles_categories_order'],
+                    'page_title' => $_REQUEST['page_title'],
+                    'meta_keywords' => $_REQUEST['meta_keywords'],
+                    'meta_description' => $_REQUEST['meta_description']);
 
       if ( toC_Articles_Categories_Admin::save((isset($_REQUEST['articles_categories_id']) && is_numeric($_REQUEST['articles_categories_id'] ) ? $_REQUEST['articles_categories_id'] : null), $data) ) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));

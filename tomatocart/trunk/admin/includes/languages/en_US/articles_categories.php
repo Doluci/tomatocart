@@ -27,6 +27,13 @@ field_publish_no = No
 action_heading_new_category = New Category
 action_heading_batch_delete_categories = Batch Delete Categories
 
+section_general = General
+section_meta = Meta Info
+
+field_page_title = Page Title:
+field_meta_keywords = Keywords:
+field_meta_description = Description:
+
 introduction_new_category = Please fill in the following information for the new category.
 introduction_edit_category = Please make the necessary changes for this category.
 

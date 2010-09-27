@@ -20,6 +20,7 @@ Toc.manufacturers.ManufacturersDialog = function(config) {
   config.id = 'manufacturers_dialog-win';
   config.title = '<?php echo $osC_Language->get('action_heading_new_manufacturer'); ?>';
   config.width = 500;
+  config.height = 380;
   config.modal = true;
   config.layout = 'fit';
   config.iconCls = 'icon-manufacturers-win';
@@ -83,82 +84,34 @@ Ext.extend(Toc.manufacturers.ManufacturersDialog, Ext.Window, {
   },
       
   buildForm: function() {
-    this.frmManufacturer = new Ext.form.FormPanel({
-      url: Toc.CONF.CONN_URL,
-      region: 'center',
-      border: false,
-      baseParams: {  
-        module: 'manufacturers',
-        action: 'save_manufacturer'
-      }, 
-      defaults: {
-        anchor: '98%'
+    this.pnlGeneral = new Toc.manufacturers.GeneralPanel();
+    this.pnlMetaInfo = new Toc.manufacturers.MetaInfoPanel();
+    
+    tabManufacturers = new Ext.TabPanel({
+      activeTab: 0,
+      defaults:{
+        hideMode:'offsets'
       },
-      layoutConfig: {
-        labelSeparator: ''
-      },
-      autoHeight: true,
-      fileUpload: true,
-      labelWidth: 100,
+      deferredRender: false,
       items: [
-        {
-          xtype: 'textfield', 
-          fieldLabel: '<?php echo $osC_Language->get('field_name'); ?>', 
-          name: 'manufacturers_name', 
-          allowBlank: false
-        },
-        {
-          xtype: 'panel',
-          id: 'manufactuerer_image_panel',
-          border: false,
-          html: ''
-        },
-        {
-          xtype: 'fileuploadfield', 
-          fieldLabel: '<?php echo $osC_Language->get('field_image'); ?>', 
-          name: 'manufacturers_image'
-        }
+        this.pnlGeneral,
+        this.pnlMetaInfo  
       ]
     });
     
-    <?php
-        $i = 1;
-        foreach ( $osC_Language->getAll() as $l ) {
-          echo 'this.friendlyUrl' . $l['id'] . ' = new Ext.form.TextField({name: "manufacturers_friendly_url[' . $l['id'] . ']",';
-          
-          if ($i == 1)
-            echo 'fieldLabel:"' . $osC_Language->get('field_manufacturer_url') . '",';
-          else
-            echo 'fieldLabel: "&nbsp;",';  
-          
-          echo 'labelWidth: 50,';
-          echo "labelStyle: 'background: url(../images/worldflags/" . $l['country_iso'] . ".png) no-repeat right center !important;', ";
-          echo 'width: 300});';
-          echo 'this.frmManufacturer.add(this.friendlyUrl' . $l['id'] . ');';
-          
-          $i++;
-        }
-    ?>
-    
-    <?php
-        $i = 1;
-        foreach ( $osC_Language->getAll() as $l ) {
-          echo 'this.lang' . $l['id'] . ' = new Ext.form.TextField({name: "manufacturers_url[' . $l['id'] . ']",';
-          
-          if ($i == 1)
-            echo 'fieldLabel:"' . $osC_Language->get('field_url') . '",';
-          else
-            echo 'fieldLabel: "&nbsp;",';  
-          
-          echo 'labelWidth: 50,';
-          echo "labelStyle: 'background: url(../images/worldflags/" . $l['country_iso'] . ".png) no-repeat right center !important;', ";
-          echo "value: 'http://', ";
-          echo 'width: 300});';
-          echo 'this.frmManufacturer.add(this.lang' . $l['id'] . ');';
-          
-          $i++;
-        }
-    ?>
+    this.frmManufacturer = new Ext.form.FormPanel({
+      id: 'form-manufacturers',
+      layout: 'fit',
+      fileUpload: true,
+      labelWidth: 120,
+      url: Toc.CONF.CONN_URL,
+      baseParams: {  
+        module: 'manufacturers',
+        action: 'save_manufacturer'
+      },
+      scope: this,
+      items: tabManufacturers
+    });
     
     return this.frmManufacturer;
   },

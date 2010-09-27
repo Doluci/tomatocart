@@ -28,9 +28,14 @@ field_article_category = Category:
 field_article_name = Name:
 field_article_url = Friendly URL:
 filed_article_description = Description:
-filed_articles_head_desc_tag = Tag:
-filed_articles_head_keywords_tag = Keywords:
 field_delete = Delete
+
+section_general = General
+section_meta = Meta Info
+
+field_page_title = Page Title:
+field_meta_keywords = Keywords:
+field_meta_description = Description:
 
 action_heading_batch_delete_articles = Batch Delete Articles
 introduction_delete_articles = Please verify the removal of this articles.

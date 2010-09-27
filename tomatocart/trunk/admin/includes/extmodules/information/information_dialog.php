@@ -18,6 +18,7 @@ Toc.information.InformationDialog = function(config) {
   config = config || {};
   
   config.id = 'information-dialog-win';
+  config.title = '<?php echo $osC_Language->get('action_heading_new_information'); ?>';
   config.layout = 'fit';
   config.width = 850;
   config.height = 530;
@@ -75,84 +76,23 @@ Ext.extend(Toc.information.InformationDialog, Ext.Window, {
   },
 
   getContentPanel: function() {
-    this.tabLanguage = new Ext.TabPanel({
-      region: 'center',
-      activeTab: 0,
-      deferredRender: false
-    });  
+    this.pnlGeneral = new Toc.information.GeneralPanel();
+    this.pnlMetaInfo = new Toc.information.MetaInfoPanel();
     
-    <?php
-      list($defaultLanguageCode) = split("_", $osC_Language->getCode());
-        
-      foreach ($osC_Language->getAll() as $l) {
-       if(USE_WYSIWYG_TINYMCE_EDITOR == 1) {
-          $editor = '
-            {
-              xtype: \'tinymce\',
-              fieldLabel: \'' . $osC_Language->get('filed_article_description') . '\',
-              name: \'articles_description[' . $l['id'] . ']\',
-              height: 250,
-              tinymceSettings: {
-                theme : "advanced",
-                language: "' . $defaultLanguageCode . '", relative_urls: false, remove_script_host: false,
-                plugins: "safari,advimage,preview,media,contextmenu,paste,directionality",
-                theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,,styleselect,formatselect,fontselect,fontsizeselect",
-                theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
-                theme_advanced_buttons3 : "hr,removeformat,visualaid,|,sub,sup,|,charmap,media,|,ltr,rtl,|",
-                theme_advanced_toolbar_location : "top",
-                theme_advanced_toolbar_align : "left",
-                theme_advanced_statusbar_location : "bottom",
-                theme_advanced_resizing : false,
-                extended_valid_elements : "a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]",
-                template_external_list_url : "example_template_list.js"
-              }
-            }';
-        } else {
-          $editor = '{xtype: \'htmleditor\', fieldLabel: \'' . $osC_Language->get('filed_article_description') . '\', name: \'articles_description[' . $l['id'] . ']\', height: 230}';
-        }   
-        
-        echo 'var pnlLang' . $l['code'] . ' = new Ext.Panel({
-          labelWidth: 100,
-          title:\'' . $l['name'] . '\',
-          iconCls: \'icon-' . $l['country_iso'] . '-win\',
-          layout: \'form\',
-          labelSeparator: \' \',
-          style: \'padding: 6px\',
-          defaults: {
-            anchor: \'97%\'
-          },
-          items: [
-            {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_article_name') . '\', name: \'articles_name[' . $l['id'] . ']\', allowBlank: false},
-            {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_article_url') . '\', name: \'articles_url[' . $l['id'] . ']\'},
-            ' . $editor . ',
-            {
-              layout: \'column\',
-              border: false,
-              items:[
-                {
-                  layout: \'form\',
-                  border: false,
-                  labelSeparator: \' \',
-                  columnWidth: .5,
-                  items: {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('filed_articles_head_desc_tag') . '\', name: \'articles_head_desc_tag[' . $l['id'] . ']\', anchor: \'97%\'}
-                },
-                {
-                  layout: \'form\',
-                  border: false,
-                  labelSeparator: \' \',
-                  columnWidth: .5,
-                  items: {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('filed_articles_head_keywords_tag') . '\', name: \'articles_head_keywords_tag[' . $l['id'] . ']\', anchor: \'97%\'}
-                }
-              ]
-            }
-          ]
-        });
-        
-        this.tabLanguage.add(pnlLang' . $l['code'] . ');
-        ';
-      }
-    ?>
-    return this.tabLanguage;
+    tabInformation = new Ext.TabPanel({
+      activeTab: 0,
+      region: 'center',
+      defaults:{
+        hideMode:'offsets'
+      },
+      deferredRender: false,
+      items: [
+        this.pnlGeneral,
+        this.pnlMetaInfo  
+      ]
+    });
+    
+    return tabInformation;
   },
   
   getDataPanel: function() {

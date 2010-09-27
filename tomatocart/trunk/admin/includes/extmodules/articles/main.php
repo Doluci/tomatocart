@@ -15,6 +15,8 @@
   
   include('articles_dialog.php');
   include('articles_grid.php');
+  include('articles_general_panel.php');
+  include('articles_meta_info_panel.php');
 ?>
 
 Ext.override(TocDesktop.ArticlesWindow, {

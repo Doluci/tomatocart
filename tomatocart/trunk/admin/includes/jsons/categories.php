@@ -176,6 +176,8 @@
       
       $parent_id = isset($_REQUEST['parent_category_id']) ? end(explode('_', $_REQUEST['parent_category_id'])) : null;
       
+//      $flag = (isset($_REQUEST['product_flag']))? $_REQUEST['product_flag']: 0;
+      
       //search engine friendly urls
       $formatted_urls = array();
       $urls = $_REQUEST['categories_url'];
@@ -199,6 +201,7 @@
                     'page_title' => $_REQUEST['page_title'],
                     'meta_keywords' => $_REQUEST['meta_keywords'],
                     'meta_description' => $_REQUEST['meta_description'],
+                    'flag' => (isset($_REQUEST['product_flag']))? $_REQUEST['product_flag']: 0,
                     'ratings' => $_REQUEST['ratings']);
       
       if ( (osC_Categories_Admin::save((isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : null), $data))) {
@@ -243,7 +246,7 @@
     function setStatus() {
       global $toC_Json, $osC_Language;
       
-      if ( isset($_REQUEST['categories_id']) && osC_Categories_Admin::setStatus($_REQUEST['categories_id'], (isset($_REQUEST['flag']) ? $_REQUEST['flag'] : 1)) ) {
+      if ( isset($_REQUEST['categories_id']) && osC_Categories_Admin::setStatus($_REQUEST['categories_id'], (isset($_REQUEST['flag']) ? $_REQUEST['flag'] : 1), (isset($_REQUEST['product_flag']) ? $_REQUEST['product_flag'] : 0)) ) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));

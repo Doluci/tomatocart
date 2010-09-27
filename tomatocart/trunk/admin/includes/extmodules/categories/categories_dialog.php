@@ -133,18 +133,69 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
   
   submitForm: function () {
     this.frmCategories.form.baseParams['ratings'] = this.pnlRatings.getSelectionModel().selections.keys;
-    this.frmCategories.form.submit({
-      waitMsg: TocLanguage.formSubmitWaitMsg,
-      success: function (form, action) {
-        this.fireEvent('saveSuccess', action.result.feedback);
-        this.close();
-      },
-      failure: function (form, action) {
-        if (action.failureType != 'client') {
-          Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
-        }
-      },
-      scope: this
-    });
+    
+    status = this.pnlGeneral.findById('status').findByType('radio');
+    status = status[0].getGroupValue()
+    
+    if(status == 0) {
+      this.frmCategories.form.baseParams['product_flag'] = 1;
+    
+      Ext.MessageBox.confirm(
+        TocLanguage.msgWarningTitle, 
+        TocLanguage.msgDisableProducts, 
+        function (btn) {
+          if (btn == 'no') {
+            this.frmCategories.form.baseParams['product_flag'] = 0;
+
+				    this.frmCategories.form.submit({
+				      waitMsg: TocLanguage.formSubmitWaitMsg,
+				      success: function (form, action) {
+				        this.fireEvent('saveSuccess', action.result.feedback);
+				        this.close();
+				      },
+				      failure: function (form, action) {
+				        if (action.failureType != 'client') {
+				          Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
+				        }
+				      },
+				      scope: this
+				    });
+
+          } else{
+
+				    this.frmCategories.form.submit({
+				      waitMsg: TocLanguage.formSubmitWaitMsg,
+				      success: function (form, action) {
+				        this.fireEvent('saveSuccess', action.result.feedback);
+				        this.close();
+				      },
+				      failure: function (form, action) {
+				        if (action.failureType != 'client') {
+				          Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
+				        }
+				      },
+				      scope: this
+				    });
+
+          }
+        }, 
+        this
+      );       
+    }else {
+        
+	    this.frmCategories.form.submit({
+	      waitMsg: TocLanguage.formSubmitWaitMsg,
+	      success: function (form, action) {
+	        this.fireEvent('saveSuccess', action.result.feedback);
+	        this.close();
+	      },
+	      failure: function (form, action) {
+	        if (action.failureType != 'client') {
+	          Ext.MessageBox.alert(TocLanguage.msgErrTitle, action.result.feedback);
+	        }
+	      },
+	      scope: this
+	    });
+    }
   }
 });

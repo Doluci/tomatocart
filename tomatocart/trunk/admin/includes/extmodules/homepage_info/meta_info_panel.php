@@ -45,6 +45,7 @@ Ext.extend(Toc.homepage_info.MetaInfoPanel, Ext.Panel, {
             anchor: \'96%\'
           },
           items: [
+            {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_page_title') . '\', name: \'HOME_PAGE_TITLE[' . $code . ']\'},
             {xtype: \'textfield\', fieldLabel: \'' . $osC_Language->get('field_meta_keywords') . '\', name: \'HOME_META_KEYWORD[' . $code . ']\'},
             {xtype: \'textarea\', height: 130, fieldLabel: \'' . $osC_Language->get('field_meta_description') . '\', name: \'HOME_META_DESCRIPTION[' . $code . ']\'}            
             ]
