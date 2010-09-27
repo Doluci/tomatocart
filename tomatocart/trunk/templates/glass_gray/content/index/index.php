@@ -23,4 +23,4 @@
   }
 ?>
 
-<p><?php echo $osC_Language->get('index_text'); ?></p>
+<?php echo $osC_Language->get('index_text'); ?>
