@@ -14,7 +14,7 @@
   $Qarticles = toC_Articles::getListing($_GET['articles_categories_id']);
 ?>
 
-<h1><?php echo $osC_Template->getPageTitle(); ?></h1>
+<h1><?php echo $article_categories['articles_categories_name']; ?></h1>
 
 <?php
   if ($Qarticles->numberOfRows() > 0) {
