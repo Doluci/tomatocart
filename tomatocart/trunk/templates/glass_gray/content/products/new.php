@@ -40,7 +40,7 @@
         <td valign="top"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id')), '<b><u>' . $Qproducts->value('products_name') . '</u></b>') . '<br />' . $osC_Language->get('date_added') . ' ' . osC_DateTime::getLong($Qproducts->value('products_date_added')) . '<br />' . $osC_Language->get('manufacturer') . ' ' . $Qproducts->value('manufacturers_name') . '<br /><br />' . $osC_Language->get('price') . ' ' . $products_price; ?></td>
         <td align="right" valign="middle">
           <?php 
-            echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" pid="' . $Qproducts->value('products_id') . '"'));
+            echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qproducts->value('products_id') . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'class="ajaxAddToCart" id="ac_productsnew_' . $Qproducts->value('products_id') . '"'));
           ?>
         </td>
       </tr>
@@ -64,7 +64,7 @@
     </table>
     
     <div class="listingPageLinks">
-      <span style="float: right;"><?php echo $Qproducts->getBatchPageLinks('page', 'new'); ?></span>
+      <div style="float: right;"><?php echo $Qproducts->getBatchPageLinks('page', 'new'); ?></div>
     
       <?php echo $Qproducts->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
     </div>

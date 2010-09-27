@@ -25,9 +25,6 @@
 
   <div class="content">
     <div style="float: left;">
-      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.css" rel="stylesheet" type="text/css" />
-      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/mojozoom/mojozoom.css" rel="stylesheet" type="text/css" />
-      
       <div id="productImages">
       <?php
         echo osc_link_object($osC_Image->getImageUrl($osC_Product->getImage(), 'originals'), $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Product->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
@@ -205,7 +202,7 @@
       <tr>
         <td colspan="2" align="center" valign="top" style="padding-top: 15px" id="shoppingCart">
           <?php
-            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" pid="' . osc_get_product_id($osC_Product->getID()) . '"');
+            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID()) . '"');
           ?>
         </td>
       </tr>
@@ -489,7 +486,7 @@
           <?php
             if (!$osC_Products->hasVariants()) {
               if ($osC_Products->isSimple()) {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajax_add_to_cart" pid="' . osc_get_product_id($osC_Products->getID()) . '"');
+                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajax_add_to_cart" id="ac_productsinfo_variants_' . osc_get_product_id($osC_Products->getID()) . '"');
               }else {
                 echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;"');
               }  
@@ -521,11 +518,10 @@
 
 <script type="text/javascript" src="includes/javascript/tab_panel.js"></script>
 <script type="text/javascript" src="includes/javascript/reviews.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.js"></script>
-<script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/mojozoom/mojozoom.js"></script>
+<script type="text/javascript" src="ext/mojozoom/mojozoom.js"></script>
 
 <?php if ($osC_Product->hasVariants()) { ?>
-  <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/variants/variants.js"></script>
+  <script type="text/javascript" src="ncludes/javascript/variants.js"></script>
 <?php } ?>
 
 <script type="text/javascript">
