@@ -94,6 +94,9 @@ CREATE TABLE toc_articles_categories_description (
   language_id int(11) NOT NULL,
   articles_categories_name varchar(255) NOT NULL,
   articles_categories_url varchar(255) NOT NULL,
+  articles_categories_page_title varchar(255) NOT NULL,
+  articles_categories_meta_keywords varchar(255) NOT NULL,
+  articles_categories_meta_description varchar(255) NOT NULL,
   PRIMARY KEY  (articles_categories_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -105,8 +108,9 @@ CREATE TABLE toc_articles_description (
   articles_name varchar(255) NOT NULL,
   articles_url varchar(255) NOT NULL,
   articles_description text NOT NULL,
-  articles_head_desc_tag varchar(255) NOT NULL,
-  articles_head_keywords_tag varchar(255) NOT NULL,
+  articles_page_title varchar(255) NOT NULL,
+  articles_meta_keywords varchar(255) NOT NULL,
+  articles_meta_description varchar(255) NOT NULL,
   PRIMARY KEY  (articles_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -646,6 +650,9 @@ CREATE TABLE toc_manufacturers_info (
   languages_id int(11) NOT NULL,
   manufacturers_url varchar(255) NOT NULL,
   manufacturers_friendly_url varchar(64) NOT NULL,
+  manufacturers_page_title varchar(255) NOT NULL,
+  manufacturers_meta_keywords varchar(255) NOT NULL,
+  manufacturers_meta_description varchar(255) NOT NULL,
   url_clicked int(5) NOT NULL default '0',
   date_last_click datetime default NULL,
   PRIMARY KEY  (manufacturers_id,languages_id)
@@ -7010,12 +7017,12 @@ INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, 
 (4, 1, 1, 4, now(), now(), NULL),
 (5, 1, 1, 5, now(), now(), NULL);
 
-INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_head_desc_tag, articles_head_keywords_tag) VALUES
-(1, 1, 'About Us', 'about-us', 'Put here the required information.', '', ''),
-(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.', '', ''),
-(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.', '', ''),
-(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.', '', ''),
-(5, 1, 'Imprint', 'imprint', 'Put here the required information.', '', '');
+INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description) VALUES
+(1, 1, 'About Us', 'about-us', 'Put here the required information.'),
+(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.'),
+(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.'),
+(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.'),
+(5, 1, 'Imprint', 'imprint', 'Put here the required information.');
 
 
 #piwik
