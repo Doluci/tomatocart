@@ -715,7 +715,7 @@
           }
         }
 
-        $string = '<form style="display:inline" action="' . osc_href_link(basename($_SERVER['SCRIPT_FILENAME'])) . '" action="get">' . $hidden_parameter .
+        $string = '<form style="display:inline" action="' . osc_href_link(basename($_SERVER['SCRIPT_FILENAME'])) . '" method="get">' . $hidden_parameter .
                   sprintf($osC_Language->get('result_set_current_page'), osc_draw_pull_down_menu($batch_keyword, $pages_array, $this->batch_number, 'onchange="this.form.submit();"'), $number_of_pages) .
                   osc_draw_hidden_session_id_field() . '</form>';
       } else {
