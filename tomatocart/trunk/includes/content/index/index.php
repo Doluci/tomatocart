@@ -52,11 +52,10 @@
 
         $this->_page_title = $osC_Category->getTitle();
         $this->_page_image = 'categories/' . $osC_Category->getImage();
-      
         
         $page_title = $osC_Category->getPageTitle();        
         if (!empty($page_title)) {
-          $this->setPageTitle($page_title);        
+          $this->setMetaPageTitle($page_title);        
         }
         
         $meta_keywords = $osC_Category->getMetaKeywords();        
@@ -95,13 +94,21 @@
       } else {
         $code = strtoupper($osC_Language->getCode());
         
-        if (defined('HOME_META_KEYWORD_' . $code) && defined('HOME_META_DESCRIPTION_' . $code)) {
+        if (defined('HOME_META_KEYWORD_' . $code) && defined('HOME_META_DESCRIPTION_' . $code) && defined('HOME_PAGE_TITLE_' . $code)) {
+          $page_title = constant('HOME_PAGE_TITLE_' . $code);
           $meta_keywords = constant('HOME_META_KEYWORD_' . $code);
           $meta_description = constant('HOME_META_DESCRIPTION_' . $code); 
         }
-
-        if (!empty($meta_keywords) && !empty($meta_description)) {
+        
+        if (!empty($page_title)) {
+          $this->setMetaPageTitle($page_title);
+        }
+        
+        if (!empty($meta_keywords)) {
           $this->addPageTags('keywords', $meta_keywords);
+        }
+
+        if (!empty($meta_description)) {
           $this->addPageTags('description', $meta_description);
         }
       }

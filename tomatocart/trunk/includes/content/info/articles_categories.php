@@ -25,12 +25,31 @@
 /* Class constructor */
 
     function osC_Info_Articles_categories() {
-      global $osC_Language;
-
+      global $osC_Language, $osC_Services, $breadcrumb, $article_categories;
+      
       if ( isset($_GET['articles_categories_id']) && !empty($_GET['articles_categories_id']) ) {
-        $this->_page_title = toC_Articles::getArticleCategoriesName($_GET['articles_categories_id']);
+        $article_categories = toC_Articles::getArticleCategoriesEntry($_GET['articles_categories_id']);
+        
+        $this->_page_title = $article_categories['articles_categories_name'];
+        
+        if (!empty($article_categories['page_title'])) {
+          $this->setMetaPageTitle($article_categories['page_title']);        
+        }
+        
+        if (!empty($enty['meta_keywords'])) {
+          $this->addPageTags('keywords', $enty['meta_keywords']);
+        }
+        
+        if (!empty($enty['meta_description'])) {
+          $this->addPageTags('description', $enty['meta_description']);
+        }
+        
+        if ($osC_Services->isStarted('breadcrumb')) {
+          $breadcrumb->add($article_categories['articles_categories_name'], osc_href_link(FILENAME_INFO, 'articles_categories&articles_categories_id=' . $_GET['articles_categories_id']));
+        }
       } else {
-        $this->_page_title = $osC_Language->get('info_article_categories_heading');
+        $this->_page_title = $osC_Language->get('info_not_found_heading');
+        $this->_page_contents = 'info_not_found.php';
       }
     }
   }

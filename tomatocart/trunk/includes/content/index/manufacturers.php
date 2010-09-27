@@ -35,10 +35,25 @@
         if ($osC_Services->isStarted('breadcrumb')) {
           $breadcrumb->add($osC_Manufacturer->getTitle(), osc_href_link(FILENAME_DEFAULT, $this->_module . '=' . $_GET[$this->_module]));
         }
-
+        
         $this->_page_title = $osC_Manufacturer->getTitle();
         $this->_page_image = 'manufacturers/' . $osC_Manufacturer->getImage();
 
+        $page_title = $osC_Manufacturer->getPageTitle();
+        if (!empty($page_title)) {
+          $this->setMetaPageTitle($page_title);        
+        }
+        
+        $meta_keywords = $osC_Manufacturer->getMetaKeywords();        
+        if (!empty($meta_keywords)) {
+          $this->addPageTags('keywords', $meta_keywords);
+        }
+        
+        $meta_description = $osC_Manufacturer->getMetaDescription();        
+        if (!empty($meta_description)) {
+          $this->addPageTags('description', $meta_description);
+        }
+        
         $this->_process();
       } else {
         $this->_page_contents = 'index.php';

@@ -49,13 +49,13 @@
       global $osC_Language, $messageStack;
       
       if (isset($_POST['department_email']) && !empty($_POST['department_email'])) {
-        $department_email = osc_sanitize_string($_POST['department_email']);
+        $email = osc_sanitize_string($_POST['department_email']);
         
         if (!osc_validate_email_address($department_email)) {
           $messageStack->add('contact', $osC_Language->get('field_departments_email_error'));
         }
       } else {
-        $messageStack->add('contact', $osC_Language->get('field_departments_email_error'));
+        $email = STORE_OWNER_EMAIL_ADDRESS;
       }
       
       if (isset($_POST['name']) && !empty($_POST['name'])) {
@@ -99,7 +99,7 @@
       }
       
       if ( $messageStack->size('contact') === 0 ) {
-        osc_email(STORE_OWNER, $department_email, $osC_Language->get('contact_email_subject'), $enquiry . '<br /><br /><br />' . $osC_Language->get('contact_telephone_title') . $telephone, $name, $email_address);
+        osc_email(STORE_OWNER, $email, $osC_Language->get('contact_email_subject'), $enquiry . '<br /><br /><br />' . $osC_Language->get('contact_telephone_title') . $telephone, $name, $email_address);
 
         osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO'));    
       } 
