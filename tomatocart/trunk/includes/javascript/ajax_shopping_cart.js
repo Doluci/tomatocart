@@ -71,7 +71,11 @@ var AjaxShoppingCart = new Class({
           var errors = [];
 
           //send request
-          var pID = addToCartButton.get('pid');
+          var btnId = addToCartButton.get('id');
+          
+          if (btnId.test("^ac_[a-z]+_[0-9]+$", "i")) {
+            var pID = btnId.split('_').getLast();
+          }
           
           var params = {action: 'add_product', pID: pID};
           if ( $defined($('quantity')) ) {
@@ -144,16 +148,24 @@ var AjaxShoppingCart = new Class({
             //move image
             if (result.success == true) {
               if ( $defined($('defaultProductImage')) ) {
-                if ( $defined($('productImages')) ) {
-                  var srcImage = $('productImages').getElement('#defaultProductImage');
-                }else {
-                  var srcImage = $('defaultProductImage').getElement('img.productImage');
-                }
+                //in the product info page, copy the product image and move it
+                var productLink = $('productImages').getElement('#defaultProductImage');
+                var productImg = $('defaultProductImage').getElement('img.productImage');
+                var cloneProductImg = productImg.clone();
+                var srcPos = productLink.getCoordinates();
+                
+                cloneProductImg.injectAfter(productLink).setStyles({
+                  'position': 'absolute',
+                  'left': productImg.getCoordinates().left,
+                  'top': productImg.getCoordinates().top-5
+                });
+                
+                var srcImage = cloneProductImg;
               }else if ( $defined($('productImage' + pID)) ) {
                 var srcImage = $('productImage' + pID).getElement('img.productImage');
+                 var srcPos = srcImage.getCoordinates();
               }
 
-              var srcPos = srcImage.getCoordinates();
               var destPos = $('ajaxCartContent').getParent().getCoordinates();
 
               var floatImage = srcImage.clone().setStyles({
@@ -174,6 +186,10 @@ var AjaxShoppingCart = new Class({
                   (function() {floatImage.destroy()}).delay(1000);
 
                   addToCartButton.erase('disabled');
+                  
+                  if ($defined(cloneProductImg)) {
+                    cloneProductImg.destroy();
+                  }
                 }.bind(this)
               }).morph({width: srcPos.width / 2, height: srcPos.height / 2, top: destPos.top + destPos.height / 4, left: destPos.left + destPos.width / 4});
             } else {
