@@ -41,10 +41,16 @@
         if (($id !== false) && osC_Product::checkEntry($id)) {
           $osC_Product = new osC_Product($id);
           $osC_Product->incrementCounter();
-
+          
+          $this->_page_title = $osC_Product->getTitle();
+          
           $this->addPageTags('keywords', $osC_Product->getTitle());
           $this->addPageTags('keywords', $osC_Product->getSKU());
 
+          if ($osC_Product->hasPageTitle()) {
+            $this->setMetaPageTitle($osC_Product->getPageTitle());
+          }
+          
           if ($osC_Product->hasTags()) {
             $this->addPageTags('keywords', $osC_Product->getTags());
           }
@@ -88,11 +94,7 @@
             }
           }
 
-          if ($osC_Product->hasPageTitle()) {
-            $this->_page_title = $osC_Product->getPageTitle();
-          } else {
-            $this->_page_title = $osC_Product->getTitle();
-          }
+          $this->addStyleSheet('ext/mojozoom/mojozoom.css');
           
         } else {
           $this->_page_title = $osC_Language->get('product_not_found_heading');
