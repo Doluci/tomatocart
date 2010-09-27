@@ -23,17 +23,17 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html dir="<?php echo $osC_Language->getTextDirection();?>" xml:lang="<?php echo $osC_Language->getCode();?>" lang="<?php echo $osC_Language->getCode();?>">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="PRAGMA" content="NO-CACHE">
-<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-<meta http-equiv="EXPIRES" content="-1">
-<meta http-equiv="X-UA-Compatible" content="IE=7" /> 
-
 <title><?php echo $osC_Language->get('administration_title'); ?></title>
 
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="external/extjs/resources/css/ext-all.css" />
 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="-1" />
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+
+<link rel="stylesheet" type="text/css" href="external/extjs/resources/css/ext-all.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/colorpicker/colorpicker-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/form/fileuploadfield-min.css" />
 <link rel="stylesheet" type="text/css" href="templates/default/extensions/form/multiselect-min.css" />
@@ -61,15 +61,15 @@
   <div id="x-loading-mask" style="width:100%; height:100%; background:#000000; position:absolute; z-index:20000; left:0; top:0;">&#160;</div>
   <div id="x-loading-panel" style="position:absolute;left:40%;top:40%;border:1px solid #9c9f9d;padding:2px;background:#d1d8db;width:300px;text-align:center;z-index:20001;">
     <div class="x-loading-panel-mask-indicator" style="border:1px solid #c1d1d6;color:#666;background:white;padding:10px;margin:0;padding-left: 20px;height:110px;text-align:left;">
-      <img class="x-loading-panel-logo" style="display:block;margin-bottom:15px;" src="images/tomatocart.jpg" />
-      <img src="images/loading.gif" style="width:16px;height:16px;vertical-align:middle" />&#160;
+      <img class="x-loading-panel-logo" style="display:block;margin-bottom:15px;" src="images/tomatocart.jpg" alt="TomatoCart -- Best Open Source Shopping Cart Software" />
+      <img src="images/loading.gif" style="width:16px;height:16px;vertical-align:middle" alt="loading..." />&#160;
       <span id="load-status"><?php echo $osC_Language->get('init_system'); ?></span>
       <div style="font-size:10px; font-weight:normal; margin-top:15px;">Copyright &copy; 2009 Wuxi Elootec Technology Co., Ltd</div>
     </div>
   </div>
 
   <div id="x-desktop">
-    <a id="tomatocart-logo" href="http://www.tomatocart.com" target="_blank" style="margin:5px; float:right;"><img src="images/power_by_button.png" /></a>
+    <a id="tomatocart-logo" href="http://www.tomatocart.com" target="_blank" style="margin:5px; float:right;"><img src="images/power_by_button.png" alt="TomatoCart -- Best Open Source Shopping Cart Software" /></a>
   </div>
   
   <div id="ux-sidebar"></div>
@@ -86,8 +86,8 @@
   </div>
   
   <!-- EXT JS LIBRARY -->
-  <script src="external/extjs/adapter/ext/ext-base.js"></script>
-  <script src="external/extjs/ext-all.js"></script>
+  <script type="text/javascript" src="external/extjs/adapter/ext/ext-base.js"></script>
+  <script type="text/javascript" src="external/extjs/ext-all.js"></script>
   
   <script type="text/javascript" src="external/devAnalogClock/swfobject.js"></script>
 
