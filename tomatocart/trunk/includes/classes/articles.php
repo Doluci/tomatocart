@@ -4,7 +4,7 @@
   TomatoCart Open Source Shopping Cart Solutions
   http://www.tomatocart.com
 
-  Copyright (c) 2009 Wuxi Elootec Technology Co., Ltd;  Copyright (c) 2004 osCommerce
+  Copyright (c) 2009 Wuxi Elootec Technology Co., Ltd
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License v2 (1991)
@@ -12,20 +12,22 @@
 */
 
   class toC_Articles {
-
+    
     function &getEntry($id) {
       global $osC_Database, $osC_Language;
 
-      $Qentry = $osC_Database->query('select a.articles_image, ad.articles_name, ad.articles_description from :table_articles a, :table_articles_description ad where a.articles_id = ad.articles_id and ad.language_id = :language_id and a.articles_id = :articles_id');
+      $Qentry = $osC_Database->query('select a.articles_categories_id, acd.articles_categories_name, a.articles_image, ad.articles_name, ad.articles_description, ad.articles_page_title as page_title, ad.articles_meta_keywords as meta_keywords, ad.articles_meta_description as meta_description from :table_articles a, :table_articles_description ad, :table_articles_categories_description acd where a.articles_id = ad.articles_id and ad.language_id = :language_id and a.articles_id = :articles_id and a.articles_categories_id = acd.articles_categories_id and ad.language_id = acd.language_id');
 
       $Qentry->bindTable(':table_articles', TABLE_ARTICLES);
       $Qentry->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
+      $Qentry->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
       $Qentry->bindInt(':articles_id', $_GET['articles_id']);
       $Qentry->bindInt(':language_id', $osC_Language->getID());
-
       $Qentry->execute();
 
-      return $Qentry;
+      $data = $Qentry->toArray();
+      
+      return $data;
     }
 
     function &getListing($categories_id = null) {
@@ -45,19 +47,24 @@
 
       return $Qarticles;
     }
-
-    function getArticleCategoriesName($categories_id) {
+    
+    function getArticleCategoriesEntry($categories_id) {
       global $osC_Database, $osC_Language;
 
-      $Qcategories = $osC_Database->query('select articles_categories_name from :table_articles_categories_description where articles_categories_id = :articles_categories_id and language_id = :language_id');
+      $Qcategories = $osC_Database->query('select articles_categories_name, articles_categories_page_title, articles_categories_meta_keywords, articles_categories_meta_description from :table_articles_categories_description where articles_categories_id = :articles_categories_id and language_id = :language_id');
       $Qcategories->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
       $Qcategories->bindInt(':articles_categories_id', $categories_id);
       $Qcategories->bindInt(':language_id', $osC_Language->getID());
       $Qcategories->execute();
 
-      if($Qcategories->next()){
-        return $Qcategories->value('articles_categories_name');
+      if($Qcategories->numberOfRows() > 0){
+        $data = array('articles_categories_name' => $Qcategories->value('articles_categories_name'),
+                      'page_title' => $Qcategories->value('articles_categories_page_title'),
+                      'meta_keywords' => $Qcategories->value('articles_categories_meta_keywords'),
+                      'meta_description' => $Qcategories->value('articles_categories_meta_description'));
       }
+      
+      return $data;
     }
   }
 ?>
