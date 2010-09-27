@@ -18,8 +18,9 @@
     function saveInfo() {
       global $toC_Json, $osC_Language;
 
-      $data = array('keywords' => $_REQUEST['HOME_META_KEYWORD'], 
-                    'descriptions' => $_REQUEST['HOME_META_DESCRIPTION'], 
+      $data = array('page_title' => $_REQUEST['HOME_PAGE_TITLE'],
+                    'keywords' => $_REQUEST['HOME_META_KEYWORD'], 
+                    'descriptions' => $_REQUEST['HOME_META_DESCRIPTION'],
                     'index_text' => $_REQUEST['index_text']);
 
       if(toC_Homepage_Info_Admin::saveData($data)) {

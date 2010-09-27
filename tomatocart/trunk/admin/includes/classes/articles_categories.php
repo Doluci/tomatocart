@@ -86,9 +86,9 @@
 
         foreach ($osC_Language->getAll() as $l) {
           if ( is_numeric($id) ) {
-            $Qacd = $osC_Database->query('update :table_articles_categories_description set articles_categories_name = :articles_categories_name, articles_categories_url = :articles_categories_url where articles_categories_id = :articles_categories_id and language_id = :language_id');
+            $Qacd = $osC_Database->query('update :table_articles_categories_description set articles_categories_name = :articles_categories_name, articles_categories_url = :articles_categories_url, articles_categories_page_title = :articles_categories_page_title, articles_categories_meta_keywords = :articles_categories_meta_keywords, articles_categories_meta_description = :articles_categories_meta_description where articles_categories_id = :articles_categories_id and language_id = :language_id');
           } else {
-            $Qacd = $osC_Database->query('insert into :table_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url) values (:articles_categories_id, :language_id, :articles_categories_name, :articles_categories_url)');
+            $Qacd = $osC_Database->query('insert into :table_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url, articles_categories_page_title, articles_categories_meta_keywords, articles_categories_meta_description) values (:articles_categories_id, :language_id, :articles_categories_name, :articles_categories_url, :articles_categories_page_title, :articles_categories_meta_keywords, :articles_categories_meta_description)');
           }
 
           $Qacd->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
@@ -96,6 +96,9 @@
           $Qacd->bindInt(':language_id', $l['id']);
           $Qacd->bindValue(':articles_categories_name', $data['name'][$l['id']]);
           $Qacd->bindValue(':articles_categories_url', ($data['url'][$l['id']] == '') ? $data['name'][$l['id']] : $data['url'][$l['id']]);
+          $Qacd->bindValue(':articles_categories_page_title', $data['page_title'][$l['id']]);
+          $Qacd->bindValue(':articles_categories_meta_keywords', $data['meta_keywords'][$l['id']]);
+          $Qacd->bindValue(':articles_categories_meta_description', $data['meta_description'][$l['id']]);
           $Qacd->setLogging($_SESSION['module'], $articles_category_id);
           $Qacd->execute();
 

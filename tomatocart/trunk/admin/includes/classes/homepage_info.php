@@ -23,6 +23,15 @@
         $name = $l['name'];
         $code = strtoupper($l['code']);
         
+        //check page title for language
+        if (!defined('HOME_PAGE_TITLE_' . $code)) {
+          $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Homepage Page Title For $name', 'HOME_PAGE_TITLE_$code', '','the page title for the front page', '6', '0', now())");
+
+          define('HOME_PAGE_TITLE_' . $code, '');
+          
+          $clear_cache = true;
+        }
+        
         //check meta keywords for language
         if (!defined('HOME_META_KEYWORD_' . $code)) {
           $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Homepage Meta Keywords For $name', 'HOME_META_KEYWORD_$code', '','the meta keywords for the front page', '6', '0', now())");
@@ -49,7 +58,8 @@
 	      if($Qhomepage->next()) {
 	        $data['index_text[' . $l['id'] . ']'] = $Qhomepage->value('definition_value');
 	      }
-
+        
+	      $data['HOME_PAGE_TITLE[' . $code . ']'] = constant('HOME_PAGE_TITLE_' . $code);
         $data['HOME_META_KEYWORD[' . $code . ']'] = constant('HOME_META_KEYWORD_' . $code);
         $data['HOME_META_DESCRIPTION[' . $code . ']'] = constant('HOME_META_DESCRIPTION_' . $code);
       }
@@ -66,9 +76,9 @@
       global $osC_Database, $osC_Language;
       $error = false;
       
-      foreach($data['keywords'] as $key => $value) {
+      foreach($data['page_title'] as $key => $value) {
         $Qconfiguration = $osC_Database->query("update :table_configuration set configuration_value = :configuration_value where configuration_key = :configuration_key");
-        $Qconfiguration->bindValue(":configuration_key", 'HOME_META_KEYWORD_' . $key);
+        $Qconfiguration->bindValue(":configuration_key", 'HOME_PAGE_TITLE_' . $key);
         $Qconfiguration->bindValue(":configuration_value", $value);
         $Qconfiguration->bindTable(":table_configuration", TABLE_CONFIGURATION);
         $Qconfiguration->execute();
@@ -76,6 +86,21 @@
         if($osC_Database->isError()) {
           $error = true;
           break;
+        }
+      }
+      
+      if ($error === false) {
+        foreach($data['keywords'] as $key => $value) {
+          $Qconfiguration = $osC_Database->query("update :table_configuration set configuration_value = :configuration_value where configuration_key = :configuration_key");
+          $Qconfiguration->bindValue(":configuration_key", 'HOME_META_KEYWORD_' . $key);
+          $Qconfiguration->bindValue(":configuration_value", $value);
+          $Qconfiguration->bindTable(":table_configuration", TABLE_CONFIGURATION);
+          $Qconfiguration->execute();
+          
+          if($osC_Database->isError()) {
+            $error = true;
+            break;
+          }
         }
       }
       

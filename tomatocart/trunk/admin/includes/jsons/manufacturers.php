@@ -51,7 +51,7 @@
      
       $data = osC_Manufacturers_Admin::getData($_REQUEST['manufacturers_id']);
       
-      $Qmanufacturer = $osC_Database->query('select languages_id, manufacturers_url, manufacturers_friendly_url from :table_manufacturers_info where manufacturers_id = :manufacturers_id');
+      $Qmanufacturer = $osC_Database->query('select languages_id, manufacturers_url, manufacturers_friendly_url, manufacturers_page_title, manufacturers_meta_keywords, manufacturers_meta_description from :table_manufacturers_info where manufacturers_id = :manufacturers_id');
       $Qmanufacturer->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
       $Qmanufacturer->bindInt(':manufacturers_id', $_REQUEST['manufacturers_id']);
       $Qmanufacturer->execute();
@@ -59,6 +59,9 @@
       while ($Qmanufacturer->next()) {
         $data['manufacturers_url[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_url');  
         $data['manufacturers_friendly_url[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_friendly_url');
+        $data['page_title[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_page_title');
+        $data['meta_keywords[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_meta_keywords');
+        $data['meta_description[' . $Qmanufacturer->ValueInt('languages_id') . ']'] = $Qmanufacturer->Value('manufacturers_meta_description');
       }
       $Qmanufacturer->freeResult();
       
@@ -86,7 +89,10 @@
       
       $data = array('name' => $_REQUEST['manufacturers_name'],
                     'friendly_url' => $formatted_urls,
-                    'url' => $_REQUEST['manufacturers_url']);
+                    'url' => $_REQUEST['manufacturers_url'],
+                    'page_title' => $_REQUEST['page_title'],
+                    'meta_keywords' => $_REQUEST['meta_keywords'],
+                    'meta_description' => $_REQUEST['meta_description']);
      
       if ( osC_Manufacturers_Admin::save(isset($_REQUEST['manufacturers_id']) ? $_REQUEST['manufacturers_id'] : null, $data) ) {
         $response = array('success' => true ,'feedback' => $osC_Language->get('ms_success_action_performed'));

@@ -15,6 +15,8 @@
   
   include('manufacturers_dialog.php');
   include('manufacturers_grid.php');
+  include('manufacturers_general_panel.php');
+  include('manufacturers_meta_info_panel.php');
 ?>
 Ext.override(TocDesktop.ManufacturersWindow, {
 

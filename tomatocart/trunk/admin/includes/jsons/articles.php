@@ -85,7 +85,7 @@
       
       $data = toC_Articles_Admin::getData($_REQUEST['articles_id']);
       
-      $Qad = $osC_Database->query('select articles_name, articles_url, articles_description, articles_head_desc_tag, articles_head_keywords_tag, language_id from :table_articles_description where articles_id = :articles_id');
+      $Qad = $osC_Database->query('select articles_name, articles_url, articles_description, articles_page_title, articles_meta_keywords, articles_meta_description, language_id from :table_articles_description where articles_id = :articles_id');
       $Qad->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
       $Qad->bindInt(':articles_id', $_REQUEST['articles_id']);
       $Qad->execute();
@@ -94,8 +94,9 @@
         $data['articles_name[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_name');
         $data['articles_url[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_url');
         $data['articles_description[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_description');
-        $data['articles_head_desc_tag[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_head_desc_tag');
-        $data['articles_head_keywords_tag[' . $Qad->valueInt('language_id') . ']'] = $Qad->value('articles_head_keywords_tag');
+        $data['page_title[' . $Qad->ValueInt('language_id') . ']'] = $Qad->Value('articles_page_title');
+        $data['meta_keywords[' . $Qad->ValueInt('language_id') . ']'] = $Qad->Value('articles_meta_keywords');
+        $data['meta_description[' . $Qad->ValueInt('language_id') . ']'] = $Qad->Value('articles_meta_description');
       }
       
       $response = array('success' => true, 'data' => $data);
@@ -125,12 +126,13 @@
       $data = array('articles_name' => $_REQUEST['articles_name'],
                     'articles_url' => $formatted_urls,
                     'articles_description' => $_REQUEST['articles_description'],
-                    'articles_head_desc_tag' => $_REQUEST['articles_head_desc_tag'],
-                    'articles_head_keywords_tag' => $_REQUEST['articles_head_keywords_tag'],
                     'articles_order' => $_REQUEST['articles_order'],
                     'articles_status' => $_REQUEST['articles_status'],
                     'delimage' => (isset($_REQUEST['delimage']) && ($_REQUEST['delimage'] == 'on') ? '1' : '0'),
-                    'articles_categories' => (isset($_REQUEST['articles_categories_id'])? $_REQUEST['articles_categories_id']:'0'));
+                    'articles_categories' => (isset($_REQUEST['articles_categories_id'])? $_REQUEST['articles_categories_id']:'0'),
+                    'page_title' => $_REQUEST['page_title'],
+                    'meta_keywords' => $_REQUEST['meta_keywords'],
+                    'meta_description' => $_REQUEST['meta_description']);
                     
       if ( toC_Articles_Admin::save((isset($_REQUEST['articles_id']) && ($_REQUEST['articles_id'] != -1) ? $_REQUEST['articles_id'] : null), $data) ) {
         $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));

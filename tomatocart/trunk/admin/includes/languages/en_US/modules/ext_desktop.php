@@ -70,6 +70,7 @@ msgErrLoadData = There is an error when loading this record.
 formSubmitWaitMsg = Please waiting ...
 msgSuccessTitle = Success  
 msgDeleteConfirm = Do you really want to delete the selected record(s)?
+msgDisableProducts = Do you want to disable all products belong to this category?
 msgMustSelectOne = Please select at least one record!
 msgSessionTimeout = Session Timeout! Please login again to access the system!
 msgActiveConfirm = Do you really want to active the selected record(s)?

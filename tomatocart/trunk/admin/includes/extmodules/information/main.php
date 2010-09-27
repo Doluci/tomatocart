@@ -15,6 +15,8 @@
   
   include('information_grid.php');
   include('information_dialog.php');
+  include('information_general_panel.php');
+  include('information_meta_info_panel.php');
 ?>
 
 Ext.override(TocDesktop.InformationWindow, {

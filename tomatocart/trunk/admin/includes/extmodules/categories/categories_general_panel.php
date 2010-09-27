@@ -82,6 +82,7 @@ Ext.extend(Toc.categories.GeneralPanel, Ext.Panel, {
       layout: 'column',
       border: false,
       items:[{
+        id: 'status',
         layout: 'form',
         labelSeparator: ' ',
         border: false,

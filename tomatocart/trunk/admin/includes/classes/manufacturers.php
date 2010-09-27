@@ -98,9 +98,9 @@
       if ( $error === false ) {
         foreach ( $osC_Language->getAll() as $l ) {
           if ( is_numeric($id) ) {
-            $Qurl = $osC_Database->query('update :table_manufacturers_info set manufacturers_friendly_url = :manufacturers_friendly_url, manufacturers_url = :manufacturers_url where manufacturers_id = :manufacturers_id and languages_id = :languages_id');
+            $Qurl = $osC_Database->query('update :table_manufacturers_info set manufacturers_friendly_url = :manufacturers_friendly_url, manufacturers_url = :manufacturers_url, manufacturers_page_title = :manufacturers_page_title, manufacturers_meta_keywords = :manufacturers_meta_keywords, manufacturers_meta_description = :manufacturers_meta_description where manufacturers_id = :manufacturers_id and languages_id = :languages_id');
           } else {
-            $Qurl = $osC_Database->query('insert into :table_manufacturers_info (manufacturers_id, languages_id, manufacturers_url, manufacturers_friendly_url) values (:manufacturers_id, :languages_id, :manufacturers_url, :manufacturers_friendly_url)');
+            $Qurl = $osC_Database->query('insert into :table_manufacturers_info (manufacturers_id, languages_id, manufacturers_url, manufacturers_friendly_url, manufacturers_page_title, manufacturers_meta_keywords, manufacturers_meta_description) values (:manufacturers_id, :languages_id, :manufacturers_url, :manufacturers_friendly_url, :manufacturers_page_title, :manufacturers_meta_keywords, :manufacturers_meta_description)');
           }
 
           $Qurl->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
@@ -108,6 +108,9 @@
           $Qurl->bindInt(':languages_id', $l['id']);
           $Qurl->bindValue(':manufacturers_url', $data['url'][$l['id']]);
           $Qurl->bindValue(':manufacturers_friendly_url', $data['friendly_url'][$l['id']]);
+          $Qurl->bindValue(':manufacturers_page_title', $data['page_title'][$l['id']]);
+          $Qurl->bindValue(':manufacturers_meta_keywords', $data['meta_keywords'][$l['id']]);
+          $Qurl->bindValue(':manufacturers_meta_description', $data['meta_description'][$l['id']]);
           $Qurl->setLogging($_SESSION['module'], $manufacturers_id);
           $Qurl->execute();
 
