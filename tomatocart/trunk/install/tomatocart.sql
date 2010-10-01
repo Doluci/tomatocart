@@ -1308,7 +1308,7 @@ CREATE TABLE toc_products_attributes_values (
   status int(4) NOT NULL,
   module varchar(255) NOT NULL,
   name varchar(100) NOT NULL,
-  value varchar(100) NOT NULL,
+  value varchar(255) NOT NULL,
   sort_order int(11) NOT NULL,
   PRIMARY KEY  (products_attributes_values_id,products_attributes_groups_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
