@@ -390,7 +390,7 @@
        //BEGIN: products images
       if ($error === false) {
         $images = array();
-        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/';
         
         $osC_DirectoryListing = new osC_DirectoryListing($image_path, true);
         $osC_DirectoryListing->setIncludeDirectories(false);
@@ -466,7 +466,7 @@
             
             if (!isset($data['products_variants_id'][$variant]) ) {
               //remove cache file
-              $cache_filename = $Qfile->value('cache_filename');
+              $cache_filename = $Qvariants->value('cache_filename');
               if (!empty($cache_filename) && file_exists(DIR_FS_DOWNLOAD . $cache_filename)) {
                 osc_remove(DIR_FS_DOWNLOAD . $cache_filename);
               }
