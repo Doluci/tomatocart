@@ -254,7 +254,7 @@
       $Qstatus = $osC_Database->query('insert into :table_orders_status_history (orders_id, orders_status_id, date_added, customer_notified, comments) values (:orders_id, :orders_status_id, now(), :customer_notified, :comments)');
       $Qstatus->bindTable(':table_orders_status_history', TABLE_ORDERS_STATUS_HISTORY);
       $Qstatus->bindInt(':orders_id', $insert_id);
-      $Qstatus->bindInt(':orders_status_id', ORDERS_STATUS_PREPARING);
+      $Qstatus->bindInt(':orders_status_id', $order_status);
       $Qstatus->bindInt(':customer_notified', '0');
       $Qstatus->bindValue(':comments', (isset($_SESSION['comments']) ? $_SESSION['comments'] : ''));
       $Qstatus->execute();
