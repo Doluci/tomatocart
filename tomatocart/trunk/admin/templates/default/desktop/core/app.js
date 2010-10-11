@@ -136,6 +136,34 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
     this.onReady(function(){
       Ext.get('x-loading-mask').hide();
       Ext.get('x-loading-panel').hide();
+      
+      this.showLiveFeedNotification();
+    },this);
+  },
+  
+  showLiveFeedNotification: function() {
+  	Ext.Ajax.request({
+      waitMsg: TocLanguage.formSubmitWaitMsg,
+      url: Toc.CONF.CONN_URL,
+      params: {
+        module: 'system',
+        action: 'get_tomatcart_feeds'
+      },
+      callback: function (options, success, response) {
+        var result = Ext.decode(response.responseText);
+        
+        if (result.success == true) {
+	        var liveFeedWin = this.showNotification({
+	          id: 'live-feed',
+	          title: 'TomatoCart Live Feed',
+	          iconCls: 'icon-tomatocart-feeds',
+	          hideDelay: 7000,
+	          height: 500,
+	          html: result.feeds
+	        });
+	      }
+      },
+      scope: this
     });
   },
   
@@ -257,7 +285,7 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
       , iconCls: 'x-icon-waiting'
       , title: ''
     }, config));
-    win.show();
+    win.animShow();
 
     return win;
   },
@@ -335,6 +363,17 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
     return desktopSettingWindow;
   },
   
+  getTocLiveFeedWindow: function() {
+  	var tocLiveFeedWindow = new Ext.Window({
+  	 id: 'toc-live-feed-win',
+  	 width: 600,
+  	 height: 500,
+  	 html: '<iframe src ="http://www.tomatocart.com/site-map.html" width="100%" height="100%"></iframe>'
+  	});
+  	
+  	return tocLiveFeedWindow;
+  },
+  
   createTrayButton: function(){
     var desktopSettingBtn = new Ext.Button({
       text: '',
@@ -349,7 +388,7 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
         desktopSettingBtn.setDisabled(true);
       },
       scope: this
-    });  
+    });
   },
 
   /**

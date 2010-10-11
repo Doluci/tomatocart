@@ -54,7 +54,14 @@
       $Qstatus->bindTable(':table_articles_categories', TABLE_ARTICLES_CATEGORIES);
       $Qstatus->execute();
       
-      return true;
+      if (!$osC_Database->isError()) {
+        osC_Cache::clear('box-article-categories');
+        osC_Cache::clear('sefu-article-categories'); 
+
+        return true;
+      }
+      
+      return false;
     }
 
     function save($id = null, $data) {
@@ -112,6 +119,7 @@
       if ( $error === false ) {
         $osC_Database->commitTransaction();
 
+        osC_Cache::clear('box-article-categories');
         osC_Cache::clear('sefu-article-categories');
         return true;
       }
@@ -149,6 +157,7 @@
         if ( $error === false ) {
           $osC_Database->commitTransaction();
 
+          osC_Cache::clear('box-article-categories');
           osC_Cache::clear('sefu-article-categories');
           return true;
         }

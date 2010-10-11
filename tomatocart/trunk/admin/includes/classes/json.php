@@ -36,6 +36,10 @@
       $response['success'] = false;
 
       if (isset($_SESSION['admin']) || ($_REQUEST['module'] == 'login')) {
+        //valid token before all request
+        if ($_REQUEST['module'] != 'login') {
+          toc_verify_token();
+        }
         if (isset($_REQUEST['module'])) {
           $module = $_REQUEST['module'];
           

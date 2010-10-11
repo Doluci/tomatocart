@@ -258,16 +258,16 @@ Ext.Desktop = function(app){
   this.setWallpaper = function(o){
     if(o && o.code){
       
-      var notifyWin = this.showNotification({
-        html: TocLanguage.LoadWallpaper, 
-        title: 'Please wait'
-      });
+//      var notifyWin = this.showNotification({
+//        html: TocLanguage.LoadWallpaper, 
+//        title: 'Please wait'
+//      });
       
       var wp = new Image();
       wp.src = o.path;
       
-      var task = new Ext.util.DelayedTask(verify, this);
-      task.delay(200);
+//      var task = new Ext.util.DelayedTask(verify, this);
+//      task.delay(200);
       
       app.styles.wallpaper = o.code;
     }

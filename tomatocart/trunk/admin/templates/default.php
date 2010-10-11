@@ -54,6 +54,11 @@
     echo ".icon-" . $l['country_iso'] . "-win {background-image: url(../images/worldflags/" . $l['country_iso'] . ".png) !important;}";
   }
 ?>
+#live-feed {width:300px !important;}
+#live-feed .x-window-body {
+  width: 262px !important;
+  height: 150px !important;
+}
 </style>
 </head>
 
@@ -128,7 +133,18 @@
     TocLanguage = <?php echo $toC_Json->encode($desktop_translations); ?>;
   </script>
   
-  <script type="text/javascript" src="templates/default/desktop/core/all.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/app.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/desktop.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/DragSelector.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/Gadget.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/hexfield.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/ImageDragZone.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/module.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/notification.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/shortcut.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/sidebar.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/startmenu.js"></script>
+  <script type="text/javascript" src="templates/default/desktop/core/taskbar.js"></script>
   <script type="text/javascript" src="templates/default/desktop/setting/all.js"></script>
   <script type="text/javascript" src="templates/default/extensions/extension-all.js"></script>
   <script type="text/javascript" src="<?php echo osc_href_link_admin('tocdesktop.php'); ?>"></script>      

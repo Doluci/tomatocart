@@ -15,8 +15,6 @@
   require('includes/ext_config.php');
   require('includes/classes/json.php');
   
-  toc_verify_token();
-  
   header('Expires: Thu, 01 Jan 1970 01:00:00 GMT');  
   header('Cache-Control: must-revalidate, cache, public');
   header('Pragma: public');

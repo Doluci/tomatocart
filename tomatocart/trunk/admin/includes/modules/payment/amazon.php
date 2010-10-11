@@ -106,7 +106,7 @@
       $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Transaction Server', 'MODULE_PAYMENT_AMAZON_SERVER', 'Sandbox', 'The server to perform transactions in.', '6', '0', 'osc_cfg_set_boolean_value(array(\'Production\',\'Sandbox\'))', now())");
       $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Access Key', 'MODULE_PAYMENT_AMAZON_ACCESS_KEY', '', 'The access key to use for the Amazon Web Services API.', '6', '0', now())");
       $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Secret Key', 'MODULE_PAYMENT_AMAZON_SECRET_KEY', '', 'The secret key to use for the Amazon Web Services API.', '6', '0', now())");
-
+      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('X509 Certificate', 'MODULE_PAYMENT_AMAZON_X509_CERTIFICATE', '', 'The X.509 certificate to use for the Amazon Web Services API.', '6', '0', now())");
   }
 
 /**
@@ -124,7 +124,8 @@
                              'MODULE_PAYMENT_AMAZON_ORDER_STATUS_ID',
                              'MODULE_PAYMENT_AMAZON_SERVER',
                              'MODULE_PAYMENT_AMAZON_ACCESS_KEY',
-                             'MODULE_PAYMENT_AMAZON_SECRET_KEY');
+                             'MODULE_PAYMENT_AMAZON_SECRET_KEY',
+                             'MODULE_PAYMENT_AMAZON_X509_CERTIFICATE');
       }
 
       return $this->_keys;

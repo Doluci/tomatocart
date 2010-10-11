@@ -23,7 +23,7 @@
       $Qstatus->execute();
       
       if(!$osC_Database->isError()) {
-        osC_Cache::clear('feature_products');
+        osC_Cache::clear('feature-products');
         
         return true;
       }
@@ -42,7 +42,7 @@
       $Qstatus->execute();
 
       if ( !$osC_Database->isError() ) {
-        osC_Cache::clear('feature_products');
+        osC_Cache::clear('feature-products');
         
         return true;
       }
