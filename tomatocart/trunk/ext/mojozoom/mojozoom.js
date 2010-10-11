@@ -57,7 +57,7 @@ var MojoZoom = (function() {
 		}
 	}
 
-	function makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow) {
+	function makeZoomable(img, zoomSrc, zoomImgCtr, zoomWidth, zoomHeight, alwaysShow, onImgClick) {
 		// make sure the image is loaded, if not then add an onload event and return
 		if (!img.complete && !img.__mojoZoomQueued) {
 			addEvent(img, "load", function() {
@@ -102,6 +102,10 @@ var MojoZoom = (function() {
 
 		var zoom = dc("div");
 		zoom.className = "mojozoom_marker";
+		
+		if ($defined(onImgClick)) {
+		  addEvent(zoom, "click", onImgClick);
+		}		
 
 		var zoomImg = dc("img");
 		zoomImg.className = "mojozoom_img";
@@ -160,8 +164,10 @@ var MojoZoom = (function() {
 		if (!alwaysShow) {
 			zoomImgCtr.style.visibility = "hidden";
 		}
-
+		
+    var loaded = false;
 		addEvent(zoomImg, "load", function() {
+		  if (loaded) return;
 
 			// bail out if img has been removed from dom
 			if (!zoomImg.parentNode) return;
@@ -281,14 +287,16 @@ var MojoZoom = (function() {
 					zoomImg.style.top = -((pos.y*ratioH - ctrHeight/2)|0)+"px";
 				}
 			);
+			
+			loaded = true;
 		});
 
 		// I've no idea. Simply setting the src will make IE screw it self into a 100% CPU fest. In a timeout, it's ok.
 		setTimeout(function() { 
 			zoomImg.src = zoomSrc;
-		}, 1);
+		}, 200);
 
-		}, 1);
+		}, 200);
 	}
 
 	function init() {
