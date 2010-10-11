@@ -66,15 +66,17 @@
   <h6></h6>
   <div class="content contact">
     <ol>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_departments_title'), 'eamil') . osc_draw_pull_down_menu('department_email', $departments); ?></li><span id="departments_description"></span>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_name_title'), 'name') . osc_draw_input_field('name', $osC_Customer->getName(), 'size=30'); ?></li>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_telephone_title'), 'telphone') . osc_draw_input_field('telephone', '', 'size=30'); ?></li>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_email_address_title'), 'email') . osc_draw_input_field('email', $osC_Customer->getEmailAddress(), 'size=30'); ?></li>
+    <?php if (!empty($departments)){ ?>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_departments_title'), 'department_email') . osc_draw_pull_down_menu('department_email', $departments); ?></li><span id="departments_description"></span>
+    <?php } ?>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_name_title'), 'name', null, true) . osc_draw_input_field('name', $osC_Customer->getName(), 'size="30"'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_telephone_title'), 'telephone') . osc_draw_input_field('telephone', '', 'size="30"'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_email_address_title'), 'email', null, true) . osc_draw_input_field('email', $osC_Customer->getEmailAddress(), 'size="30"'); ?></li>
       <li><?php echo osc_draw_label($osC_Language->get('contact_enquiry_title'), 'enquiry') . osc_draw_textarea_field('enquiry', null, 38, 5); ?></li>
 
     <?php if( ACTIVATE_CAPTCHA == '1') {?>
-      <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'code') . osc_draw_input_field('concat_code', '', 'size=30'); ?> </li>
-      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage"/></li>
+      <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'concat_code') . osc_draw_input_field('concat_code', '', 'size="30"'); ?> </li>
+      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage" alt="Captcha" /></li>
     <?php } ?>
     
     </ol>
@@ -86,26 +88,27 @@
 </div>
 
 </form>
-
-<script type="text/javascript">
-  window.addEvent("domready", function() {
-    var description = {};
-  <?php
-    foreach($departments_description as $key => $description) {
-  ?>
-  
-    description['<?php echo $key; ?>'] = '<?php echo $description; ?>';
-  
-  <?php } ?>
+  <?php if (!empty($departments_description)) { ?>
+    <script type="text/javascript">
+      window.addEvent("domready", function() {
+        var description = {};
+      <?php
+        foreach($departments_description as $key => $description) {
+      ?>
       
-    $('departments_description').set('html', description[$('department_email').get('value')]);
+        description['<?php echo $key; ?>'] = '<?php echo $description; ?>';
       
-    $('department_email').addEvent('change', function() {
-      $('departments_description').set('html', description[this.value]);
-    });
-  });
-
-</script>
+      <?php } ?>
+          
+        $('departments_description').set('html', description[$('department_email').get('value')]);
+          
+        $('department_email').addEvent('change', function() {
+          $('departments_description').set('html', description[this.value]);
+        });
+      });
+    
+    </script>
 <?php
+    }
   }
 ?>

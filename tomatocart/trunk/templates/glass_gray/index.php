@@ -325,8 +325,8 @@
     });
   });
   new TocBookmark({
-    bookmark: 'bookmark',
-    text: '<?php echo $osC_Language->get('bookmark'); ?>',
+  	bookmark: 'bookmark',
+  	text: '<?php echo $osC_Language->get('bookmark'); ?>',
     img: '<?php echo 'images/bookmark.png'; ?>'
   });  
 </script>

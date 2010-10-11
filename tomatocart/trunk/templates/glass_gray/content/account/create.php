@@ -35,7 +35,7 @@
                           array('id' => 'f', 'text' => $osC_Language->get('gender_female')));
 ?>
 
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), 'fake', null, (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), 'gender1', null, (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array); ?></li>
 
 <?php
   }

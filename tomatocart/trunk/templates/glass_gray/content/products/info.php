@@ -25,6 +25,9 @@
 
   <div class="content">
     <div style="float: left;">
+      <link href="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="templates/<?php echo $osC_Template->getCode(); ?>/javascript/milkbox/milkbox.js"></script>
+    
       <div id="productImages">
       <?php
         echo osc_link_object($osC_Image->getImageUrl($osC_Product->getImage(), 'originals'), $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Product->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
@@ -32,7 +35,7 @@
     
         $images = $osC_Product->getImages();
         foreach ($images as $image){
-          echo osc_link_object($osC_Image->getImageUrl($image['image'], 'originals'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" style="float:left" class="mini"') . "\n";
+          echo osc_link_object($osC_Image->getImageUrl($image['image'], 'originals'), $osC_Image->show($image['image'], $osC_Product->getTitle(), '', 'mini'), 'rel="milkbox:group_products" product-info-img="' . $osC_Image->getImageUrl($image['image'], 'product_info') . '" large-img="' . $osC_Image->getImageUrl($image['image'], 'large') . '" style="float:left" class="mini"') . "\n";
         }
       ?>
       </div>
@@ -425,94 +428,22 @@
       <div class="moduleBox">
         <div class="content">
           <?php
-            foreach ( $accessories as $accessory) {
-              $osC_Products = new osC_Product($accessory); 
+            foreach ($accessories as $accessory) {
+              $product = new osC_Product($accessory); 
           ?>
-          
-          <div style="float: left;">
-            <div id="productImages" style="width:220px">
-              <?php
-                echo osc_link_object($osC_Image->getImageUrl($osC_Products->getImage(), 'originals'), $osC_Image->show($osC_Products->getImage(), $osC_Products->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Products->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
-                echo '<div style="clear:both"></div>';
-              ?>
+          <div class="accessories">
+            <div class="image"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $accessory), $osC_Image->show($product->getImage(), $product->getTitle())); ?></div>
+            <div class="desc">
+              <h6><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $accessory), $product->getTitle()); ?></h6>
+              <p><?php echo $product->getShortDescription(); ?></p>
             </div>
           </div>
-
-    <form id="cart_quantity" name="cart_quantity" action="<?php echo osc_href_link(FILENAME_PRODUCTS, osc_get_all_get_params(array('action')) . '&action=cart_add'); ?>" method="post">
-   
-    <table id="productInfo" border="0" cellspacing="0" cellpadding="2" style="float: right; width: 270px">
-    
-      <tr>
-        <td colspan="2" class="productPrice"><?php echo $osC_Products->getPriceFormated(true). '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : ''); ?></td>
-      </tr>
-      
-  <?php
-    if (!$osC_Products->hasVariants()) {
-  ?>
-      <tr>
-        <td class="label" width="45%"><?php echo $osC_Language->get('field_sku'); ?></td>
-        <td><?php echo $osC_Products->getSKU(); ?>&nbsp;</td>
-      </tr>
-  <?php
-    }
-  ?>
-      <tr>
-        <td class="label"><?php echo $osC_Language->get('field_availability'); ?></td>
-        <td><?php echo $osC_Products->getQuantity() > 0 ? $osC_Language->get('in_stock') : $osC_Language->get('out_of_stock'); ?></td>
-      </tr>
-      
-  <?php
-    if (PRODUCT_INFO_QUANTITY == '1') {
-  ?>
-      <tr>
-        <td class="label"><?php echo $osC_Language->get('field_quantity'); ?></td>
-        <td><?php echo $osC_Products->getQuantity() . ' ' . $osC_Products->getUnitClass(); ?></td>
-      </tr>
-  <?php
-    }
-
-    if ($osC_Products->getData('reviews_average_rating') > 0) {
-  ?>  
-      <tr>      
-        <td class="label"><?php echo $osC_Language->get('average_rating'); ?></td>
-        <td><?php echo osc_image(DIR_WS_IMAGES . 'stars_' . $osC_Products->getData('reviews_average_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $osC_Products->getData('reviews_average_rating'))); ?></td>
-      </tr>
-  <?php
-    }
-  ?>
-      <tr>
-        <td colspan="2" align="center" valign="top" style="padding-top: 15px">
-          
-          <?php
-            if (!$osC_Products->hasVariants()) {
-              if ($osC_Products->isSimple()) {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajax_add_to_cart" id="ac_productsinfo_variants_' . osc_get_product_id($osC_Products->getID()) . '"');
-              }else {
-                echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Products->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;"');
-              }  
-            }
-          ?>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2" align="center">
-          <?php
-            echo osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Products->getID() . '&' . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<span>|</span>&nbsp;' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $osC_Products->getID() . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist'));
-          ?>
-        </td>
-      </tr>
-    </table>
-    </form>
-    
-    <div style="clear: both;"></div>
+          <div style="clear: both"></div>
           <?php } ?>
         </div>
       </div>
     </div>
    <?php } ?>
-
-
-
 
 <div style="clear: both;"></div>
 
@@ -521,11 +452,12 @@
 <script type="text/javascript" src="ext/mojozoom/mojozoom.js"></script>
 
 <?php if ($osC_Product->hasVariants()) { ?>
-  <script type="text/javascript" src="ncludes/javascript/variants.js"></script>
+  <script type="text/javascript" src="includes/javascript/variants.js"></script>
 <?php } ?>
 
 <script type="text/javascript">
 window.addEvent('domready', function(){
+
   //zoom image
   MojoZoom.makeZoomable(  
     document.getElementById("product_image"),   
@@ -533,7 +465,27 @@ window.addEvent('domready', function(){
     null, 
     270, 
     210, 
-    false
+    false,
+    function(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      } else {
+        e.returnValue = false;
+      }
+
+      var miniImages = $$(".mini");
+      var img = $$('.mojozoom_imgctr').getElement('img').get('src');
+      var index = 0;
+  
+      for (i = 0; i < miniImages.length; i++) {
+        if (miniImages[i].get("large-img") == img) {
+          index = i;
+          break;
+        }
+      }
+    
+      Milkbox.openMilkbox(Milkbox.galleries[0], index); 
+    }
   );
   
   //variants
@@ -559,25 +511,25 @@ window.addEvent('domready', function(){
   var miniImages = $$(".mini");
   if (miniImages.length > 0) {
     miniImages.each(function(img) {
-      img.addEvent('click', function(e) {
+      img.addEvent('mouseover', function(e) {
         if ($defined(e)) {e.preventDefault();}
         
-        new Fx.Tween($('product_image'), {
-           duration: 100,
-           property: 'opacity'
-        }).start(0).chain(function() {
-          $$('.mojozoom_imgctr').getElement('img').set('src', this.get("large-img"));
-          $('product_image').src =  this.get("product-info-img");
-          $('product_image').fade('in');
-        }.bind(this));
+        var oldImg = $$('.mojozoom_imgctr').getElement('img').get('src');
+        if (oldImg != this.get("large-img")) {
+          img = $$('.mojozoom_imgctr').getElement('img');
+          img.set('src', this.get("large-img"));
+          
+          new Fx.Tween($('product_image'), {
+             duration: 10,
+             property: 'opacity'
+          }).start(0).chain(function() {
+            $('product_image').src = this.get("product-info-img");
+            $('product_image').fade('in');
+          }.bind(this));
+        }
       });
     }, this);
   }
-  
-  //attach product image click event
-  $('defaultProductImage').addEvent('click',function(e){
-    e.preventDefault();
-  });
   
   //tab panel
   new TabPanel({panel: $('productInfoTab'), activeTab: '<?php echo (isset($_GET['tab']) && !empty($_GET['tab']) ) ? $_GET['tab'] : ''; ?>'});

@@ -31,8 +31,8 @@
           <li><?php echo osc_draw_label($osC_Language->get('field_url'), 'url') . osc_draw_input_field('url');  ?></li>  
           <li><?php echo osc_draw_label($osC_Language->get('field_content'), 'content', null, true) . osc_draw_textarea_field('content', '', 29);  ?></li>
           <li>
-            <?php echo osc_draw_label($osC_Language->get('field_image_verification'), 'image_verification')  . osc_draw_input_field('verify_code') . '&nbsp;&nbsp;' . $osC_Language->get('verification_info_note') . 
-            '<br/> <img style="margin-top: 5px;" src="' . osc_href_link(FILENAME_INFO, 'guestbook&captcha') . '" />';?>
+            <?php echo osc_draw_label($osC_Language->get('field_image_verification'), 'verify_code')  . osc_draw_input_field('verify_code') . '&nbsp;&nbsp;' . $osC_Language->get('verification_info_note') . 
+            '<br/> <img style="margin-top: 5px;" src="' . osc_href_link(FILENAME_INFO, 'guestbook&captcha') . '" alt="Captcha" />';?>
           </li>
         </ol>
         
