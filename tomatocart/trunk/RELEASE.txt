@@ -1,4 +1,66 @@
-VERSION 1.02
+VERSION 1.1
+ * Polls
+ * Guest Book
+ * Department Email Management
+ * Website bookmark
+ * Recaptcha for Contact Us Form & Guest Book
+ * Allow user customize the contact us form. Enable user define different email topic and assign different email address to different email topic
+ * Different language in admin panel and store front
+ * Image watermark for products and articles
+
+ * Gift wrapping
+ * Order edit support for gift warpping
+
+ * Pop up categories menu 
+ * Product image zoom + light box to display large image
+ * Product rating
+ * Product attachment
+ * Products Customizations to allow customers customise product with sel-defined field
+ * Product accessories
+ * Products duplicate
+ * Tinymec Editor Intergrated which enable admin to put flash, movies and images in product description and article description  
+ * Save and Continue Edit Button for product
+ * New layout for product variants
+ * Allow to manage single variant
+ * Default Variant supported
+ * Allow associate each produt variant with a product image
+ * Downloadable product support for product variant
+
+ * Implements cache in following modules: 
+    articles categories, information, manufacturer, popular search term, feature products, image menu,slide show
+    
+ * SEO improvements:
+    Enable admin to control page title, meta keywords and meta description for home page, articles categories, articles, manufacturers
+    Update the page title = page title + "-" + store name
+    Add a meta page field in template class to separate the page title with the meta page title
+    URL link style improved such as:
+      categories: http://{webiste}/{cateogires_id}-{categories_name}
+      manufacturers: http://{webiste}/{manufacturers_id}_{manufacturers_name}
+      articles categories: http://{webiste}/{articles_categories_id}--{articles_categories_name}
+      products: http://{webiste}/{cateogires_id}-{categories_name}/{products_id}-{products_name}.html
+      products: http://{webiste}/{manufacturers_id}_{categories_name}/{products_id}-{products_name}.html
+      articles: http://{webiste}/{articles_categories_name}/{articles_id}-{articles_name}.html
+      
+ * Ajax shopping cart support for:
+    Product Customization Fields
+    Gift certificate
+    Product Variants
+
+ * Payment modules:
+    Moneybookers
+    Amazon
+    Google Checkout
+    eWay
+    Paypal Standard
+    Paypal Direct Pay
+    Paypal Express
+    Paypal UK Direct Pay
+    Paypal UK Express
+    inPay
+    Nochex
+    Western Union
+    
+ * [SECURITY] Add a token to every extjs connection to against Cross-Site Request Forgery (CSRF) attack
  * [Bug] Fix the problem redeclare posix_getpwuid()
  * [Bug] Bug fix breadcrumb. The subcategory is not displayed.   
  * [Bug] Bug fixed about breadcumb. The top link and the online shop link is repeated. 
