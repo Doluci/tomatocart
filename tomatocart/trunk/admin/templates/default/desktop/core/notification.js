@@ -26,7 +26,7 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
       , resizable: false
     });
     if(this.autoDestroy){
-      this.task = new Ext.util.DelayedTask(this.close, this);
+      this.task = new Ext.util.DelayedTask(this.animHide, this);
     }else{
       this.closable = true;
     }
@@ -72,14 +72,13 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
     this.setSize(200,100);
     //change the x offset from -1 to -5
     this.el.alignTo(this.animateTarget || document, "br-tr", [ -5, -1-((this.getSize().height+10)*this.pos) ]);
-    this.el.show();
-    this.afterShow();
+//    this.el.show();
     
-//    this.el.slideIn('b', {
-//      duration: .7
-//      , callback: function() {}
-//      , scope: this
-//    });
+    this.el.slideIn('b', {
+      duration: .7
+      , callback: function() {this.afterShow()}
+      , scope: this
+    });
   }
 
   , animHide : function(){

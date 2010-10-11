@@ -78,7 +78,7 @@
         } else {
           foreach ($localimages as $image) {
             $image = basename($image);
-            $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+            $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/';
             toc_mkdir($image_path);
             
             if (file_exists('../images/products/_upload/' . $image)) {
@@ -131,7 +131,7 @@
           $error = true;
         }
       } else {
-        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/';
         
         if (!osc_remove($image_path . $_REQUEST['image'])) {
           $error = true;
@@ -285,7 +285,7 @@
           }
         }
       } else {
-        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/';
         toc_mkdir($image_path);
         
         if ($products_image->exists()) {
@@ -324,7 +324,7 @@
                              'default' => $Qimages->valueInt('default_flag'));
         }
       } else {
-        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/products/images/';
+        $image_path = '../images/products/_upload/' . $osC_Session->getID() . '/';
                     
         $osC_DirectoryListing = new osC_DirectoryListing($image_path, true);
         $osC_DirectoryListing->setIncludeDirectories('false');
@@ -784,12 +784,11 @@
         }
       }
       
+      $data['customization_fields'] = array();
       if (isset($_REQUEST['customization_fields']) && !empty($_REQUEST['customization_fields'])) {
         $fields = explode(';;', $_REQUEST['customization_fields']);
         
         if (sizeof($fields) > 0) {
-          $data['customization_fields'] = array();
-          
           foreach ($fields as $field) {
             $tmp = explode('::', $field);
   

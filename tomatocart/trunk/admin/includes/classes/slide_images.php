@@ -30,7 +30,7 @@ class toC_Slide_Images_Admin {
     return $data;
   }
 
-  function setStatus($id, $flag){
+  function setStatus($id, $flag) {
     global $osC_Database;
 
     $Qimages = $osC_Database->query('update :table_slide_images set status= :status where image_id = :image_id');
@@ -38,10 +38,15 @@ class toC_Slide_Images_Admin {
     $Qimages->bindInt(':image_id', $id);
     $Qimages->bindTable(':table_slide_images', TABLE_SLIDE_IMAGES);
     $Qimages->setLogging($_SESSION['module'], $id);
-
     $Qimages->execute();
+    
+    if (!$osC_Database->isError()) {
+      osC_Cache::clear('slide-images');
+      
+      return true;
+    }
 
-    return true;
+    return false;
   }
 
   function save($id = null, $data) {
@@ -104,6 +109,8 @@ class toC_Slide_Images_Admin {
     if ( $osC_Database->isError() ) {
       return false;
     }else{
+      osC_Cache::clear('slide-images');
+      
       return true;
     }
   }
@@ -128,6 +135,8 @@ class toC_Slide_Images_Admin {
     if ( $osC_Database->isError() ) {
       return false;
     }else{
+      osC_Cache::clear('slide-images');
+      
       return true;
     }
   }

@@ -96,7 +96,7 @@
                     if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT) {
                       $product_info .= $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
                     } else {
-                      $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '">' . $field['customization_value'] . '</a>' . '<br />';
+                      $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '&token=' . $_SESSION["token"] . '">' . $field['customization_value'] . '</a>' . '<br />';
                     }
                   }
                 $product_info .= '</div>';
@@ -417,7 +417,7 @@
                   if ($field['customization_type'] == CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT) {
                     $product_info .= $field['customization_fields_name'] . ': ' . $field['customization_value'] . '<br />';
                   } else {
-                    $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '">' . $field['customization_value'] . '</a>' . '<br />';
+                    $product_info .= $field['customization_fields_name'] . ': <a href="' . osc_href_link_admin(FILENAME_JSON, 'module=orders&action=download_customization_file&file=' . $field['customization_value'] . '&cache_file=' . $field['cache_filename']) . '&token=' . $_SESSION["token"] . '">' . $field['customization_value'] . '</a>' . '<br />';
                   }
                 }
               $product_info .= '</div>';

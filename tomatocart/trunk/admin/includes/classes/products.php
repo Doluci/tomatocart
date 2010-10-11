@@ -1256,50 +1256,6 @@
           }
         }      
       }      
-
-     // products_images
-      if ( $error == false && $data['copy_images'] == 1 ) {
-        $Qimages = $osC_Database->query('select * from :table_products_images where products_id = :products_id');
-        $Qimages->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-        $Qimages->bindInt(':products_id', $id);
-        $Qimages->execute();
-
-        while ( $Qimages -> next() ){
-          $image = $Qimages->value('image');
-          
-          $Qinsert = $osC_Database->query('insert into :table_products_images (products_id, image, default_flag, sort_order, date_added) values (:products_id, :image, :default_flag, :sort_order, :date_added)');
-          $Qinsert->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-          $Qinsert->bindInt(':products_id', $products_id);
-          $Qinsert->bindValue(':image', $image);
-          $Qinsert->bindInt(':default_flag', $Qimages->valueInt('default_flag'));
-          $Qinsert->bindInt(':sort_order', 0);
-          $Qinsert->bindRaw(':date_added', 'now()');
-          $Qinsert->execute();
-
-          if ($osC_Database->isError()) {
-            $error = true;
-            break;
-          } else {
-            $images_id = $osC_Database->nextID();
-            $pos = strlen($Qimages->value('products_id') . '_' . $Qimages->value('id') . '_');
-            
-            $new_image = $products_id . '_' . $images_id . '_' . substr($image, $pos);
-            @copy('../images/products/originals/' . $image, '../images/products/originals/' . $new_image);
-            
-            $Qupdate = $osC_Database->query('update :table_products_images set image = :image where id = :id');
-            $Qupdate->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
-            $Qupdate->bindValue(':image', $new_image);
-            $Qupdate->bindInt(':id', $images_id);
-            $Qupdate->execute();  
-          
-            foreach ($osC_Image->getGroups() as $group) {
-              if ($group['id'] != '1') {
-                $osC_Image->resize($new_image, $group['id'], 'products');
-              }
-            }
-          }
-        }
-      }
           
       //products_variants
       if ( $error == false && $data['copy_variants'] == 1 ) {
@@ -1320,10 +1276,11 @@
             }
           }
         
-          $Qinsert = $osC_Database->query('insert into :table_products_variants (products_id, is_default, products_price, products_sku, products_model, products_quantity, products_weight, products_status, filename, cache_filename) values (:products_id, :is_default, :products_price, :products_sku, :products_model, :products_quantity, :products_weight, :products_status, :filename, :cache_filename)');
+          $Qinsert = $osC_Database->query('insert into :table_products_variants (products_id, is_default, products_images_id, products_price, products_sku, products_model, products_quantity, products_weight, products_status, filename, cache_filename) values (:products_id, :is_default, :products_images_id, :products_price, :products_sku, :products_model, :products_quantity, :products_weight, :products_status, :filename, :cache_filename)');
           $Qinsert->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
           $Qinsert->bindInt(':products_id', $products_id);
           $Qinsert->bindInt(':is_default', $Qvariants->valueInt('is_default'));
+          $Qinsert->bindInt(':products_images_id', $Qvariants->valueInt('products_images_id'));
           $Qinsert->bindValue(':products_price', $Qvariants->valueDecimal('products_price'));
           $Qinsert->bindValue(':products_sku', $Qvariants->value('products_sku'));
           $Qinsert->bindValue(':products_model', $Qvariants->value('products_model'));
@@ -1362,6 +1319,59 @@
         }
       }
       
+     // products_images
+      if ( $error == false && $data['copy_images'] == 1 ) {
+        $Qimages = $osC_Database->query('select * from :table_products_images where products_id = :products_id');
+        $Qimages->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+        $Qimages->bindInt(':products_id', $id);
+        $Qimages->execute();
+
+        while ( $Qimages -> next() ){
+          $image = $Qimages->value('image');
+          
+          $Qinsert = $osC_Database->query('insert into :table_products_images (products_id, image, default_flag, sort_order, date_added) values (:products_id, :image, :default_flag, :sort_order, :date_added)');
+          $Qinsert->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+          $Qinsert->bindInt(':products_id', $products_id);
+          $Qinsert->bindValue(':image', $image);
+          $Qinsert->bindInt(':default_flag', $Qimages->valueInt('default_flag'));
+          $Qinsert->bindInt(':sort_order', 0);
+          $Qinsert->bindRaw(':date_added', 'now()');
+          $Qinsert->execute();
+
+          if ($osC_Database->isError()) {
+            $error = true;
+            break;
+          } else {
+            $images_id = $osC_Database->nextID();
+            $pos = strlen($Qimages->value('products_id') . '_' . $Qimages->value('id') . '_');
+            
+            $new_image = $products_id . '_' . $images_id . '_' . substr($image, $pos);
+            @copy('../images/products/originals/' . $image, '../images/products/originals/' . $new_image);
+            
+            //update image name
+            $Qupdate = $osC_Database->query('update :table_products_images set image = :image where id = :id');
+            $Qupdate->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+            $Qupdate->bindValue(':image', $new_image);
+            $Qupdate->bindInt(':id', $images_id);
+            $Qupdate->execute();
+
+            foreach ($osC_Image->getGroups() as $group) {
+              if ($group['id'] != '1') {
+                $osC_Image->resize($new_image, $group['id'], 'products');
+              }
+            }
+            
+            //update products variants images id
+            $Qupdate = $osC_Database->query('update :table_products_variants set products_images_id = :new_products_images_id where products_id = :products_id and products_images_id = :old_products_images_id');
+            $Qupdate->bindTable(':table_products_variants', TABLE_PRODUCTS_VARIANTS);
+            $Qupdate->bindInt(':old_products_images_id', $Qimages->valueInt('id'));
+            $Qupdate->bindInt(':new_products_images_id', $images_id);
+            $Qupdate->bindInt(':products_id', $products_id);
+            $Qupdate->execute();
+          }
+        }
+      }
+          
       //products_attributes
       if ( $error == false && $data['copy_attributes'] == 1 ) {
         $Qattributes = $osC_Database->query('select * from :table_products_attributes where products_id = :products_id');
@@ -1499,7 +1509,7 @@
         osC_Cache::clear('also_purchased');
         osC_Cache::clear('sefu-products');
         osC_Cache::clear('new_products');
-        osC_Cache::clear('feature_products');
+        osC_Cache::clear('feature-products');
 
         return true;
       }
@@ -1562,7 +1572,7 @@
       $Qstatus->execute();
       
       if(!$osC_Database->isError()) {
-        osC_Cache::clear('feature_products');
+        osC_Cache::clear('feature-products');
         
         return true;
       }
@@ -1580,7 +1590,13 @@
       $Qstatus->execute();
       
       if(!$osC_Database->isError()) {
+        osC_Cache::clear('categories');
+        osC_Cache::clear('category_tree');
+        osC_Cache::clear('also_purchased');
+        osC_Cache::clear('sefu-products');
         osC_Cache::clear('new_products');
+        osC_Cache::clear('feature_products');
+        
         return true;
       }
       return false;

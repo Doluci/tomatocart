@@ -124,7 +124,7 @@
       if ( $error === false ) {
         $osC_Database->commitTransaction();
 
-        osC_Cache::clear('manufacturers');
+        osC_Cache::clear('box-manufacturers');
         osC_Cache::clear('sefu-manufacturers');
 
         return true;
@@ -180,13 +180,15 @@
         $Qupdate->execute();
       }
 
-      osC_Cache::clear('manufacturers');
+      osC_Cache::clear('box-manufacturers');
+      osC_Cache::clear('sefu-manufacturers');
 
       return true;
     }
 
     function getManufacturersData(){
       global $osC_Database;
+      
       $Qmanufacturers = $osC_Database->query('select * from :table_manufacturers');
       $Qmanufacturers->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
       $Qmanufacturers->execute();
