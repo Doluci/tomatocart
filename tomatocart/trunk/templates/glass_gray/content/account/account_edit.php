@@ -37,7 +37,7 @@
                           array('id' => 'f', 'text' => $osC_Language->get('gender_female')));
 ?>
 
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), 'fake', null, (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array, $Qaccount->value('customers_gender')); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), 'gender1', null, (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array, $Qaccount->value('customers_gender')); ?></li>
 
 <?php
   }
@@ -58,9 +58,9 @@
 
       <li><?php echo osc_draw_label($osC_Language->get('field_customer_email_address'), 'email_address', null, true) . ' ' . osc_draw_input_field('email_address', $Qaccount->value('customers_email_address')); ?></li>
       
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_group'), 'group', null, true) . ' ' . $Qaccount->value('customers_groups_name'); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_group'), null, null, false) . ' ' . $Qaccount->value('customers_groups_name'); ?></li>
       
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_store_credit'), 'store_credit', null, true) . ' ' . $osC_Currencies->format($Qaccount->value('customers_credits')); ?></li>
+      <li><?php echo osc_draw_label($osC_Language->get('field_customer_store_credit'), null, null, false) . ' ' . $osC_Currencies->format($Qaccount->value('customers_credits')); ?></li>
     </ol>
   </div>
 </div>

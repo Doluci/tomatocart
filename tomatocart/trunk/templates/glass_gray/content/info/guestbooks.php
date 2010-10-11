@@ -26,27 +26,29 @@
     <h6><?php echo $osC_Template->getPageTitle(); ?></h6>
 
     <div class="content">
-      <dl id="guestbook">
-      <?php 
-         $i = 1;
-         $class = '';
-         
-         while ($Qlisting->next()){
-           if ($i == $Qlisting->numberOfRows()) {$class = ' class="last"';} 
-      ?>
-
-        <dt>
-          <span><?php echo osC_DateTime::getLong($Qlisting->value('date_added'));  ?></span>
-          <?php echo $Qlisting->value('title'); ?>
-        </dt>
-        <dd<?php echo $class; ?>><?php echo $Qlisting->value('content'); ?></dd>
-      
-      <?php 
-           $i++;
-         }
-         $Qlisting->freeResult();
-      ?>
-      </dl>          
+      <?php if ($Qlisting->numberOfRows() > 0) { ?>
+        <dl id="guestbook">
+        <?php 
+           $i = 1;
+           $class = '';
+           
+           while ($Qlisting->next()){
+             if ($i == $Qlisting->numberOfRows()) {$class = ' class="last"';} 
+        ?>
+  
+          <dt>
+            <span><?php echo osC_DateTime::getLong($Qlisting->value('date_added'));  ?></span>
+            <?php echo $Qlisting->value('title'); ?>
+          </dt>
+          <dd<?php echo $class; ?>><?php echo $Qlisting->value('content'); ?></dd>
+        
+        <?php 
+             $i++;
+           }
+           $Qlisting->freeResult();
+        ?>
+        </dl>          
+      <?php } ?>
     </div>
 
     <p align="right">

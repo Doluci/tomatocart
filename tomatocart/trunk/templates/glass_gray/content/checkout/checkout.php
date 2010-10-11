@@ -25,7 +25,7 @@ $step = 1;
   <?php if ($osC_Customer->isLoggedOn() === false) { ?>
     <li id="checkoutMethodForm">
       <h3 class="formHeader">
-         <?php echo $step++ . '<a onclick="javascript:void(0);">' . $osC_Language->get('checkout_method') . '</a>';?><span> </span>
+         <?php echo $step++ . '<a onclick="javascript:void(0);">' . $osC_Language->get('checkout_method') . '</a>';?><span><?php echo osc_image('templates/' . $osC_Template->getCode() . '/images/checkout_down.png'); ?> </span>
       </h3>
       <div class="formBody"></div>
     </li>
@@ -110,7 +110,6 @@ $step = 1;
           formHeader.getNext().setStyle('display', 'none');
         } else {
           this.openedForm = formHeader.getParent().id;
-          formHeader.getElement('span').set('html', '<?php echo osc_image('templates/' . $osC_Template->getCode() . '/images/checkout_down.png'); ?>');
         }
       }.bind(this));  
     },
@@ -129,14 +128,15 @@ $step = 1;
           }
           
           form_body.setStyle('display', 'none');
-          span.set('html', '<?php echo osc_image('templates/' . $osC_Template->getCode() . '/images/checkout_up.png'); ?>');
+          
+          span.getElement('img').setProperty('src', 'templates/' + '<?php echo $osC_Template->getCode();?>' + '/images/checkout_up.png');
         } else {
           if (formHeader.getParent().hasClass('collapse')) {
             formHeader.getParent().removeClass('collapse');
           }
           
           form_body.setStyle('display', 'block');
-          span.set('html', '<?php echo osc_image('templates/' . $osC_Template->getCode() . '/images/checkout_down.png'); ?>');
+          span.getElement('img').setProperty('src', 'templates/' + '<?php echo $osC_Template->getCode(); ?>' + '/images/checkout_down.png');
         }
       });
     }
@@ -148,6 +148,7 @@ $step = 1;
       isLoggedOn: <?php echo ($osC_Customer->isLoggedOn() === true) ? 'true' : 'false';?>,
       sessionName: '<?php echo $osC_Session->getName(); ?>',
       template: '<?php echo $osC_Template->getCode(); ?>',
+      languageCode: '<?php echo $osC_Language->getCode(); ?>',
       sessionId: '<?php echo $osC_Session->getID(); ?>',
 <?php 
   if ( isset($_GET['view']) && !empty($_GET['view']) ) {

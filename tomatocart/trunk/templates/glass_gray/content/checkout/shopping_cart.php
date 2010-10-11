@@ -63,7 +63,7 @@
 ?>
 
         </td>
-        <td valign="center">
+        <td valign="middle">
 
         <?php
         echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products['id']), '<b>' . $products['name'] . '</b>');
@@ -121,6 +121,7 @@
                   }
                 ?>
               </div>
+              <div style="clear: both"></div>
             <?php } ?>
           </p>
         <?php } ?>
@@ -128,7 +129,7 @@
         <td valign="top">
           <?php
             if (!isset($products['customizations'])) { 
-              echo osc_draw_input_field('products[' . $products_id_string . ']', $products['quantity'], 'size="4" style="width: 40px"'); 
+              echo osc_draw_input_field('products[' . $products_id_string . ']', $products['quantity'], 'id="products_' . $products_id_string. '" size="4" style="width: 40px"'); 
             }
           ?>
         </td>
