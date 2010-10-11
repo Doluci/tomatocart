@@ -72,16 +72,6 @@
     function process_button() {
       global $osC_Customer, $osC_Currencies, $osC_ShoppingCart, $osC_Language;
 
-      if (MODULE_PAYMENT_PAYPAL_IPN_CURRENCY == 'Selected Currency') {
-        $currency = $osC_Currencies->getCode();
-      } else {
-        $currency = MODULE_PAYMENT_PAYPAL_IPN_CURRENCY;
-      }
-
-      if (in_array($currency, array('CAD', 'EUR', 'GBP', 'JPY', 'USD')) === false) {
-        $currency = DEFAULT_CURRENCY;
-      }
-      
       //products
       $products = array();
       if ($osC_ShoppingCart->hasContents()) {
@@ -127,9 +117,9 @@
                       'language' => $osC_Language->getCode(),
                       'detail1_text' => implode(',', $products),
                       'detail1_description' => implode(',', $products),
-                      'currency' => $currency,
-                      //'amount' => $osC_ShoppingCart->getTotal(),
-                      'amount' => '0.1',
+                      'currency' => 'USD',
+                      //'amount' => '0.1',
+                      'amount' => $osC_ShoppingCart->getTotal(),
                       'confirmation_note' => 'Thans for shopping at ' . STORE_NAME . '!');
 
       $process_button_string = '';
@@ -141,14 +131,16 @@
 
       return $process_button_string;
     }
-
+    
     function callback() {
-	    $md5sign = strtoupper(md5($_POST['merchant_id'] . $_POST['transaction_id'] . strtoupper(md5(MODULE_PAYMENT_MONEYBOOKERS_SECRET_WORD)) . $_POST['mb_amount'] . $_POST['mb_currency'] . $_POST['status']));
-	    $comment = 'Moneybookers Verified:' . $_POST['status'];
-	    
-	    if($md5sign == $_POST['md5sig'] && intval($_POST['status']) == 2) {
-	      osC_Order::process($_POST['transaction_id'], $this->order_status, $comment);
-	    } 
+
+      $md5sign = strtoupper(md5($_POST['merchant_id'] . $_POST['transaction_id'] . strtoupper(md5(MODULE_PAYMENT_MONEYBOOKERS_SECRET_WORD)) . $_POST['mb_amount'] . $_POST['mb_currency'] . $_POST['status']));
+      $comment = 'Moneybookers Verified: ' . $_POST['status'];
+
+      
+      if($md5sign == $_POST['md5sig'] && intval($_POST['status']) == 2) {
+        osC_Order::process($_POST['transaction_id'], $this->order_status, $comment);
+      } 
     }
     
   }

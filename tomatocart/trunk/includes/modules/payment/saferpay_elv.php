@@ -144,13 +144,13 @@
       $this->_transaction_response = $this->sendTransactionToGateway('https://support.saferpay.de/scripts/Execute.asp', $post_string);
 
       $error = false;
-
+      
       if (substr($this->_transaction_response, 0, 3) == 'OK:') {
         $this->_transaction_response = trim(substr($this->_transaction_response, 3));
 
         $osC_XML = new osC_XML($this->_transaction_response);
         $result = $osC_XML->toArray();
-
+        
         switch ($result_array['IDP attr']['RESULT']) {
           case '0': //success
             break;

@@ -30,6 +30,7 @@
       
       $Qterms = $osC_Database->query('select search_terms_id, text, search_count from :table_search_terms where show_in_terms = 1');
       $Qterms->bindTable(':table_search_terms', TABLE_SEARCH_TERMS);
+      $Qterms->setCache('box-popular-search-terms', BOX_POPULAR_SEARCH_TERM_CACHE);
       $Qterms->execute();
       
       $search_terms = array();
@@ -44,6 +45,22 @@
       $cloud = new toC_Tag_Cloud($search_terms);
       
       $this->_content = $cloud->generateTagCloud();
+    }
+    
+    function install() {
+      global $osC_Database;
+
+      parent::install();
+
+      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'BOX_BEST_SELLERS_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now())");
+    }
+
+    function getKeys() {
+      if (!isset($this->_keys)) {
+        $this->_keys = array('BOX_POPULAR_SEARCH_TERM_CACHE');
+      }
+
+      return $this->_keys;
     }
   }
 ?>

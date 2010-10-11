@@ -55,7 +55,9 @@ var AjaxShoppingCart = new Class({
 		    form[i].value = '';
 		  }
 		  
-		  form.getElement('span').innerHTML = '';
+		  if ($defined(form.getElement('span'))) {
+		    form.getElement('span').innerHTML = '';
+		  }
 		}
   },
 

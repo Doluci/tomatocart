@@ -204,7 +204,7 @@
              
       $Gresponse = new GoogleResponse($merchant_id, $merchant_key);
 
-      $Gresponse->SetLogFiles('cache/log/gerror.log', 'cache/log/gmessage.log', L_ALL);     
+      $Gresponse->SetLogFiles('includes/logs/gerror.log', 'includes/logs/gmessage.log', L_ALL);     
   
       // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
       $xml_response = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : file_get_contents("php://input");

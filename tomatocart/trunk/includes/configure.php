@@ -23,9 +23,9 @@
   define('DB_SERVER', '');
   define('DB_SERVER_USERNAME', '');
   define('DB_SERVER_PASSWORD', '');
-  define('DB_DATABASE', '');
-  define('DB_DATABASE_CLASS', '');
-  define('DB_TABLE_PREFIX', '');
+  define('DB_DATABASE', 'TomatoCart');
+  define('DB_DATABASE_CLASS', 'mysql');
+  define('DB_TABLE_PREFIX', 'toc_');
   define('USE_PCONNECT', 'false');
   define('STORE_SESSIONS', '');
 ?>

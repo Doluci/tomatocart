@@ -37,7 +37,7 @@
 
       if ($this->_status === true) {
         $this->order_status = MODULE_PAYMENT_PAYPAL_STANDARD_ORDER_STATUS_ID > 0 ? (int)MODULE_PAYMENT_PAYPAL_STANDARD_ORDER_STATUS_ID : (int)ORDERS_STATUS_PAID;
-        
+
         if ((int)MODULE_PAYMENT_PAYPAL_STANDARD_ZONE > 0) {
           $check_flag = false;
 
@@ -75,7 +75,7 @@
 
     function process_button() {
       global $osC_Customer, $osC_Currencies, $osC_ShoppingCart, $osC_Tax, $osC_Language;
-      
+
       $process_button_string = '';
       $params = array('business' => MODULE_PAYMENT_PAYPAL_STANDARD_ID,
                       'currency_code' => $osC_Currencies->getCode(),
@@ -83,7 +83,8 @@
                       'custom' => $osC_Customer->getID(),
                       'no_note' => '1',
                       'lc' => 'EN', //AU, DE, FR, IT, GB, ES, US
-                      'notify_url' => osc_href_link(FILENAME_CHECKOUT, 'callback&module=' . $this->_code, 'SSL', false, false, true),
+                      'notify_url' =>  HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . FILENAME_CHECKOUT . '?callback&module=' . $this->_code,
+                      //'notify_url' => osc_href_link(FILENAME_CHECKOUT, 'callback&module=' . $this->_code, 'SSL', false, false, true),
                       'return' => osc_href_link(FILENAME_CHECKOUT, 'process', 'SSL', null, null, true),
                       'rm' => '2',
                       'cancel_return' => osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL', null, null, true),
@@ -109,20 +110,20 @@
         $params['zip'] = $osC_ShoppingCart->getBillingAddress('postcode');
         $params['country'] = $osC_ShoppingCart->getBillingAddress('country_iso_code_2');
       }
-      
+
       if (MODULE_PAYMENT_PAYPAL_STANDARD_TRANSFER_CART == '-1') {
         $params['cmd'] = '_xclick';
         $params['item_name'] = STORE_NAME;
-        
+
         $shipping_tax = ($osC_ShoppingCart->getShippingMethod('cost')) * ($osC_Tax->getTaxRate($osC_ShoppingCart->getShippingMethod('tax_class_id'), $osC_ShoppingCart->getTaxingAddress('country_id'), $osC_ShoppingCart->getTaxingAddress('zone_id')) / 100);
-        
+
         if (DISPLAY_PRICE_WITH_TAX == '1') {
           $shipping = $osC_ShoppingCart->getShippingMethod('cost');
         } else {
-          $shipping = $osC_ShoppingCart->getShippingMethod('cost') + $shipping_tax; 
+          $shipping = $osC_ShoppingCart->getShippingMethod('cost') + $shipping_tax;
         }
         $params['shipping'] = $osC_Currencies->formatRaw($shipping);
-        
+
         $total_tax = $osC_ShoppingCart->getTax() - $shipping_tax;
         $params['tax'] = $osC_Currencies->formatRaw($total_tax);
         $params['amount'] = $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal() - $shipping - $total_tax);
@@ -141,61 +142,61 @@
           $products = $osC_ShoppingCart->getProducts();
           foreach($products as $product) {
             $product_name = $product['name'];
-            
+
             //gift certificate
             if ($product['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE) {
               $product_name .= "\n" . ' - ' . $osC_Language->get('senders_name') . ': ' . $product['gc_data']['senders_name'];
-              
+
               if ($product['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
                 $product_name .= "\n" . ' - ' . $osC_Language->get('senders_email')  . ': ' . $product['gc_data']['senders_email'];
               }
-              
+
               $product_name .= "\n" . ' - ' . $osC_Language->get('recipients_name') . ': ' . $product['gc_data']['recipients_name'];
-              
+
               if ($product['gc_data']['type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
                 $product_name .= "\n" . ' - ' . $osC_Language->get('recipients_email')  . ': ' . $product['gc_data']['recipients_email'];
               }
-              
+
               $product_name .= "\n" . ' - ' . $osC_Language->get('message')  . ': ' . $product['gc_data']['message'];
             }
-            
+
             if ($osC_ShoppingCart->hasVariants($product['id'])) {
               foreach ($osC_ShoppingCart->getVariants($product['id']) as $variant) {
                 $product_name .= ' - ' . $variant['groups_name'] . ': ' . $variant['values_name'];
               }
             }
-            
+
             $product_data = array('item_name_' . $i => $product_name, 'item_number_' . $i => $product['sku'], 'quantity_' . $i  => $product['quantity']);
-            
+
             $tax = $osC_Tax->getTaxRate($product['tax_class_id'], $osC_ShoppingCart->getTaxingAddress('country_id'), $osC_ShoppingCart->getTaxingAddress('zone_id'));
             $price = $osC_Currencies->addTaxRateToPrice($product['final_price'], $tax);
             $product_data['amount_' . $i] = $osC_Currencies->formatRaw($price);
-                         
+
             $params = array_merge($params,$product_data);
-            
+
             $i++;
           }
         }
-        
+
         //order totals
         foreach ($osC_ShoppingCart->getOrderTotals() as $total) {
           if ( !in_array($total['code'], $this->_ignore_order_totals) ) {
             if ( ($total['code'] == 'coupon') || ($total['code'] == 'gift_certificate') ) {
               $params['discount_amount_cart'] += $osC_Currencies->formatRaw(abs($total['value']));
             } else {
-              $order_total = array('item_name_' . $i => $total['title'], 'quantity_' . $i => 1, 'amount_' . $i => $total['value']);       
+              $order_total = array('item_name_' . $i => $total['title'], 'quantity_' . $i => 1, 'amount_' . $i => $total['value']);
               $params = array_merge($params, $order_total);
-                   
+
               $i++;
             }
           }
         }
       }
-      
+
       if ( defined('MODULE_PAYMENT_PAYPAL_STANDARD_PAGE_STYLE') ) {
         $params['page_style'] = MODULE_PAYMENT_PAYPAL_STANDARD_PAGE_STYLE;
       }
-      
+
       if (MODULE_PAYMENT_PAYPAL_STANDARD_EWP_STATUS == '1') {
         $params['cert_id'] = MODULE_PAYMENT_PAYPAL_STANDARD_EWP_CERT_ID;
 
@@ -307,7 +308,7 @@
             
             $total = $Qtotal->toArray();
             
-            $comment = $_POST['payment_status'] . ' (' . ucfirst($_POST['payer_status']) . '; ' . $currencies->format($_POST['mc_gross'], false, $_POST['mc_currency']) . ')';
+            $comment = $_POST['payment_status'] . ' (' . ucfirst($_POST['payer_status']) . '; ' . $osC_Currencies->format($_POST['mc_gross'], false, $_POST['mc_currency']) . ')';
             
             if ($_POST['payment_status'] == 'Pending') {
               $comment .= '; ' . $_POST['pending_reason'];
@@ -315,8 +316,8 @@
               $comment .= '; ' . $_POST['reason_code'];
             }
             
-            if ( $_POST['mc_gross'] != number_format($total['value'] * $order['currency_value'], $currencies->getDecimalPlaces($order['currency'])) ) {
-              $comment .= '; PayPal transaction value (' . osc_output_string_protected($_POST['mc_gross']) . ') does not match order value (' . number_format($total['value'] * $order['currency_value'], $currencies->getDecimalPlaces($order['currency'])) . ')';
+            if ( $_POST['mc_gross'] != number_format($total['value'] * $order['currency_value'], $osC_Currencies->getDecimalPlaces($order['currency'])) ) {
+              $comment .= '; PayPal transaction value (' . osc_output_string_protected($_POST['mc_gross']) . ') does not match order value (' . number_format($total['value'] * $order['currency_value'], $osC_Currencies->getDecimalPlaces($order['currency'])) . ')';
             }
             
             $comments = 'PayPal IPN Verified [' . $comment . ']';
@@ -327,21 +328,21 @@
       } else {
         if (defined('MODULE_PAYMENT_PAYPAL_STANDARD_DEBUG_EMAIL')) {
           $email_body = 'PAYPAL_STANDARD_DEBUG_POST_DATA:' . "\n\n";
-          
+
           reset($_POST);
           foreach($_POST as $key=>$value) {
             $email_body .= $key . '=' . $value . "\n";
           }
-  
+
           $email_body .= "\n" . 'PAYPAL_STANDARD_DEBUG_GET_DATA:' . "\n\n";
           reset($_GET);
           foreach($_GET as $key=>$value) {
             $email_body .= $key . '=' . $value . "\n";
           }
-  
+
           osc_email('', MODULE_PAYMENT_PAYPAL_STANDARD_DEBUG_EMAIL, 'PayPal IPN Invalid Process', $email_body, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
         }
-           
+
         if (isset($_POST['invoice']) && is_numeric($_POST['invoice']) && $_POST['invoice'] > 0) {
           $Qcheck = $osC_Database->query('select orders_id from :table_orders where orders_id=:orders_id and customers_id=:customers_id');
           $Qcheck->bindTable(':table_orders', TABLE_ORDERS);

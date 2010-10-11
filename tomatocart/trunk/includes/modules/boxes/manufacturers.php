@@ -31,7 +31,7 @@
       $Qmanufacturers->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
       $Qmanufacturers->bindTable(':table_manufacturers_info', TABLE_MANUFACTURERS_INFO);
       $Qmanufacturers->bindInt(':languages_id', $osC_Language->getID());
-      $Qmanufacturers->setCache('manufacturers');
+      $Qmanufacturers->setCache('box-manufacturers-' . $osC_Language->getCode(), 100);
       $Qmanufacturers->execute();
 
       if (BOX_MANUFACTURERS_LIST_TYPE == 'ComboBox') {

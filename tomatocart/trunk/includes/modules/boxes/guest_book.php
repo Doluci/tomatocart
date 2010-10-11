@@ -35,14 +35,16 @@
       $QguestBook->bindInt(':guest_book_list', BOX_GUEST_BOOK_LIST);
       $QguestBook->execute();
       
-      $this->_content = '<dl>';
-      
-      while ($QguestBook->next()) {
-        $this->_content .= '<dt>' . $QguestBook->value('title') . '</dt>';
-        $this->_content .= '<dd>' . $QguestBook->value('content') . '</dd>';
+      if ($QguestBook->numberOfRows() > 0) {
+        $this->_content = '<dl>';
+        
+        while ($QguestBook->next()) {
+          $this->_content .= '<dt>' . $QguestBook->value('title') . '</dt>';
+          $this->_content .= '<dd>' . $QguestBook->value('content') . '</dd>';
+        }
+                
+        $this->_content .= '</dl>';
       }
-              
-      $this->_content .= '</dl>';
       
       $this->_content .= '<p align="right">' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook'), osc_draw_image_button('small_read_more.png', $osC_Language->get('button_read_more'))) . '</p>';
                                   

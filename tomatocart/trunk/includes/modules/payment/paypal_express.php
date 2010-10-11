@@ -134,9 +134,7 @@
         $post_string .= $key . '=' . urlencode(trim($value)) . '&';
       }
       $post_string = substr($post_string, 0, -1);
-      
-      var_dump($params);
-      
+           
       $response = $this->sendTransactionToGateway($this->api_url, $post_string);
       $response_array = array();
       parse_str($response, $response_array);

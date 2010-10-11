@@ -33,6 +33,7 @@
       $Qac->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
       $Qac->bindInt(':language_id', $osC_Language->getID());
       $Qac->bindInt(':max_display_articles_categories', BOX_ARTICLES_CATEGORIES_MAX_LIST);
+      $Qac->setCache('box_articles_categories-' . $osC_Language->getCode(), BOX_ARTICLES_CATEGORIES_MAX_LIST);
       $Qac->execute();
 
       $this->_content = '<ul>';

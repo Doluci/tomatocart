@@ -81,7 +81,7 @@
   
     function process_button() {
       global $osC_ShoppingCart;  
-      
+    
       $params = array('accessKey' => MODULE_PAYMENT_AMAZON_ACCESS_KEY,
                       'amount' => $osC_ShoppingCart->getTotal(),
                       'description' => STORE_NAME,
@@ -206,7 +206,7 @@
       $options = array(
         CURLOPT_SSL_VERIFYHOST => 1,
         CURLOPT_SSL_VERIFYPEER => true, //verify the certificate
-        CURLOPT_CAINFO => "ca-bundle.crt",
+        CURLOPT_CAINFO => MODULE_PAYMENT_AMAZON_X509_CERTIFICATE,
         CURLOPT_RETURNTRANSFER => true,     // return web page
         CURLOPT_FOLLOWLOCATION => false,     // do not follow redirects
       );
@@ -234,7 +234,7 @@
     } 
 
     function log($content){
-      $fh = fopen('cache/log/amazon.log', 'a+');
+      $fh = fopen('includes/logs/amazon.log', 'a+');
       fwrite($fh, $content);
       fclose($fh);
     }
@@ -288,20 +288,28 @@
     }    
 
     function callback(){
+
       $order_id = $_POST['referenceId'];
       $url_end_point = osc_href_link(FILENAME_CHECKOUT, 'callback&module=' . $this->_code, 'SSL', null, null, true);
 
       $params = $_POST;
       $params['callback'] = '';
       $params['module'] = 'amazon';
-      $error = self::_validate_request($params, $url_end_point, "POST");    
+      $error = self::_validate_request($params, $url_end_point, "POST");   
+
       
       if($error == 1 && $_POST['status'] == 'PS') {
         $comments = 'Amazon IPN Verified.';
         
-        osC_Order::process($order_id, $this->order_status, $comment);
+        osC_Order::process($order_id, $this->order_status, $comments);
       }    
     }
-    
+    function process() {
+      if (is_numeric($_GET['referenceId'])) {
+        osC_Order::process($_GET['referenceId'], ORDERS_STATUS_PENDING);
+      }
+    }
+  
+
   }
 ?>

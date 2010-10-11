@@ -45,12 +45,9 @@
       $Qproducts->bindInt(':default_flag', 1);
       $Qproducts->bindInt(':language_id', $osC_Language->getID());
       $Qproducts->bindInt(':max_display_feature_products', MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY);
-
-      if (MODULE_CONTENT_NEW_PRODUCTS_CACHE > 0) {
-        $Qproducts->setCache('feature_products-' . $osC_Language->getCode() . '-' . $osC_Currencies->getCode() . '-' . $current_category_id, MODULE_CONTENT_FEATURE_PRODUCTS_CACHE);
-      }
+      $Qproducts->setCache('feature-products-' . $osC_Language->getCode() . '-' . $osC_Currencies->getCode() . '-' . $current_category_id);
       $Qproducts->execute();
-      
+
       if ($Qproducts->numberOfRows()) {
         $this->_content = '<div style="overflow: auto; height: 100%;">';
 
@@ -81,12 +78,11 @@
       parent::install();
 
       $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY', '9', 'Maximum number of feature products to display', '6', '0', now())");
-      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'MODULE_CONTENT_FEATURE_PRODUCTS_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now())");
     }
 
     function getKeys() {
       if (!isset($this->_keys)) {
-        $this->_keys = array('MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY', 'MODULE_CONTENT_FEATURE_PRODUCTS_CACHE');
+        $this->_keys = array('MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY');
       }
 
       return $this->_keys;

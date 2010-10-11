@@ -13,7 +13,7 @@
 
   class osC_Payment_bank_wire extends osC_Payment {
     
-  var $_title,
+    var $_title,
         $_code = 'bank_wire',
         $_status = false,
         $_sort_order,
@@ -60,26 +60,25 @@
 	
 
    function selection() {
-    return array('id' => $this->_code,
-                 'module' => $this->_method_title);
+     return array('id' => $this->_code,
+                  'module' => $this->_method_title);
    }
     
    function confirmation() {
-    global $osC_Language;
+     global $osC_Language;
     
-    $confirmation = array('title' => $this->_method_title,
-                          'fields' => array(array('title' => $osC_Language->get('payment_bank_wire_bank_account_owner'),
-                                                  'field' => MODULE_PAYMENT_BANK_WIRE_ACCOUNT_OWNER),
-                                            array('title' => $osC_Language->get('payment_bank_wire_bank_detail'),
-                                                  'field' => MODULE_PAYMENT_BANK_WIRE_DETAIL),
-                                            array('title' => $osC_Language->get('payment_bank_wire_bank_address'),
-                                                  'field' => MODULE_PAYMENT_BANK_WIRE_BANK_ADDRESS)
-                          ));
+     $confirmation = array('title' => $this->_method_title,
+                           'fields' => array(array('title' => $osC_Language->get('payment_bank_wire_bank_account_owner'),
+                                                   'field' => MODULE_PAYMENT_BANK_WIRE_ACCOUNT_OWNER),
+                                             array('title' => $osC_Language->get('payment_bank_wire_bank_detail'),
+                                                   'field' => MODULE_PAYMENT_BANK_WIRE_DETAIL),
+                                             array('title' => $osC_Language->get('payment_bank_wire_bank_address'),
+                                                   'field' => MODULE_PAYMENT_BANK_WIRE_BANK_ADDRESS)));
 
-    return $confirmation;
-  }
+      return $confirmation;
+    }
 
-  function process() {
+    function process() {
       $this->_order_id = osC_Order::insert();
       osC_Order::process($this->_order_id, $this->order_status);
     }

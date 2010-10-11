@@ -48,10 +48,6 @@ class toC_Sefu {
       $link = str_replace(array('?', '&', '='), array('/', '/', ','), $link);
     } else if(SERVICES_KEYWORD_RICH_URLS == '1'){
       $link = $this->generateRichKeywordURL($link, $page);
-    } else{
-      if (strpos($link, '&') !== false) {
-        $link = str_replace('&', '&amp;', $link);
-      }
     }
 
     return $link;
