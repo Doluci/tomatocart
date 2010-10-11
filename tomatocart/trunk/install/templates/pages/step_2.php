@@ -15,12 +15,13 @@
   
   $directories = array('/admin/images', '/admin/backups', '/cache', 
                        '/cache/admin', '/cache/admin/emails', '/cache/admin/emails/attachments',
+                       '/cache/orders_customizations', '/cache/products_attachments', '/cache/products_customizations',
                        '/download', '/images', '/images/articles',
                        '/images/articles/large', '/images/articles/mini', '/images/articles/originals',
                        '/images/articles/product_info', '/images/articles/thumbnails', '/images/products',
                        '/images/products/large', '/images/products/mini', '/images/products/originals',
                        '/images/products/product_info', '/images/products/thumbnails', '/images/categories',
-                       '/images/manufacturers', '/includes/work', '/templates',
+                       '/images/manufacturers', '/includes/work', '/includes/logs', '/templates',
                        '/ext/piwik/', '/ext/piwik/config', '/ext/piwik/tmp',
                        '/ext/piwik/tmp/cache', '/ext/piwik/tmp/templates_c',
                        '/admin/includes/languages', '/includes/languages', '/install/includes/languages', '/install/templates/main_page/languages');
