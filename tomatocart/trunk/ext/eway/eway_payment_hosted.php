@@ -1,4 +1,4 @@
-<?
+<?php
 class EwayPaymentHosted {
   var $myGatewayURL;
     var $myCustomerID;
@@ -29,18 +29,18 @@ class EwayPaymentHosted {
 <html>
 <head></head>
 <body>
-  <form method="post" name="ewaySubmitForm" action="<?=$this->myGatewayURL;?>">
-  <input type="hidden" name="ewayCustomerID" value="<?=$this->myCustomerID;?>" />
-<?    
+  <form method="post" name="ewaySubmitForm" action="<?php echo $this->myGatewayURL; ?>">
+  <input type="hidden" name="ewayCustomerID" value="<?php echo $this->myCustomerID;?>" />
+<?php
   foreach($this->myTransactionData as $key=>$value){
-?>  <input type="hidden" name="<?=$key?>" value="<?=$value?>" />
-<?  
+?>  <input type="hidden" name="<?php echo $key?>" value="<?php echo $value?>" />
+<?php  
   }
 ?>  </form>
 <script type="text/javascript">document.ewaySubmitForm.submit();</script>
 </body>
 </html>
-<?
+<?php
   }
   
   //Set Transaction Data

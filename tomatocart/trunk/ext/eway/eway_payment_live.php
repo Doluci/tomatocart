@@ -1,4 +1,4 @@
-<?
+<?php
 class EwayPaymentLive {
   var $myGatewayURL;
     var $myCustomerID;
