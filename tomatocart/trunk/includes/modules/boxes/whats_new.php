@@ -25,7 +25,7 @@
     }
 
     function initialize() {
-      global $osC_Cache, $osC_Database, $osC_Services, $osC_Currencies, $osC_Specials, $osC_Language, $osC_Image, $osC_Product;
+      global $osC_Cache, $osC_Database, $osC_Services, $osC_Currencies, $osC_Specials, $osC_Language, $osC_Image;
 
       $this->_title_link = osc_href_link(FILENAME_PRODUCTS, 'new');
 

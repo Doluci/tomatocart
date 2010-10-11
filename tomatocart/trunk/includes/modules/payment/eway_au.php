@@ -121,8 +121,8 @@
         require_once('ext/eway/eway_payment_live.php');
         $eway = new EwayPaymentLive(MODULE_PAYMENT_EWAY_AU_CUSTOMER_ID, MODULE_PAYMENT_EWAYPAYMENT_PROCESSING_METHOD, (MODULE_PAYMENT_EWAYPAYMENT_GATEWAY_MODE == 'Live gateway') ? true : false);
         
-        $eway->setTransactionData("TotalAmount", 1);
-//        $eway->setTransactionData("TotalAmount", $_POST['my_totalamount']); //mandatory field
+//        $eway->setTransactionData("TotalAmount", 1);
+        $eway->setTransactionData("TotalAmount", $_POST['my_totalamount']); //mandatory field
         $eway->setTransactionData("CustomerFirstName", $_POST['my_firstname']);
         $eway->setTransactionData("CustomerLastName", $_POST['my_lastname']);
         $eway->setTransactionData("CustomerEmail", $_POST['my_email']);
@@ -172,7 +172,7 @@
       
           osC_Order::process($this->_order_id, $this->order_status, $comment);
         }
-      }else{
+      } else {
         //hosted payment
         require_once('ext/eway/eway_payment_hosted.php');
         
@@ -184,8 +184,8 @@
           $orders_id = $_prep[1];
         }
         
-  //      $eway->setTransactionData("TotalAmount", $_POST['my_totalamount']); //mandatory field
-        $eway->setTransactionData("TotalAmount", 1);
+        $eway->setTransactionData("TotalAmount", $_POST['my_totalamount']); //mandatory field
+//        $eway->setTransactionData("TotalAmount", 1);
         $eway->setTransactionData("CustomerFirstName", $_POST['my_firstname']);
         $eway->setTransactionData("CustomerLastName", $_POST['my_lastname']);
         $eway->setTransactionData("CustomerEmail", $_POST['my_email']);
@@ -199,9 +199,7 @@
         $eway->setTransactionData("Option1", $_POST['my_ewayOption1']);
         $eway->setTransactionData("Option2", "");
         $eway->setTransactionData("Option3", "");
-        
-
-        
+                
         $eway->doPayment();
         exit;
       }

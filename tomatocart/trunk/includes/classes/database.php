@@ -432,7 +432,9 @@
         $this->result = $this->db_class->next($this->query_handler);
 
         if (isset($this->cache_key)) {
-          $this->cache_data[] = $this->result;
+          if ($this->result !== false) {
+            $this->cache_data[] = $this->result;
+          }
         }
       }
 

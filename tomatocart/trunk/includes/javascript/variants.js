@@ -83,7 +83,7 @@ var TocVariants = new Class({
     $$('.mini').each(function(link) {
       var href = link.getProperty('href');
       if (href.indexOf(image) > -1) {
-        link.fireEvent('click');
+        link.fireEvent('mouseover');
       }
     });
   }

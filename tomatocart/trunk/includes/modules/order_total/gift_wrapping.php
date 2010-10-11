@@ -48,7 +48,7 @@
           $osC_ShoppingCart->addToTotal($osC_Tax->calculate($wrapping_price, $tax));
           
           if (DISPLAY_PRICE_WITH_TAX == '1') {
-            $wrapping_price += $tax /100;
+            $wrapping_price = $wrapping_price * ( 1 + $tax /100);
           }
         }
   

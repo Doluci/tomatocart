@@ -20,32 +20,32 @@
                           array('id' => 'f', 'text' => $osC_Language->get('gender_female')));
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), null, 'fake', (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array, (isset($Qentry) ? $Qentry->value('entry_gender') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getGender() : null))); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_gender'), 'gender1', 'fake', (ACCOUNT_GENDER > 0)) . osc_draw_radio_field('gender', $gender_array, (isset($Qentry) ? $Qentry->value('entry_gender') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getGender() : null))); ?></li>
 
 <?php
   }
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_first_name'), null, 'firstname', true) . osc_draw_input_field('firstname', (isset($Qentry) ? $Qentry->value('entry_firstname') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getFirstName() : null))); ?></tli>
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_last_name'), null, 'lastname', true) . osc_draw_input_field('lastname', (isset($Qentry) ? $Qentry->value('entry_lastname') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getLastName() : null))); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_first_name'), 'firstname', 'firstname', true) . osc_draw_input_field('firstname', (isset($Qentry) ? $Qentry->value('entry_firstname') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getFirstName() : null))); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_last_name'), 'lastname', 'lastname', true) . osc_draw_input_field('lastname', (isset($Qentry) ? $Qentry->value('entry_lastname') : (!$osC_Customer->hasDefaultAddress() ? $osC_Customer->getLastName() : null))); ?></li>
 
 <?php
   if (ACCOUNT_COMPANY > -1) {
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_company'), null, 'company', (ACCOUNT_COMPANY > 0)) . osc_draw_input_field('company', (isset($Qentry) ? $Qentry->value('entry_company') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_company'), 'company', 'company', (ACCOUNT_COMPANY > 0)) . osc_draw_input_field('company', (isset($Qentry) ? $Qentry->value('entry_company') : null)); ?></li>
 
 <?php
   }
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_street_address'), null, 'street_address', true) . osc_draw_input_field('street_address', (isset($Qentry) ? $Qentry->value('entry_street_address') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_street_address'), 'street_address', 'street_address', true) . osc_draw_input_field('street_address', (isset($Qentry) ? $Qentry->value('entry_street_address') : null)); ?></li>
 
 <?php
   if (ACCOUNT_SUBURB > -1) {
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_suburb'), null, 'suburb', (ACCOUNT_SUBURB > 0)) . osc_draw_input_field('suburb', (isset($Qentry) ? $Qentry->value('entry_suburb') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_suburb'), 'suburb', 'suburb', (ACCOUNT_SUBURB > 0)) . osc_draw_input_field('suburb', (isset($Qentry) ? $Qentry->value('entry_suburb') : null)); ?></li>
 
 <?php
   }
@@ -53,18 +53,18 @@
   if (ACCOUNT_POST_CODE > -1) {
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_post_code'), null, 'postcode', (ACCOUNT_POST_CODE > 0)) . osc_draw_input_field('postcode', (isset($Qentry) ? $Qentry->value('entry_postcode') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_post_code'), 'postcode', 'postcode', (ACCOUNT_POST_CODE > 0)) . osc_draw_input_field('postcode', (isset($Qentry) ? $Qentry->value('entry_postcode') : null)); ?></li>
 
 <?php
   }
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_city'), null, 'city', true) . osc_draw_input_field('city', (isset($Qentry) ? $Qentry->value('entry_city') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_city'), 'city', 'city', true) . osc_draw_input_field('city', (isset($Qentry) ? $Qentry->value('entry_city') : null)); ?></li>
 
   <li>
 
 <?php
-  echo osc_draw_label($osC_Language->get('field_customer_country'), null, 'country', true);
+  echo osc_draw_label($osC_Language->get('field_customer_country'), 'country', 'country', true);
 
   $countries_array = array(array('id' => '',
                                  'text' => $osC_Language->get('pull_down_default')));
@@ -86,7 +86,7 @@
   <li>
 
 <?php
-    echo osc_draw_label($osC_Language->get('field_customer_state'), null, 'state', (ACCOUNT_STATE > 0));
+    echo osc_draw_label($osC_Language->get('field_customer_state'), 'state', 'state', (ACCOUNT_STATE > 0));
 
     if ( (isset($_GET['new']) && ($_GET['new'] == 'save')) || (isset($_GET['edit']) && ($_GET['edit'] == 'save')) || (isset($_GET[$osC_Template->getModule()]) && ($_GET[$osC_Template->getModule()] == 'process')) ) {
       if ($entry_state_has_zones === true) {
@@ -127,7 +127,7 @@
   if (ACCOUNT_TELEPHONE > -1) {
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_telephone_number'), null, 'telephone', (ACCOUNT_TELEPHONE > 0)) . osc_draw_input_field('telephone', (isset($Qentry) ? $Qentry->value('entry_telephone') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_telephone_number'), 'telephone', 'telephone', (ACCOUNT_TELEPHONE > 0)) . osc_draw_input_field('telephone', (isset($Qentry) ? $Qentry->value('entry_telephone') : null)); ?></li>
 
 <?php
   }
@@ -135,7 +135,7 @@
   if (ACCOUNT_FAX > -1) {
 ?>
 
-  <li><?php echo osc_draw_label($osC_Language->get('field_customer_fax_number'), null, 'fax', (ACCOUNT_FAX > 0)) . osc_draw_input_field('fax', (isset($Qentry) ? $Qentry->value('entry_fax') : null)); ?></li>
+  <li><?php echo osc_draw_label($osC_Language->get('field_customer_fax_number'), 'fax', 'fax', (ACCOUNT_FAX > 0)) . osc_draw_input_field('fax', (isset($Qentry) ? $Qentry->value('entry_fax') : null)); ?></li>
 
 <?php
   }

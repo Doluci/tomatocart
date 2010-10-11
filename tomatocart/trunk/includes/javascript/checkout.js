@@ -678,11 +678,11 @@ var Checkout = new Class({
   },
   
   showNotify: function(image) {
-    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/en_us/ajax-loader.gif');
+    image.set('src', 'images/ajax-loader.gif');
   },
   
   hideNotify: function(image) {
-    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/en_us/button_continue.gif');
+    image.set('src', 'templates/' + this.options.template + '/images/buttons/languages/' + this.options.languageCode + '/button_continue.gif');
   }
 });
 

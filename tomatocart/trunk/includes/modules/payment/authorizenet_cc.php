@@ -217,7 +217,7 @@
                       'x_method' => 'CC',
                       'x_card_num' => $osC_CreditCard->getNumber(),
                       'x_exp_date' => $osC_CreditCard->getExpiryMonth() . $osC_CreditCard->getExpiryYear(),
-                      'x_type' => 'AUTH_ONLY',
+                      'x_type' => 'AUTH_CAPTURE',
                       'x_first_name' => $osC_ShoppingCart->getBillingAddress('firstname'),
                       'x_last_name' => $osC_ShoppingCart->getBillingAddress('lastname'),
                       'x_company' => $osC_ShoppingCart->getBillingAddress('company'),

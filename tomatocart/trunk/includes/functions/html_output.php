@@ -595,8 +595,8 @@
     if (!is_bool($required)) {
       $required = false;
     }
-
-    return '<label for="' . osc_output_string($for) . '"' . (!empty($access_key) ? ' accesskey="' . osc_output_string($access_key) . '"' : '') . '>' . osc_output_string($text) . ($required === true ? '<em>*</em>' : '') . '</label>';
+    
+    return '<label' . (!empty($for) ? ' for="' . osc_output_string($for) . '"' : '') . (!empty($access_key) ? ' accesskey="' . osc_output_string($access_key) . '"' : '') . '>' . osc_output_string($text) . ($required === true ? '<em>*</em>' : '') . '</label>';
   }
 
 /**
