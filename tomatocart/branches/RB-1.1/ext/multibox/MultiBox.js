@@ -515,11 +515,11 @@ var MultiBox = new Class({
 			this.elementContent.setStyle('display','block').injectInside(this.contentContainer);
 			
 		}else if(this.type == 'ajax'){
+			$('MultiBoxContentContainer').setStyle('overflow', 'scroll');
 			new Request.HTML({
 				update: $('MultiBoxContentContainer'),
 				autoCancel: true
 			}).get(this.contentObj.url);
-			
 		}else{
 			var obj = this.createEmbedObject().injectInside(this.contentContainer);
 			if(this.str != ''){
