@@ -345,7 +345,7 @@ CREATE TABLE toc_customers_basket (
   products_id tinytext NOT NULL,
   customers_basket_quantity int(11) NOT NULL,
   gift_certificates_data text,
-  customizations text,
+  customizations text default NULL,
   final_price decimal(15,4) NOT NULL,
   customers_basket_date_added datetime default NULL,
   PRIMARY KEY  (customers_basket_id)
@@ -1301,7 +1301,7 @@ CREATE TABLE toc_products_attributes_values (
   status int(4) NOT NULL,
   module varchar(255) NOT NULL,
   name varchar(100) NOT NULL,
-  value varchar(255) NOT NULL,
+  value varchar(100) NOT NULL,
   sort_order int(11) NOT NULL,
   PRIMARY KEY  (products_attributes_values_id,products_attributes_groups_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1591,7 +1591,6 @@ DROP TABLE IF EXISTS toc_specials;
 CREATE TABLE toc_specials (
   specials_id int(11) NOT NULL auto_increment,
   products_id int(11) NOT NULL,
-  specials_type int(1) NOT NULL default '0',
   specials_new_products_price decimal(15,4) NOT NULL,
   specials_date_added datetime default NULL,
   specials_last_modified datetime default NULL,
@@ -6997,7 +6996,7 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 
 # Articles Categories
 INSERT INTO toc_articles_categories (articles_categories_id, articles_categories_status, articles_categories_order) VALUES (1, 1, 1);
-INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url) VALUES (1, 1, 'Information', 'information');
+INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url, articles_categories_page_title, articles_categories_meta_keywords, articles_categories_meta_description) VALUES (1, 1, 'Information', 'information', '', '' , '');
 
 # Articles
 INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, articles_order, articles_date_added, articles_last_modified, articles_image) VALUES
@@ -7007,12 +7006,12 @@ INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, 
 (4, 1, 1, 4, now(), now(), NULL),
 (5, 1, 1, 5, now(), now(), NULL);
 
-INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description) VALUES
-(1, 1, 'About Us', 'about-us', 'Put here the required information.'),
-(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.'),
-(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.'),
-(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.'),
-(5, 1, 'Imprint', 'imprint', 'Put here the required information.');
+INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_page_title, articles_meta_keywords, articles_meta_description) VALUES
+(1, 1, 'About Us', 'about-us', 'Put here the required information.', '', '', ''),
+(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.', '', '', ''),
+(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.', '', '', ''),
+(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.', '', '', ''),
+(5, 1, 'Imprint', 'imprint', 'Put here the required information.', '', '', '');
 
 
 #piwik
