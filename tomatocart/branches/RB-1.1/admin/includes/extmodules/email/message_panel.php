@@ -371,7 +371,7 @@ Ext.extend(Toc.email.MessagePanel, Ext.Panel, {
   },
   
   print: function(){
-      var params = '?module=email&action=print_message&accounts_id=' + this.accountsId + '&fetch_time=' + this.fetchTime + '&id=' + this.messagesId;
+      var params = '?module=email&action=print_message&accounts_id=' + this.accountsId + '&fetch_time=' + this.fetchTime + '&id=' + this.messagesId + '&token=' + token;
       window.open('<?php echo osc_href_link_admin(FILENAME_JSON); ?>' + params); 
   }
   
