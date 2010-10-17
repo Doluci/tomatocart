@@ -185,7 +185,7 @@ CREATE TABLE toc_configuration (
   configuration_id int(11) NOT NULL auto_increment,
   configuration_title varchar(64) NOT NULL,
   configuration_key varchar(64) NOT NULL,
-  configuration_value varchar(16383) NOT NULL,
+  configuration_value varchar(1024) NOT NULL,
   configuration_description varchar(255) NOT NULL,
   configuration_group_id int(11) NOT NULL,
   sort_order int(5) default NULL,
@@ -577,13 +577,6 @@ CREATE TABLE toc_gift_certificates_redeem_history (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS toc_google_orders;
-CREATE TABLE toc_google_orders (
-  orders_id int(10) NOT NULL ,
-  google_order_number varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 DROP TABLE IF EXISTS toc_guest_books;
 CREATE TABLE IF NOT EXISTS toc_guest_books (
   guest_books_id int(11) NOT NULL AUTO_INCREMENT,
@@ -595,7 +588,7 @@ CREATE TABLE IF NOT EXISTS toc_guest_books (
   content text NOT NULL,
   date_added datetime DEFAULT NULL,
   PRIMARY KEY (guest_books_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS toc_languages;
@@ -6945,7 +6938,6 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_UPCOMING_PRODUCTS_MAX_DISPLAY', '10', 'Maximum number of upcoming products to display', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'MODULE_CONTENT_UPCOMING_PRODUCTS_CACHE', '1440', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY', '9', 'Maximum number of new products to display', '6', '0', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function) VALUES ('Allow display price to guests', 'ALLOW_DISPLAY_PRICE_TO_GUESTS', '1', '', 1, 1, 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))');
 
 # Weight Classes
 INSERT INTO toc_weight_classes VALUES (1, 'g', 1, 'Gram(s)');
@@ -6982,7 +6974,6 @@ INSERT INTO toc_email_templates (email_templates_id, email_templates_name, email
 (12, 'active_downloadable_product', 1),
 (13, 'admin_create_order_credit_slip', 1),
 (14, 'admin_create_order_store_credit', 1),
-(15, 'admin_create_purchase_order', 1),
 (16, 'admin_password_forgotten', 1),
 (17, 'out_of_stock_alerts', 1);
 
