@@ -62,6 +62,7 @@
   <script src="external/extjs/ext-all.js"></script> 
   <script type="text/javascript">
   Ext.onReady(function(){
+    Ext.BLANK_IMAGE_URL = 'templates/default/desktop/images/default/s.gif';
     Ext.EventManager.onWindowResize(centerPanel);
     
     var loginPanel = Ext.get("x-login-panel");
