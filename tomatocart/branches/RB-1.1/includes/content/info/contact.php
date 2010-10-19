@@ -73,6 +73,10 @@
       } else {
         $messageStack->add('contact', $osC_Language->get('field_customer_concat_email_error'));
       }
+
+      if (isset($_POST['telephone']) && !empty($_POST['telephone'])) {
+        $telephone = osc_sanitize_string($_POST['telephone']);
+      }
       
       if (isset($_POST['enquiry']) && !empty($_POST['enquiry'])) {
         $enquiry = osc_sanitize_string($_POST['enquiry']);
