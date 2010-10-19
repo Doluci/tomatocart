@@ -30,7 +30,7 @@
     
       <div id="productImages">
       <?php
-        echo osc_link_object($osC_Image->getImageUrl($osC_Product->getImage(), 'originals'), $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Product->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
+        echo osc_link_object('javascript:void(0)', $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), ' large-img="' . $osC_Image->getImageUrl($osC_Product->getImage(), 'large') . '" id="product_image" style="padding:0px;border:0px;"', 'product_info'),'id="defaultProductImage"');
         echo '<div style="clear:both"></div>';
     
         $images = $osC_Product->getImages();
@@ -457,7 +457,6 @@
 
 <script type="text/javascript">
 window.addEvent('domready', function(){
-
   //zoom image
   MojoZoom.makeZoomable(  
     document.getElementById("product_image"),   
