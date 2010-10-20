@@ -86,8 +86,12 @@
     }
     
     function selection() {
-      return array('id' => $this->_code,
-                   'module' => $this->_method_title);
+      if (isset($_SESSION['ppe_token'])) {
+        return array('id' => $this->_code,
+                 'module' => $this->_method_title);
+      }else {
+        return false;
+      }
     }
     
     function pre_confirmation_check() {
@@ -144,8 +148,6 @@
 
       if (($response_array['ACK'] != 'Success') && ($response_array['ACK'] != 'SuccessWithWarning')) {
         $messageStack->add_session('shopping_cart', stripslashes($response_array['L_LONGMESSAGE0']), 'error');
-        var_dump($response_array);
-        exit;
         
         osc_redirect(osc_href_link(FILENAME_CHECKOUT, '', 'SSL'));
         exit;
@@ -264,7 +266,8 @@
       
       $params['METHOD'] = 'SetExpressCheckout';
       $params['PAYMENTACTION'] = ((MODULE_PAYMENT_PAYPAL_EXPRESS_METHOD == 'Sale') ? 'Sale' : 'Authorization');
-      $params['RETURNURL'] = osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express&express_action=retrieve', 'NONSSL', true, true, true);
+      $params['RETURNURL'] = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . FILENAME_CHECKOUT . '?callback&module=paypal_express&express_action=retrieve';
+      //$params['RETURNURL'] = osc_href_link(FILENAME_CHECKOUT, 'callback&module=paypal_express&express_action=retrieve', 'NONSSL', true, true, true);
       $params['CANCELURL'] = osc_href_link(FILENAME_CHECKOUT, '', 'NONSSL', true, true, true);
       $params['AMT'] =  $osC_Currencies->formatRaw($osC_ShoppingCart->getTotal() - $osC_ShoppingCart->getShippingMethod('cost'), $osC_Currencies->getCode());
       $params['CURRENCYCODE'] = $osC_Currencies->getCode();
