@@ -1,3 +1,21 @@
+VERSION 1.1.1
+--BUG FIX
+ * Can not open categories window in IE, Opera
+ * include box modules when _has_box_modules is true and content modules when _has_content_modules is true
+ * fix bug for invalid token when downloading from admin(backup, email, file manager etc)
+ * correct install.sql to meet the mysql strict mysql mode
+ * initialize Ext.BLANK_IMAGE_URL or prevent system load blank image url from extjs.com
+ * Add variants product to cart error in IE
+ * Sometimes all slide images are gone due to the error of getimagesize function. Check whether slide images exist before get image size 
+ * 1st time the product page is loaded, when you click on the product image within the zoon-in area, the product image will be opened in the current window replacing the whole page instead of displaying it in the Lightbox Layer.
+ * Paypal express, debug information is display during checkout. Remove var_dump information
+ * calculate number of products bug in products categories
+ * import language error for articles, clone articles table failed
+ * telephone is not saved
+ 
+--FEATURE
+ * Use light box to compare products instead of popup a new windows
+
 VERSION 1.1
  * Polls
  * Guest Book
