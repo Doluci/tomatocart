@@ -117,7 +117,7 @@
                   });
               });
               </script>';
-      $this->_content = $css . "\n" . $js . "\n" . $content;
+      $this->_content = $js . "\n" . $content;
     }
 
     function install() {
