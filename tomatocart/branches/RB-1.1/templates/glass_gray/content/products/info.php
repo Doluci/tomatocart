@@ -496,6 +496,7 @@ window.addEvent('domready', function(){
     combVariants: $$('tr.variantCombobox select'),
     variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
     productsId: <?php echo $osC_Product->getID(); ?>,
+    displayQty:  <?php echo (PRODUCT_INFO_QUANTITY == '1') ? 'true' : 'false'; ?>,
     lang: {
       txtInStock: '<?php echo $osC_Language->get('in_stock');?>',
       txtOutOfStock: '<?php echo $osC_Language->get('out_of_stock'); ?>',
