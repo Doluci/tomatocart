@@ -737,10 +737,10 @@
           $Qupdate->setLogging($_SESSION['module'], $orders_id);
           $Qupdate->execute();      
             
-//          //send notification email
-//          $email->setData($customers_name, $customers_email_address, $Qproducts->value('products_name'));
-//          $email->buildMessage();
-//          $email->sendEmail();
+          //send notification email
+          $email->setData($customers_name, $customers_email_address, $Qproducts->value('products_name'));
+          $email->buildMessage();
+          $email->sendEmail();
         }
       }
     }
@@ -771,13 +771,13 @@
           $Qupdate->setLogging($_SESSION['module'], $orders_id);
           $Qupdate->execute();  
           
-//          //send notification email
-//          if ($Qcertificates->valueInt('type') == GIFT_CERTIFICATE_TYPE_EMAIL) {
-//            $email->resetRecipients();
-//            $email->setData($Qcertificates->value('senders_name'), $Qcertificates->value('senders_email'), $Qcertificates->value('recipients_name'), $Qcertificates->value('recipients_email'), $osC_Currencies->format($Qcertificates->value('amount')), $Qcertificates->value('gift_certificates_code'), $Qcertificates->value('messages'));
-//            $email->buildMessage();
-//            $email->sendEmail();
-//          }
+          //send notification email
+          if ($Qcertificates->valueInt('type') == GIFT_CERTIFICATE_TYPE_EMAIL) {
+            $email->resetRecipients();
+            $email->setData($Qcertificates->value('senders_name'), $Qcertificates->value('senders_email'), $Qcertificates->value('recipients_name'), $Qcertificates->value('recipients_email'), $osC_Currencies->format($Qcertificates->value('amount')), $Qcertificates->value('gift_certificates_code'), $Qcertificates->value('messages'));
+            $email->buildMessage();
+            $email->sendEmail();
+          }
         }
       }
     }
