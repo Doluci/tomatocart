@@ -378,39 +378,26 @@
       $Qstatus->bindValue(":categories_status", $flag);
       $Qstatus->execute();
       
-      $error = $osC_Database->isError();
-      
-      if( !$error ) {
-        if($flag) {
-          $Qpstatus = $osC_Database->query('update :table_products set products_status = 1 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
-          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
-          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-          $Qpstatus->bindInt(":categories_id", $id);
-          $Qpstatus->execute();    
-
-          $error = $osC_Database->isError();
-        } else {
-          if($product_flag) {
-	          $Qpstatus = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
-	          $Qpstatus->bindTable(':table_products', TABLE_PRODUCTS);
-	          $Qpstatus->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-	          $Qpstatus->bindInt(":categories_id", $id);
-	          $Qpstatus->execute();
-	          
-	          $error = $osC_Database->isError();
-	        }        
+      if( !$osC_Database->isError() ) {
+        if ( ($flag == 0) && ($product_flag == 1) ) {
+          $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+          $Qupdate->bindTable(':table_products', TABLE_PRODUCTS);
+          $Qupdate->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+          $Qupdate->bindInt(":categories_id", $id);
+          $Qupdate->execute();
         }
-
-	      if(!$error) {
-	        osC_Cache::clear('categories');
-	        osC_Cache::clear('category_tree');
-	        osC_Cache::clear('also_purchased');
-	        osC_Cache::clear('sefu-products');
-	        osC_Cache::clear('new_products');
-	        
-	        return true;
-	      }
       }
+      
+      if( !$osC_Database->isError() ) {
+        osC_Cache::clear('categories');
+        osC_Cache::clear('category_tree');
+        osC_Cache::clear('also_purchased');
+        osC_Cache::clear('sefu-products');
+        osC_Cache::clear('new_products');
+        
+        return true;
+      }
+      
       return false;
     }
   }
