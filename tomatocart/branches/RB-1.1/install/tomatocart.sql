@@ -751,7 +751,7 @@ CREATE TABLE toc_orders_products (
   products_id int(11) NOT NULL,
   products_type int(4) NOT NULL default 0,
   products_sku varchar(64) default NULL,
-  products_name varchar(64) NOT NULL,
+  products_name varchar(255) NOT NULL,
   products_price decimal(15,4) NOT NULL,
   final_price decimal(15,4) NOT NULL,
   products_tax decimal(7,4) NOT NULL,
@@ -1311,7 +1311,7 @@ DROP TABLE IF EXISTS toc_products_description;
 CREATE TABLE toc_products_description (
   products_id int(11) NOT NULL auto_increment,
   language_id int(11) NOT NULL default '1',
-  products_name varchar(64) NOT NULL default '',
+  products_name varchar(255) NOT NULL default '',
   products_short_description text,
   products_description text,
   products_keyword varchar(64) default NULL,
