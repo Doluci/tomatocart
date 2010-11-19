@@ -17,7 +17,7 @@ Toc.categories.CategoriesDialog = function (config) {
   config.id = 'categories-dialog-win';
   config.title = '<?php echo $osC_Language->get("action_heading_new_category"); ?>';
   config.layout = 'fit';
-  config.width = 480;
+  config.width = 520;
   config.height = 380;
   config.modal = true;
   config.iconCls = 'icon-categories-win';
@@ -64,10 +64,9 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
           var ratings = action.result.data.ratings;
           var records = new Array();
           this.pnlRatings.getStore().each(function(record) { 
-//          alert(record.id);  
-                            if (ratings.contains(record.id))   
-                                 records.push(record);   
-                        });   
+            if (ratings.contains(record.id))   
+              records.push(record);   
+          });   
           this.pnlRatings.getSelectionModel().selectRecords(records, true);
           
           this.pnlGeneral.cboParentCategories.disable();
@@ -134,8 +133,8 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
   submitForm: function () {
     this.frmCategories.form.baseParams['ratings'] = this.pnlRatings.getSelectionModel().selections.keys;
     
-    status = this.pnlGeneral.findById('status').findByType('radio');
-    status = status[0].getGroupValue()
+    var status = this.pnlGeneral.findById('status').findByType('radio');
+    status = status[0].getGroupValue();
     
     if(status == 0) {
       this.frmCategories.form.baseParams['product_flag'] = 1;

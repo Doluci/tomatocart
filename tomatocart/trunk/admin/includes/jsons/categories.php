@@ -176,8 +176,6 @@
       
       $parent_id = isset($_REQUEST['parent_category_id']) ? end(explode('_', $_REQUEST['parent_category_id'])) : null;
       
-//      $flag = (isset($_REQUEST['product_flag']))? $_REQUEST['product_flag']: 0;
-      
       //search engine friendly urls
       $formatted_urls = array();
       $urls = $_REQUEST['categories_url'];

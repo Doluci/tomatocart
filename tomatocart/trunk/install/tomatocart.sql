@@ -185,7 +185,7 @@ CREATE TABLE toc_configuration (
   configuration_id int(11) NOT NULL auto_increment,
   configuration_title varchar(64) NOT NULL,
   configuration_key varchar(64) NOT NULL,
-  configuration_value varchar(16383) NOT NULL,
+  configuration_value varchar(1024) NOT NULL,
   configuration_description varchar(255) NOT NULL,
   configuration_group_id int(11) NOT NULL,
   sort_order int(5) default NULL,
@@ -345,7 +345,7 @@ CREATE TABLE toc_customers_basket (
   products_id tinytext NOT NULL,
   customers_basket_quantity int(11) NOT NULL,
   gift_certificates_data text,
-  customizations text,
+  customizations text default NULL,
   final_price decimal(15,4) NOT NULL,
   customers_basket_date_added datetime default NULL,
   PRIMARY KEY  (customers_basket_id)
@@ -577,13 +577,6 @@ CREATE TABLE toc_gift_certificates_redeem_history (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS toc_google_orders;
-CREATE TABLE toc_google_orders (
-  orders_id int(10) NOT NULL ,
-  google_order_number varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 DROP TABLE IF EXISTS toc_guest_books;
 CREATE TABLE IF NOT EXISTS toc_guest_books (
   guest_books_id int(11) NOT NULL AUTO_INCREMENT,
@@ -595,7 +588,7 @@ CREATE TABLE IF NOT EXISTS toc_guest_books (
   content text NOT NULL,
   date_added datetime DEFAULT NULL,
   PRIMARY KEY (guest_books_id)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS toc_languages;
@@ -758,7 +751,7 @@ CREATE TABLE toc_orders_products (
   products_id int(11) NOT NULL,
   products_type int(4) NOT NULL default 0,
   products_sku varchar(64) default NULL,
-  products_name varchar(64) NOT NULL,
+  products_name varchar(255) NOT NULL,
   products_price decimal(15,4) NOT NULL,
   final_price decimal(15,4) NOT NULL,
   products_tax decimal(7,4) NOT NULL,
@@ -1308,7 +1301,7 @@ CREATE TABLE toc_products_attributes_values (
   status int(4) NOT NULL,
   module varchar(255) NOT NULL,
   name varchar(100) NOT NULL,
-  value varchar(255) NOT NULL,
+  value varchar(100) NOT NULL,
   sort_order int(11) NOT NULL,
   PRIMARY KEY  (products_attributes_values_id,products_attributes_groups_id,language_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -1318,7 +1311,7 @@ DROP TABLE IF EXISTS toc_products_description;
 CREATE TABLE toc_products_description (
   products_id int(11) NOT NULL auto_increment,
   language_id int(11) NOT NULL default '1',
-  products_name varchar(64) NOT NULL default '',
+  products_name varchar(255) NOT NULL default '',
   products_short_description text,
   products_description text,
   products_keyword varchar(64) default NULL,
@@ -1598,7 +1591,6 @@ DROP TABLE IF EXISTS toc_specials;
 CREATE TABLE toc_specials (
   specials_id int(11) NOT NULL auto_increment,
   products_id int(11) NOT NULL,
-  specials_type int(1) NOT NULL default '0',
   specials_new_products_price decimal(15,4) NOT NULL,
   specials_date_added datetime default NULL,
   specials_last_modified datetime default NULL,
@@ -6945,7 +6937,6 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_UPCOMING_PRODUCTS_MAX_DISPLAY', '10', 'Maximum number of upcoming products to display', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'MODULE_CONTENT_UPCOMING_PRODUCTS_CACHE', '1440', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Maximum Entries To Display', 'MODULE_CONTENT_FEATURE_PRODUCTS_MAX_DISPLAY', '9', 'Maximum number of new products to display', '6', '0', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function) VALUES ('Allow display price to guests', 'ALLOW_DISPLAY_PRICE_TO_GUESTS', '1', '', 1, 1, 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))');
 
 # Weight Classes
 INSERT INTO toc_weight_classes VALUES (1, 'g', 1, 'Gram(s)');
@@ -6982,7 +6973,6 @@ INSERT INTO toc_email_templates (email_templates_id, email_templates_name, email
 (12, 'active_downloadable_product', 1),
 (13, 'admin_create_order_credit_slip', 1),
 (14, 'admin_create_order_store_credit', 1),
-(15, 'admin_create_purchase_order', 1),
 (16, 'admin_password_forgotten', 1),
 (17, 'out_of_stock_alerts', 1);
 
@@ -7006,7 +6996,7 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 
 # Articles Categories
 INSERT INTO toc_articles_categories (articles_categories_id, articles_categories_status, articles_categories_order) VALUES (1, 1, 1);
-INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url) VALUES (1, 1, 'Information', 'information');
+INSERT INTO toc_articles_categories_description (articles_categories_id, language_id, articles_categories_name, articles_categories_url, articles_categories_page_title, articles_categories_meta_keywords, articles_categories_meta_description) VALUES (1, 1, 'Information', 'information', '', '' , '');
 
 # Articles
 INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, articles_order, articles_date_added, articles_last_modified, articles_image) VALUES
@@ -7016,12 +7006,12 @@ INSERT INTO toc_articles (articles_id, articles_categories_id, articles_status, 
 (4, 1, 1, 4, now(), now(), NULL),
 (5, 1, 1, 5, now(), now(), NULL);
 
-INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description) VALUES
-(1, 1, 'About Us', 'about-us', 'Put here the required information.'),
-(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.'),
-(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.'),
-(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.'),
-(5, 1, 'Imprint', 'imprint', 'Put here the required information.');
+INSERT INTO toc_articles_description (articles_id, language_id, articles_name, articles_url, articles_description, articles_page_title, articles_meta_keywords, articles_meta_description) VALUES
+(1, 1, 'About Us', 'about-us', 'Put here the required information.', '', '', ''),
+(2, 1, 'Shipping & Returns', 'shipping-returns', 'Put here the required information.', '', '', ''),
+(3, 1, 'Privacy Notice', 'privacy-notice', 'Put here the required information.', '', '', ''),
+(4, 1, 'Conditions of Use', 'conditions-of-use', 'Put here the required information.', '', '', ''),
+(5, 1, 'Imprint', 'imprint', 'Put here the required information.', '', '', '');
 
 
 #piwik
