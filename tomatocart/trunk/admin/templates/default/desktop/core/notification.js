@@ -90,7 +90,7 @@ Ext.ux.Notification = Ext.extend(Ext.Window, {
         , remove: true
       });
     } else {
-      Ext.ux.Notification.superclass.onDestroy.call(this);
+      Ext.ux.Notification.superclass.close.call(this);
     }
   }
 });
