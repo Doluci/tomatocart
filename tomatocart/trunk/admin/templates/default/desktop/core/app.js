@@ -362,18 +362,7 @@ Ext.extend(Ext.app.App, Ext.util.Observable, {
 		
     return desktopSettingWindow;
   },
-  
-  getTocLiveFeedWindow: function() {
-  	var tocLiveFeedWindow = new Ext.Window({
-  	 id: 'toc-live-feed-win',
-  	 width: 600,
-  	 height: 500,
-  	 html: '<iframe src ="http://www.tomatocart.com/site-map.html" width="100%" height="100%"></iframe>'
-  	});
-  	
-  	return tocLiveFeedWindow;
-  },
-  
+    
   createTrayButton: function(){
     var desktopSettingBtn = new Ext.Button({
       text: '',
