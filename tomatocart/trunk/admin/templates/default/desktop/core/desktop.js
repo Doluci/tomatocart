@@ -257,7 +257,6 @@ Ext.Desktop = function(app){
   
   this.setWallpaper = function(o){
     if(o && o.code){
-      
 //      var notifyWin = this.showNotification({
 //        html: TocLanguage.LoadWallpaper, 
 //        title: 'Please wait'
@@ -266,8 +265,8 @@ Ext.Desktop = function(app){
       var wp = new Image();
       wp.src = o.path;
       
-//      var task = new Ext.util.DelayedTask(verify, this);
-//      task.delay(200);
+      var task = new Ext.util.DelayedTask(verify, this);
+      task.delay(200);
       
       app.styles.wallpaper = o.code;
     }
@@ -276,10 +275,10 @@ Ext.Desktop = function(app){
       if(wp.complete){
         task.cancel();
         
-        notifyWin.setIconClass('x-icon-done');
-        notifyWin.setTitle('Finished');
-        notifyWin.setMessage('Wallpaper loaded.');
-        this.hideNotification(notifyWin);
+//        notifyWin.setIconClass('x-icon-done');
+//        notifyWin.setTitle('Finished');
+//        notifyWin.setMessage('Wallpaper loaded.');
+//        this.hideNotification(notifyWin);
         
         document.body.background = wp.src;
       }else{
