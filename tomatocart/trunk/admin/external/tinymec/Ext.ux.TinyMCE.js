@@ -151,9 +151,9 @@
 
 			/** ----------------------------------------------------------
 			*/        
-			onDestroy: function(){
+			beforeDestroy: function(){
 				if( this.ed ) tinyMCE.remove( this.ed );
-				Ext.ux.TinyMCE.superclass.onDestroy.call( this );
+				Ext.ux.TinyMCE.superclass.beforeDestroy.call( this );
 			},
 			
 			/** ----------------------------------------------------------
