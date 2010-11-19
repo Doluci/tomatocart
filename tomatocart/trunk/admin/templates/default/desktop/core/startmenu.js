@@ -56,14 +56,13 @@ Ext.extend(Ext.ux.StartMenu, Ext.menu.Menu, {
   height : 300,
   toolPanelWidth : 100,
   width : 300,
-  
     // private
     render : function(){
         if(this.el){
             return;
         }
         var el = this.el = new Ext.Layer({
-            cls: "x-menu ux-start-menu",
+            cls: Ext.isIE8 ? "x-start-menu ux-start-menu" : "x-menu ux-start-menu",
             shadow:this.shadow,
             constrain: false,
             parentEl: this.parentEl || document.body,
@@ -201,7 +200,7 @@ Ext.extend(Ext.ux.StartMenu, Ext.menu.Menu, {
           padding: '2px',
           position: 'absolute',
           overflow: 'auto'
-        });
+          });
         
         this.toolsPanel.setStyle({
           padding: '2px 4px 2px 2px',

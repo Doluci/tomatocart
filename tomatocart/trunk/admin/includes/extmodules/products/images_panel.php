@@ -59,6 +59,7 @@ Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
     this.pnlImagesUpload = new Ext.ux.UploadPanel({
       title: '<?php echo $osC_Language->get('image_remote_upload'); ?>', 
       border: false,
+      id: 'products-img-upload',
       removeAllIconCls: 'remove',
       addText: TocLanguage.btnAdd,
       uploadText: TocLanguage.btnUpload,
