@@ -1010,3 +1010,6 @@ div.ext-ux-wiz-Header {
   font-size: 16px;
   font-weight: bold;
 }
+
+#live-feed {width:300px !important;}
+#live-feed .x-window-body {width: 262px !important; height: 150px !important;}
