@@ -361,7 +361,7 @@ var AjaxShoppingCart = new Class({
   					var deleteEl = new Element('span', {'class': 'removeProduct'});
   
   					$('ajaxCartContentProducts').grab(rowEl.grab(quantityEl).grab(productEl).grab(priceEl).grab(deleteEl));
-  
+
             //variants
             if ( $defined(product.variants) ) {
               var variants = [];
@@ -369,10 +369,10 @@ var AjaxShoppingCart = new Class({
                 variants.push(variant.groups_name + ': ' + variant.values_name);
               });
 
-              var variantsEl = new Element('p', {'class': 'variants', 'html': '<p>' + variants.join('<br />') + '</p>'});
+              var variantsEl = new Element('p', {'class': 'variants', 'html': variants.join('<br />')});
               rowEl.grab(variantsEl);
             }
-            
+
             //customization fields
             if ( $defined(product.customizations) ) {
               var customizationsEl = new Element('p', {'class': 'customizations', 'html': this.getCustomizations(product.customizations)});

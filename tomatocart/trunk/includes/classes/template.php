@@ -262,23 +262,27 @@
       $object = new $_template_info();
       
       //initialize box modules
-      $this->osC_Modules_Boxes = new osC_Modules('boxes');
-      $groups = $object->getGroups('boxes');
-      if (is_array($groups) && !empty($groups)) {
-        foreach ($groups as $group) {
-          $content = $this->_iniGroupModules('boxes', $group);
-          $this->_module_boxes[$group] = trim($content);
+      if ($this->hasPageBoxModules()) {
+        $this->osC_Modules_Boxes = new osC_Modules('boxes');
+        $groups = $object->getGroups('boxes');
+        if (is_array($groups) && !empty($groups)) {
+          foreach ($groups as $group) {
+            $content = $this->_iniGroupModules('boxes', $group);
+            $this->_module_boxes[$group] = trim($content);
+          }
         }
       }
       
       //initialize content modules
-      $this->osC_Modules_Content = new osC_Modules('content');
-      $groups = $object->getGroups('content');
-      if (is_array($groups) && !empty($groups)) {
-        foreach ($groups as $group) {
-          $content = $this->_iniGroupModules('content', $group);
-          
-          $this->_module_content[$group] = trim($content);
+      if ($this->hasPageContentModules()) {
+        $this->osC_Modules_Content = new osC_Modules('content');
+        $groups = $object->getGroups('content');
+        if (is_array($groups) && !empty($groups)) {
+          foreach ($groups as $group) {
+            $content = $this->_iniGroupModules('content', $group);
+            
+            $this->_module_content[$group] = trim($content);
+          }
         }
       }
     }

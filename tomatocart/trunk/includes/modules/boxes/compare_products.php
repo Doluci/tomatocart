@@ -25,23 +25,38 @@
     }
 
     function initialize() {
-      global $osC_Language, $toC_Compare_Products;
+      global $osC_Language, $osC_Template, $toC_Compare_Products;
       
       if ($toC_Compare_Products->hasContents()) {
+        $osC_Template->addStyleSheet('ext/multibox/multibox.css');
+        $osC_Template->addJavascriptFilename('ext/multibox/Overlay.js');
+        $osC_Template->addJavascriptFilename('ext/multibox/MultiBox.js');
+        
         $this->_content = '<ul>';
         
         foreach ($toC_Compare_Products->getProducts() as $products_id) {
           $osC_Product = new osC_Product($products_id);
             
           $this->_content .= '<li>' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $products_id . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_remove'), osc_draw_image_button('button_delete_icon.png', $osC_Language->get('button_delete')), 'style="float: right; margin: 0 3px 1px 3px"') . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Product->getTitle()) . '</li>';
-	      }
-	      
+        }
+        
         $this->_content .= '</ul>';
         $this->_content .= 
           '<p>' .
-            '<span style="float: right">' . osc_link_object('javascript:popupWindow(\'' . osc_href_link(FILENAME_PRODUCTS, 'compare_products') . '\', \'popupWindow\', \'scrollbars=yes\');', osc_draw_image_button('small_compare_now.png', $osC_Language->get('button_compare_now'))) . '</span>' .
+            '<span style="float: right">' . osc_link_object(osc_href_link(FILENAME_JSON, 'module=products&action=compare_products'), osc_draw_image_button('small_compare_now.png', $osC_Language->get('button_compare_now')), 'class="multibox" rel="width:800,height:400,ajax:true"') . '</span>' .
             osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=compare_products_clear'), osc_draw_image_button('small_clear.png', $osC_Language->get('button_clear'))) . '&nbsp;&nbsp;' .
           '</p>';
+      
+        $js .= '<script type="text/javascript">
+                  window.addEvent("domready",function() {
+                    var overlay = new Overlay(); 
+                    var box = new MultiBox(\'multibox\', { 
+                        overlay: overlay
+                    });
+                  });
+                </script>';
+        
+        $this->_content .= "\n" . $js;
       }
     }
   }

@@ -240,7 +240,7 @@ Ext.extend(Toc.backup.BackupGrid, Ext.grid.GridPanel, {
     file = record.get('file');
     params = "height=300px,width=340px,top=50px,left=165px,status=yes,toolbar=no,menubar=no,location=no,scrollbars=yes";
     
-    url = '<?php echo osc_href_link_admin(FILENAME_JSON); ?>' + '?module=backup&action=download_backup&file=' + file;
+    url = '<?php echo osc_href_link_admin(FILENAME_JSON); ?>' + '?module=backup&action=download_backup&file=' + file + '&token=' + token;
 
     window.open(url, "", params); 
   },

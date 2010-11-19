@@ -323,8 +323,6 @@
       
       $response_array = array();
       parse_str($response, $response_array);
-      var_dump($params);
-      var_dump($response_array);
       exit;
       
       if ($response_array['RESULT'] != '0') {

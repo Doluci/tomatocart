@@ -11,7 +11,7 @@
   as published by the Free Software Foundation.
 */
 
-  require('includes\classes\homepage_info.php');
+  require('includes/classes/homepage_info.php');
 
   class toC_Json_Homepage_info {
 

@@ -324,17 +324,15 @@ Ext.extend(Toc.categories.CategoriesGrid, Ext.grid.GridPanel, {
         switch(action) {
           case 'status-off':
             flag = (action == 'status-on') ? 1 : 0;
-            product_flag = 1;
             
             Ext.MessageBox.confirm(
               TocLanguage.msgWarningTitle, 
               TocLanguage.msgDisableProducts, 
               function (btn) {
                 if (btn == 'no') {
-                  product_flag = 0;
-                  this.onAction(module, categoriesId, flag, product_flag);
+                  this.onAction(module, categoriesId, flag, 0);
                 } else{
-                  this.onAction(module, categoriesId, flag, product_flag);
+                  this.onAction(module, categoriesId, flag, 1);
                 }
               }, 
               this

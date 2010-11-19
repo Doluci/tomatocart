@@ -22,7 +22,7 @@ Toc.categories.RatingsGridPanel = function(config){
     url: Toc.CONF.CONN_URL,
     baseParams: {
       module: 'categories',
-      action: 'list_ratings',
+      action: 'list_ratings'
     },
     reader: new Ext.data.JsonReader({
       root: Toc.CONF.JSON_READER_ROOT,

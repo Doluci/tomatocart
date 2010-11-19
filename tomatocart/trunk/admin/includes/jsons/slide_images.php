@@ -30,10 +30,13 @@
         
       $records = array();     
       while ( $Qimages->next() ) {
-        list($orig_width, $orig_height) = getimagesize('../images/' . $Qimages->value('image'));
-        $width = intval($orig_width * 80 / $orig_height);
-        
-        $image = '<img src="../images/' . $Qimages->value('image') . '" width="' . $width . '" height="80" />'; 
+        $image = '';
+        if (file_exists('../images/' . $Qimages->value('image'))) {
+          list($orig_width, $orig_height) = getimagesize('../images/' . $Qimages->value('image'));
+          $width = intval($orig_width * 80 / $orig_height);
+          
+          $image = '<img src="../images/' . $Qimages->value('image') . '" width="' . $width . '" height="80" />';
+        }
        
         $records[] = array('image_id' => $Qimages->valueInt('image_id'),
                            'image' =>  $image,
