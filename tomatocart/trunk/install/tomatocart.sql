@@ -34,7 +34,7 @@ CREATE TABLE toc_address_book (
 DROP TABLE IF EXISTS toc_administrators;
 CREATE TABLE toc_administrators (
   id int(11) NOT NULL auto_increment,
-  user_name varchar(32) character set utf8 collate utf8_bin NOT NULL,
+  user_name varchar(32) default NULL,
   user_password varchar(40) NOT NULL,
   user_settings text,
   email_address varchar(96) NOT NULL,
@@ -57,8 +57,8 @@ CREATE TABLE toc_administrators_log (
   module_action varchar(32) default NULL,
   module_id int(11) default NULL,
   field_key varchar(255) NOT NULL,
-  old_value text collate utf8_unicode_ci,
-  new_value text collate utf8_unicode_ci,
+  old_value text,
+  new_value text,
   action varchar(255) NOT NULL,
   administrators_id int(11) NOT NULL,
   datestamp datetime NOT NULL,
@@ -384,7 +384,7 @@ CREATE TABLE toc_customers_groups_description (
 
 
 DROP TABLE IF EXISTS toc_customization_fields;
-CREATE TABLE IF NOT EXISTS toc_customization_fields (
+CREATE TABLE toc_customization_fields (
   customization_fields_id int(11) NOT NULL auto_increment,
   products_id int(11) NOT NULL,
   type tinyint(1) NOT NULL,
@@ -394,7 +394,7 @@ CREATE TABLE IF NOT EXISTS toc_customization_fields (
 
 
 DROP TABLE IF EXISTS toc_customization_fields_description;
-CREATE TABLE IF NOT EXISTS toc_customization_fields_description (
+CREATE TABLE toc_customization_fields_description (
   customization_fields_id int(11) NOT NULL,
   languages_id int(11) NOT NULL,
   name varchar(64) NOT NULL,
@@ -578,7 +578,7 @@ CREATE TABLE toc_gift_certificates_redeem_history (
 
 
 DROP TABLE IF EXISTS toc_guest_books;
-CREATE TABLE IF NOT EXISTS toc_guest_books (
+CREATE TABLE toc_guest_books (
   guest_books_id int(11) NOT NULL AUTO_INCREMENT,
   title varchar(255) NOT NULL,
   email varchar(255) NOT NULL,
@@ -710,6 +710,7 @@ CREATE TABLE toc_orders (
   delivery_country_iso2 char(2) NOT NULL,
   delivery_country_iso3 char(3) NOT NULL,
   delivery_address_format varchar(255) NOT NULL,
+  delivery_telephone varchar(32) NOT NULL,
   billing_name varchar(64) NOT NULL,
   billing_company varchar(32) default NULL,
   billing_street_address varchar(64) NOT NULL,
@@ -724,6 +725,7 @@ CREATE TABLE toc_orders (
   billing_country_iso2 char(2) NOT NULL,
   billing_country_iso3 char(3) NOT NULL,
   billing_address_format varchar(255) NOT NULL,
+  billing_telephone varchar(32) NOT NULL,
   payment_method varchar(255) NOT NULL,
   payment_module varchar(255) NOT NULL,
   uses_store_credit tinyint(1) NOT NULL,
@@ -1163,7 +1165,7 @@ CREATE TABLE toc_piwik_user_language (
 
 
 DROP TABLE IF EXISTS toc_polls;
-CREATE TABLE IF NOT EXISTS toc_polls (
+CREATE TABLE toc_polls (
   polls_id int(11) NOT NULL auto_increment,
   polls_type tinyint(1) NOT NULL,
   polls_status tinyint(1) NOT NULL,
@@ -1174,7 +1176,7 @@ CREATE TABLE IF NOT EXISTS toc_polls (
 
 
 DROP TABLE IF EXISTS toc_polls_answers;
-CREATE TABLE IF NOT EXISTS toc_polls_answers (
+CREATE TABLE toc_polls_answers (
   polls_answers_id int(11) NOT NULL auto_increment,
   polls_id int(10) NOT NULL,
   votes_count int(10) NOT NULL default '0',
@@ -1184,7 +1186,7 @@ CREATE TABLE IF NOT EXISTS toc_polls_answers (
 
 
 DROP TABLE IF EXISTS toc_polls_answers_description;
-CREATE TABLE IF NOT EXISTS toc_polls_answers_description (
+CREATE TABLE toc_polls_answers_description (
   polls_answers_id int(11) NOT NULL,
   languages_id int(11) NOT NULL,
   answers_title varchar(255) NOT NULL,
@@ -1193,7 +1195,7 @@ CREATE TABLE IF NOT EXISTS toc_polls_answers_description (
 
 
 DROP TABLE IF EXISTS toc_polls_description;
-CREATE TABLE IF NOT EXISTS toc_polls_description (
+CREATE TABLE toc_polls_description (
   polls_id int(11) NOT NULL,
   polls_title varchar(255) NOT NULL,
   languages_id int(11) NOT NULL,
@@ -1202,7 +1204,7 @@ CREATE TABLE IF NOT EXISTS toc_polls_description (
 
 
 DROP TABLE IF EXISTS toc_polls_votes;
-CREATE TABLE IF NOT EXISTS toc_polls_votes (
+CREATE TABLE toc_polls_votes (
   polls_votes_id int(11) NOT NULL auto_increment,
   polls_id int(11) NOT NULL,
   polls_answers_id int(11) NOT NULL,
@@ -1241,7 +1243,8 @@ CREATE TABLE toc_products (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS toc_products_accessories (
+DROP TABLE IF EXISTS toc_products_accessories;
+CREATE TABLE toc_products_accessories (
   products_id int(11) NOT NULL,
   accessories_id int(11) NOT NULL,
   PRIMARY KEY (products_id, accessories_id)
@@ -1516,7 +1519,7 @@ CREATE TABLE toc_ratings (
 
 
 DROP TABLE IF EXISTS toc_ratings_description;
-CREATE TABLE IF NOT EXISTS toc_ratings_description (
+CREATE TABLE toc_ratings_description (
   ratings_id int(11) NOT NULL,
   languages_id int(11) NOT NULL,
   ratings_text varchar(64) NOT NULL,
@@ -1525,7 +1528,7 @@ CREATE TABLE IF NOT EXISTS toc_ratings_description (
 
 
 DROP TABLE IF EXISTS toc_customers_ratings;
-CREATE TABLE IF NOT EXISTS toc_customers_ratings (
+CREATE TABLE toc_customers_ratings (
   customers_ratings_id int(11) NOT NULL AUTO_INCREMENT,
   customers_id int(11) NOT NULL,  
   reviews_id int(11) NOT NULL,  
@@ -6973,8 +6976,8 @@ INSERT INTO toc_email_templates (email_templates_id, email_templates_name, email
 (12, 'active_downloadable_product', 1),
 (13, 'admin_create_order_credit_slip', 1),
 (14, 'admin_create_order_store_credit', 1),
-(16, 'admin_password_forgotten', 1),
-(17, 'out_of_stock_alerts', 1);
+(15, 'admin_password_forgotten', 1),
+(16, 'out_of_stock_alerts', 1);
 
 INSERT INTO toc_email_templates_description (email_templates_id, language_id, email_title, email_content) VALUES
 (1, 1, 'Welcome to %%store_name%%', '<p>%%greeting_text%%</p><br /><br /><p>We welcome you to %%store_name%%!</p><br /><br /><p>You can now take part in the various services we have offer for you. Some of these services include:</p><br /><br /><ul><br /><li>Permanent Cart - Any products added to your online cart remain there until you remove them, or check them out.<br /><li>Address Book - We can now deliver your products to another address other than yours! This is perfect to send birthday gifts direct to the birthday-person themselves.<br /><li>Order History - View your history of purchases that you have made with us.<br /><li>Products Reviews - Share your opinions on products with our other customers.<br /></ul><br /><p>For help with any of our online services, please email the store-owner: %%store_owner_email_address%%.</p><br /><br />Note: This email address was given to us by one of our customers. If you did not signup to be a member, please send an email to the store owner.'),
@@ -6991,8 +6994,8 @@ INSERT INTO toc_email_templates_description (email_templates_id, language_id, em
 (12, 1, 'The download link for %%downloadable_products%% is actived', 'Dear %%customer_name%%,<br /><br />The download link for the products you purchased from store %%store_name%%: <br /><br />%%downloadable_products%%<br /><br />is actived.<br /><br />Please go to the orders area of "My Account" and download the products.<br /><br />%%download_link%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (13, 1, 'A new credit slip is created for returned products', 'Dear %%customer_name%%,<br /><br />A new credit slip is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The slip number is %%slip_number%% and the total amount is %%total_amount%%. You can print out the credit slip in the "My Acount" area. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
 (14, 1, 'New store credit is created for returned products', 'Dear %%customer_name%%,<br /><br />New store credit is created for following returned products:<br /><br /> %%returned_products%% <br /><br />from order %%order_number%%. The total amount is %%total_amount%% and the store credit is made to your billing account so that it can be used for future purchases. <br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
-(16, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
-(17, 1, 'Product out of Stock', 'TomatoCart<br>---------------------------------------------------<br>%%products_name%% %%products_variants%% is out of stock.<br>---------------------------------------------------<br>Remaining stock: %%products_quantity%%. You are advised to turn <br>to the Products section in the admin panel to replenish the inventory.');
+(15, 1, 'Administrator Password Reminder to TomatoCart', 'A new password was requested from %%admin_ip_address%%.<br /><br />Your new password is:<br /><br />%%admin_password%%<br /><br />Regards,<br /><br />%%store_name%% <br />%%store_owner_email_address%%'),
+(16, 1, 'Product out of Stock', 'TomatoCart<br>---------------------------------------------------<br>%%products_name%% %%products_variants%% is out of stock.<br>---------------------------------------------------<br>Remaining stock: %%products_quantity%%. You are advised to turn <br>to the Products section in the admin panel to replenish the inventory.');
 
 # Articles Categories
 INSERT INTO toc_articles_categories (articles_categories_id, articles_categories_status, articles_categories_order) VALUES (1, 1, 1);
