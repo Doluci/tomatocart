@@ -42,4 +42,5 @@ introduction_batch_delete_currencies = Please verify the removal of the followin
 
 ms_success_currency_updated = Success: The currency exchange rate for %s (%s) has been successfully updated.
 
+ms_error_currency_code_exist = Error: The currency code does already exist. It is not allowed to have two currencies with the same currencies code.
 ms_error_invalid_currency = Error: The currency exchange rate for %s (%s) was not updated. Please verify the currency code and try again.
