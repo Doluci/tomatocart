@@ -70,47 +70,50 @@
       $i = 0;
       $y_table_position = TOC_PDF_POS_PRODUCTS_TABLE_CONTENT_Y;
       $osC_Currencies = new osC_Currencies_Admin();
-      
+
       foreach ($this->_order->getProducts() as $products) {
         $rowspan = 1;
-        
+
         //Pos
         $this->_pdf->SetFont(TOC_PDF_FONT, 'B', TOC_PDF_TABLE_CONTENT_FONT_SIZE);
         $this->_pdf->SetY($y_table_position);
         $this->_pdf->MultiCell(8, 4, ($i + 1), 0, 'C');
-      
+
         //Product
         $this->_pdf->SetY($y_table_position);
         $this->_pdf->SetX(30);
-        
+
         $product_info = $products['name'];
+        if (strlen($products['name']) > 30) {
+          $rowspan = 2;
+        }
         
         if ( $products['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
           $product_info .= "\n" . '   -' . $osC_Language->get('senders_name') . ': ' . $products['senders_name'];
-          
+
           if ($products['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
             $product_info .= "\n" . '   -' . $osC_Language->get('senders_email') . ': ' . $products['senders_email'];
             $rowspan++;
           }
-          
+
           $product_info .= "\n" . '   -' . $osC_Language->get('recipients_name') . ': ' . $products['recipients_name'];
-          
+
           if ($products['gift_certificates_type'] == GIFT_CERTIFICATE_TYPE_EMAIL) {
             $product_info .= "\n" . '   -' . $osC_Language->get('recipients_email') . ': ' . $products['recipients_email'];
             $rowspan++;
           }
-          
+
           $rowspan += 3;
           $product_info .= "\n" . '   -' . $osC_Language->get('messages') . ': ' . $products['messages'];
         }
-        
+
         if (isset( $products['variants'] ) && ( sizeof( $products['variants'] ) > 0)) {
           foreach ( $products['variants'] as $variant ) {
             $product_info .=  "\n" . $variant['groups_name'] . ": " . $variant['values_name'];
             $rowspan++;
           } 
         } 
-        $this->_pdf->MultiCell(100, 4, $product_info, 0, 'L');          
+        $this->_pdf->MultiCell(80, 4, $product_info, 0, 'L');          
   
         //Quantity
         $this->_pdf->SetY($y_table_position);
@@ -155,7 +158,6 @@
       //Order Totals
       $this->_pdf->SetFont(TOC_PDF_FONT, 'B', TOC_PDF_TABLE_CONTENT_FONT_SIZE);
       foreach ( $this->_order->getTotals() as $totals ) {
-      
         $y_table_position+= 4;
         $this->_pdf->SetFont(TOC_PDF_FONT, 'B', 8);
         $this->_pdf->SetY($y_table_position);

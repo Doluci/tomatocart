@@ -79,6 +79,9 @@
         $this->_pdf->SetX(24);
         
         $product_info = $products['name'];
+        if (strlen($products['name']) > 60) {
+          $rowspan = 2;
+        }
         
         if ( $products['type'] == PRODUCT_TYPE_GIFT_CERTIFICATE ) {
           $product_info .= "\n" . '   -' . $osC_Language->get('senders_name') . ': ' . $products['senders_name'];
@@ -105,7 +108,7 @@
             $rowspan++;
           } 
         } 
-        $this->_pdf->MultiCell(140, 4, $product_info, 0, 'L');          
+        $this->_pdf->MultiCell(120, 4, $product_info, 0, 'L');          
   
         //Quantity
         $this->_pdf->SetY($y_table_position);
