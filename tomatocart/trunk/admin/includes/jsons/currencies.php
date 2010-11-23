@@ -66,18 +66,32 @@
     function saveCurrency() {
       global $toC_Json, $osC_Language;
       
-      $data = array('title' => $_REQUEST['title'],
-                    'code' => $_REQUEST['code'],
-                    'symbol_left' => $_REQUEST['symbol_left'],
-                    'symbol_right' => $_REQUEST['symbol_right'],
-                    'decimal_places' => $_REQUEST['decimal_places'],
-                    'value' => $_REQUEST['value']);
+      $error = false;
+      $feedback = array();
       
-      if (osC_Currencies_Admin::save((isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : null), $data, ((isset($_REQUEST['default']) && ($_REQUEST['default'] == 'on')) || (isset($_REQUEST['is_default']) && ($_REQUEST['is_default'] == 'on') && ($_REQUEST['code'] != DEFAULT_CURRENCY))))) {
-        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      $code = isset($_REQUEST['code']) ? $_REQUEST['code'] : null;
+      
+      if ( osC_Currencies_Admin::codeIsExist($code) ) {
+        $error = true;
+        $feedback[] = $osC_Language->get('ms_error_currency_code_exist');
+      }
+      
+      if ($error === false) {
+        $data = array('title' => $_REQUEST['title'],
+                      'code' => $code,
+                      'symbol_left' => $_REQUEST['symbol_left'],
+                      'symbol_right' => $_REQUEST['symbol_right'],
+                      'decimal_places' => $_REQUEST['decimal_places'],
+                      'value' => $_REQUEST['value']);
+            
+        if (osC_Currencies_Admin::save((isset($_REQUEST['id']) && is_numeric($_REQUEST['id']) ? $_REQUEST['id'] : null), $data, ((isset($_REQUEST['default']) && ($_REQUEST['default'] == 'on')) || (isset($_REQUEST['is_default']) && ($_REQUEST['is_default'] == 'on') && ($_REQUEST['code'] != DEFAULT_CURRENCY))))) {
+          $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+        } else {
+          $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+        }
       } else {
-        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
-      } 
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed') . '<br />' . implode('<br />', $feedback));
+      }
       
       echo $toC_Json->encode($response);
     }

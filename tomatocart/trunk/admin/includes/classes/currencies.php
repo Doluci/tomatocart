@@ -23,6 +23,21 @@
 
       return $this->currencies;
     }
+    
+    function codeIsExist($code) {
+      global $osC_Database;
+      
+      $Qcheck = $osC_Database->query('select currencies_id from :table_currencies where code = :code');
+      $Qcheck->bindTable(':table_currencies', TABLE_CURRENCIES);
+      $Qcheck->bindValue(':code', $code);
+      $Qcheck->execute();
+
+      if ($Qcheck->numberOfRows() > 0) {
+        return true;
+      }
+
+      return false;
+    }
 
     function save($id = null, $data, $set_default = false) {
       global $osC_Database;
