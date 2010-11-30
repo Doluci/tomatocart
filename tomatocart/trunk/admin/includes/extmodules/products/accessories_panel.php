@@ -128,7 +128,7 @@ Ext.extend(Toc.products.AccessoriesPanel, Ext.grid.GridPanel, {
   onRowAction: function(grid, record, action, row, col) {
     switch(action) {
       case 'icon-delete-record':
-        this.getStore().remove(row);
+        this.getStore().removeAt(row);
         break;
     }
   },

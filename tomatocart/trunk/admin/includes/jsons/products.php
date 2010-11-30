@@ -147,6 +147,28 @@
       echo $toC_Json->encode($response);
     }
   
+    function moveProducts() {
+      global $toC_Json, $osC_Language;
+      
+      $error = false;
+      
+      $batch = explode(',', $_REQUEST['batch']);
+      foreach ($batch as $id) {
+        if ( !osC_Products_Admin::move($_REQUEST['old_categories_id'], $_REQUEST['target_categories_id'], $id) ) {
+          $error = true;
+          break;
+        }
+      }
+      
+      if ($error === false) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      } else {
+        $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));
+      }
+      
+      echo $toC_Json->encode($response);
+    }
+    
     function deleteProducts() {
       global $toC_Json, $osC_Language, $osC_Image;
       
@@ -370,19 +392,26 @@
       } else {
         $Qproducts = $osC_Database->query('select p.products_id, p.products_type, pd.products_name, p.products_quantity, p.products_price, p.products_date_added, p.products_last_modified, p.products_date_available, p.products_status from :table_products p, :table_products_description pd where p.products_id = pd.products_id and pd.language_id = :language_id');
       }
-    
+
       if ( !empty($_REQUEST['search']) ) {
         $Qproducts->appendQuery('and pd.products_name like :products_name');
         $Qproducts->bindValue(':products_name', '%' . $_REQUEST['search'] . '%');
       }
     
-      $Qproducts->appendQuery(' order by pd.products_id desc');
+      if ( !empty($_REQUEST['sort']) && !empty($_REQUEST['dir']) ) {
+        $Qproducts->appendQuery('order by :sort :dir');
+        $Qproducts->bindRaw(':sort', $_REQUEST['sort']);
+        $Qproducts->bindRaw(':dir', $_REQUEST['dir']);
+      } else {
+        $Qproducts->appendQuery(' order by pd.products_id desc');
+      }
+      
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
       $Qproducts->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
       $Qproducts->bindInt(':language_id', $osC_Language->getID());
       $Qproducts->setExtBatchLimit($start, $limit);
       $Qproducts->execute();
-      
+       
       $records = array();
       while ($Qproducts->next()) {
         $products_price = $osC_Currencies->format($Qproducts->value('products_price'));

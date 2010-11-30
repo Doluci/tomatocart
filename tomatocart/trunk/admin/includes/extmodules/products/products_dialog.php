@@ -110,7 +110,7 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
     return this.frmProduct;
   },
     
-  show: function() {
+  show: function(categoryId) {
     this.frmProduct.form.reset();  
 
     this.pnlImages.grdImages.store.load();
@@ -127,7 +127,7 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
           this.pnlData.onPriceNetChange(); 
           this.pnlData.updateCboTaxClass(action.result.data.products_type);
           this.pnlData.loadExtraOptionTab(action.result.data);   
-          this.pnlCategories.setCategories(action.result.data);
+          this.pnlCategories.setCategories(action.result.data.categories_id);
           this.pnlVariants.onProductTypeChange(action.result.data.products_type);
           this.pnlAttributes.setAttributesGroupsId(action.result.data.products_attributes_groups_id);
           
@@ -140,6 +140,10 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
       });
     } else {   
       Toc.products.ProductDialog.superclass.show.call(this);
+    }
+    
+    if (!Ext.isEmpty(categoryId) && (categoryId > 0)) {
+      this.pnlCategories.setCategories(categoryId);
     }
   },
 

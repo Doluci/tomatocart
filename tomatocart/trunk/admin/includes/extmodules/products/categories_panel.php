@@ -61,12 +61,12 @@ Ext.extend(Toc.products.CategoriesPanel, Ext.Panel, {
     return this.pnlCategoriesTree;    
   },
   
-  setCategories: function(data) {
+  setCategories: function(categoryId) {
     if (this.treeLoaded == true) {
-      this.pnlCategoriesTree.setValue(data.categories_id);
+      this.pnlCategoriesTree.setValue(categoryId);
     } else {
       this.pnlCategoriesTree.loader.on('load', function(){
-        this.pnlCategoriesTree.setValue(data.categories_id);
+        this.pnlCategoriesTree.setValue(categoryId);
       }, this);
     }    
   },

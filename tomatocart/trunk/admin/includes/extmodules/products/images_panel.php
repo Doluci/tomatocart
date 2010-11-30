@@ -61,6 +61,7 @@ Ext.extend(Toc.products.ImagesPanel, Ext.Panel, {
       border: false,
       id: 'products-img-upload',
       removeAllIconCls: 'remove',
+      maxFileSize: 4194304,
       addText: TocLanguage.btnAdd,
       uploadText: TocLanguage.btnUpload,
       enableProgress: false,
