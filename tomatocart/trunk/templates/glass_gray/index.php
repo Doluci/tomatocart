@@ -283,7 +283,7 @@
              '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, null, 'SSL'), $osC_Language->get('cart_contents')) . '<span>|</span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('checkout')) . '<span>|</span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('contact_us')) . '<span>|</span></li>'.
-             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), $osC_Language->get('Guest Book')) . '<span>|</span></li>' .
+             '<li>' . osc_link_object(osc_href_link(FILENAME_INFO, 'guestbook&new'), $osC_Language->get('guest_book')) . '<span>|</span></li>' .
              '<li>' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'rss'), osc_image(DIR_WS_IMAGES . 'rss16x16.png') . '<span>RSS</span>') . '</li>';
       ?>
     </ul>
