@@ -17,7 +17,11 @@ Toc.products.ProductsGrid = function(config) {
   config = config || {};
   
   config.border = false;
+  config.region = 'center';
   config.viewConfig = {emptyText: TocLanguage.gridNoRecords};
+  config.animCollapse = false;
+  config.enableDragDrop = true;
+  config.ddGroup = 'productDD';
 
   config.ds = new Ext.data.Store({
     url: Toc.CONF.CONN_URL,
@@ -37,29 +41,7 @@ Toc.products.ProductsGrid = function(config) {
       {name: 'products_price', type: 'string'},
       {name: 'products_quantity', type: 'int'}
     ]),
-    sortData:function(f, direction){  
-      direction = direction || 'ASC';  
-      var dir = direction == 'ASC' ? 1 : -1;  
-      var st = this.fields.get(f).sortType;  
-      var fn = function(r1, r2){  
-        var v1 = st(r1.data[f]), v2 = st(r2.data[f]);
-        if(f == "products_price"){
-          while(v1.indexOf(",") != -1) {
-            v1 = v1.replace(",", "");
-          }
-          while(v2.indexOf(",") != -1) {
-            v2 = v2.replace(",", "");
-          }
-          v1 = parseFloat(v1.substr(1));  v2 = parseFloat(v2.substr(1));
-        }
-        return v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);  
-      };  
-      this.data.sort(direction, fn);  
-      if(this.snapshot && this.snapshot != this.data){  
-        this.snapshot.sort(direction, fn);  
-      }  
-    },
-    autoLoad: true
+    remoteSort: true
   });
   
   renderStatus = function(status) {
@@ -84,40 +66,13 @@ Toc.products.ProductsGrid = function(config) {
   config.cm = new Ext.grid.ColumnModel([
     config.sm,
     {id:'products_name', header: "<?php echo $osC_Language->get('table_heading_products'); ?>", sortable: true, dataIndex: 'products_name'},
-    {header: "<?php echo $osC_Language->get('table_heading_frontpage'); ?>", align: 'center', renderer: renderStatus, dataIndex: 'products_frontpage', width: 100},
-    {header: "<?php echo $osC_Language->get('table_heading_status'); ?>", align: 'center', renderer: renderStatus, dataIndex: 'products_status', width: 100},
-    {header: "<?php echo $osC_Language->get('table_heading_price'); ?>", dataIndex: 'products_price', sortable: true, width: 100, align: 'right'},
-    {header: "<?php echo $osC_Language->get('table_heading_quantity'); ?>", dataIndex: 'products_quantity', sortable: true, width: 100, align: 'right'},
+    {header: "<?php echo $osC_Language->get('table_heading_frontpage'); ?>", align: 'center', renderer: renderStatus, dataIndex: 'products_frontpage', width: 90},
+    {header: "<?php echo $osC_Language->get('table_heading_status'); ?>", align: 'center', renderer: renderStatus, sortable: true, dataIndex: 'products_status', width: 80},
+    {header: "<?php echo $osC_Language->get('table_heading_price'); ?>", dataIndex: 'products_price', sortable: true, width: 80, align: 'right'},
+    {header: "<?php echo $osC_Language->get('table_heading_quantity'); ?>", dataIndex: 'products_quantity', sortable: true, width: 80, align: 'right'},
     config.rowActions
   ]);
   config.autoExpandColumn = 'products_name';
-  
-  var dsCategories = new Ext.data.Store({
-    url: Toc.CONF.CONN_URL,
-    baseParams: {
-      module: 'products',
-      action: 'get_categories',
-      top: 1 
-    },
-    reader: new Ext.data.JsonReader({
-      fields:['id','text'],
-      root: Toc.CONF.JSON_READER_ROOT
-    }),
-    autoLoad: true
-  });
-  
-  config.cboCategories = new Toc.CategoriesComboBox({
-    store: dsCategories,
-    valueField: 'id',
-    displayField: 'text',
-    emptyText: '<?php echo $osC_Language->get("top_category"); ?>',
-    triggerAction: 'all',
-    readOnly: true,
-    listeners: {
-      select: this.onSearch,
-      scope: this
-    }
-  });
   
   config.txtSearch = new Ext.form.TextField({
     width:160,
@@ -147,8 +102,6 @@ Toc.products.ProductsGrid = function(config) {
     }, 
     '->',
     config.txtSearch,
-    ' ',
-    config.cboCategories,
     ' ', 
     {
       iconCls : 'search',
@@ -205,7 +158,7 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
       this.onRefresh();
     }, this);
     
-    dlg.show();
+    dlg.show(this.mainPanel.getCategoriesTree().getCategoriesPath(null));
   },
   
   onEdit: function(record) {
@@ -387,13 +340,18 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
     }
   },
   
+  refreshGrid: function (categoriesId) {
+    var store = this.getStore();
+
+    store.baseParams['categories_id'] = categoriesId;
+    store.load();
+  },
+  
   onSearch: function(){
     var filter = this.txtSearch.getValue() || null;
-    var categoriesId = this.cboCategories.getValue() || null;
     var store = this.getStore();
           
     store.baseParams['search'] = filter;
-    store.baseParams['categories_id'] = categoriesId;
     store.reload();
   },
   

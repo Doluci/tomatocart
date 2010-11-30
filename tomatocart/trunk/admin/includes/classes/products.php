@@ -803,6 +803,42 @@
       return false;
     }
 
+    function move($old_categories_id, $target_categories_id, $id) {
+      global $osC_Database;
+      
+      if ($old_categories_id > 0) {
+        $Qdelete = $osC_Database->query('delete from :table_products_to_categories where products_id = :products_id and categories_id = :categories_id');
+        $Qdelete->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+        $Qdelete->bindInt(':products_id', $id);
+        $Qdelete->bindInt(':categories_id', $old_categories_id);
+        $Qdelete->execute();
+        
+        if ($osC_Database->isError()) {
+          return false;
+        }
+      }
+      
+      $Qcheck = $osC_Database->query('select * from :table_products_to_categories where products_id = :products_id and categories_id = :categories_id');
+      $Qcheck->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+      $Qcheck->bindInt(':products_id', $id);
+      $Qcheck->bindInt(':categories_id', $target_categories_id);
+      $Qcheck->execute();
+      
+      if ($Qcheck->numberOfRows() < 1) {
+        $Qinsert = $osC_Database->query('insert into :table_products_to_categories (products_id, categories_id) values (:products_id, :categories_id)');
+        $Qinsert->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+        $Qinsert->bindInt(':products_id', $id);
+        $Qinsert->bindInt(':categories_id', $target_categories_id);
+        $Qinsert->execute();
+        
+        if ($osC_Database->isError()) {
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
     function delete($id, $categories = null) {
       global $osC_Database, $osC_Image;
 

@@ -37,6 +37,8 @@
   include('customizations_dialog.php');
   include('accessories_panel.php');
   include('variants_groups_dialog.php');
+  include('categories_tree_panel.php');
+  include('products_main_panel.php');
 ?>
 
 Ext.override(TocDesktop.ProductsWindow, {
@@ -56,22 +58,21 @@ Ext.override(TocDesktop.ProductsWindow, {
     win.show();
   },
 
-
   createProductsWindow: function(productId) {
     var desktop = this.app.getDesktop();
     win = desktop.getWindow('products-win');
 
     if(!win){
-      grdProducts = new Toc.products.ProductsGrid({owner: this});
+      pnl = new Toc.products.ProductsMainPanel({owner: this});
 
       win = desktop.createWindow({
         id: 'products-win',
         title:'<?php echo $osC_Language->get('heading_title'); ?>',
-        width:800,
+        width:870,
         height:400,
         iconCls: 'icon-products-win',
         layout: 'fit',
-        items: grdProducts
+        items: pnl
       });
     }
 
