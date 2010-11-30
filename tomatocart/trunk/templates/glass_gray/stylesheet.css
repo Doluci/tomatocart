@@ -398,6 +398,7 @@ A:hover {
   float: left;
   width: 204px;
   height: auto;
+  text-align: left;
 }
 
 .boxNew {
