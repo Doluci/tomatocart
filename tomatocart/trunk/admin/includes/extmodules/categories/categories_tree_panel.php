@@ -145,9 +145,17 @@ Ext.extend(Toc.categories.CategoriesTreePanel, Ext.tree.TreePanel, {
           handler: function() {
             var dlg = this.owner.createCategoriesDialog();
             
-            dlg.on('saveSuccess', function() {
-              this.refresh();
-            }, this);            
+            dlg.on('saveSuccess', function(feedback, categoriesId, text) {
+              node.appendChild({
+                id: categoriesId, 
+                text: text, 
+                cls: 'x-tree-node-collapsed', 
+                parent_id: node.id, 
+                leaf: true
+              });
+              
+              node.expand();
+            }, this);         
             
             dlg.show(null, this.getCategoriesPath(node));
           },
@@ -158,11 +166,10 @@ Ext.extend(Toc.categories.CategoriesTreePanel, Ext.tree.TreePanel, {
           iconCls: 'edit',
           handler: function() {
             var dlg = this.owner.createCategoriesDialog();
-            dlg.setTitle(node.text);
             
-            dlg.on('saveSuccess', function() {
-              this.refresh();
-            }, this);      
+            dlg.on('saveSuccess', function(feedback, categoriesId, text) {
+              node.setText(text);
+            }, this);
             
             dlg.show(node.id, this.getCategoriesPath(node));
           },
@@ -190,6 +197,9 @@ Ext.extend(Toc.categories.CategoriesTreePanel, Ext.tree.TreePanel, {
                       var result = Ext.decode(response.responseText);
                       
                       if (result.success == true) {
+                        var pNode = node.parentNode;
+                        pNode.ui.addClass('x-tree-node-collapsed');
+                        
                         node.remove();
                         this.setCategoryId(currentCategoryId);
                       } else {

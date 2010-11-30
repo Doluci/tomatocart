@@ -191,7 +191,7 @@
         osC_Cache::clear('category_tree');
         osC_Cache::clear('also_purchased');
 
-        return true;
+        return $category_id;
       }
 
       $osC_Database->rollbackTransaction();
