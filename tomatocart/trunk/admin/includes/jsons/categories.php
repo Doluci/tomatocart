@@ -68,6 +68,7 @@
       $Qratings->bindInt(':languages_id', $osC_Language->getID());
       $Qratings->execute();
       
+      $records = array();
       while ( $Qratings->next() ) {
         $records[] = array(
           'ratings_id' => $Qratings->valueInt('ratings_id'),
@@ -202,12 +203,13 @@
                     'flag' => (isset($_REQUEST['product_flag']))? $_REQUEST['product_flag']: 0,
                     'ratings' => $_REQUEST['ratings']);
       
-      if ( (osC_Categories_Admin::save((isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : null), $data))) {
-        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'));
+      $category_id = osC_Categories_Admin::save((isset($_REQUEST['categories_id']) && is_numeric($_REQUEST['categories_id']) ? $_REQUEST['categories_id'] : null), $data); 
+      if ( $category_id > 0) {
+        $response = array('success' => true, 'feedback' => $osC_Language->get('ms_success_action_performed'), 'categories_id' => $category_id, 'text' => $_REQUEST['categories_name'][$osC_Language->getID()]);
       } else {
         $response = array('success' => false, 'feedback' => $osC_Language->get('ms_error_action_not_performed'));    
       }
-                
+      
       header('Content-Type: text/html');
       echo $toC_Json->encode($response);
     }
@@ -230,7 +232,7 @@
       echo $toC_Json->encode($response);
     }
     
-    function  loadCategoriesTree() {
+    function loadCategoriesTree() {
       global $toC_Json, $osC_Language;
       
       $osC_CategoryTree = new osC_CategoryTree();

@@ -46,6 +46,7 @@ Ext.override(TocDesktop.CategoriesWindow, {
     
     win.show();
   },
+  
   createCategoriesDialog: function() {
     var desktop = this.app.getDesktop();
     var dlg = desktop.getWindow('categories-dialog-win');
@@ -53,14 +54,14 @@ Ext.override(TocDesktop.CategoriesWindow, {
     if (!dlg) {
       dlg = desktop.createWindow({}, Toc.categories.CategoriesDialog);
       
-      dlg.on('saveSuccess', function (feedback) {
+      dlg.on('saveSuccess', function (feedback, categoriesId, text) {
         this.app.showNotification({
           title: TocLanguage.msgSuccessTitle,
           html: feedback
         });
       }, this);
     }
-      
+
     return dlg;
   },
   

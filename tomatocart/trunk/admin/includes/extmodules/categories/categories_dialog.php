@@ -161,11 +161,10 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
 				    });
 
           } else{
-
 				    this.frmCategories.form.submit({
 				      waitMsg: TocLanguage.formSubmitWaitMsg,
 				      success: function (form, action) {
-				        this.fireEvent('saveSuccess', action.result.feedback);
+				        this.fireEvent('saveSuccess', action.result.feedback, action.result.categories_id, action.result.text);
 				        this.close();
 				      },
 				      failure: function (form, action) {
@@ -180,12 +179,11 @@ Ext.extend(Toc.categories.CategoriesDialog, Ext.Window, {
         }, 
         this
       );       
-    }else {
-        
+    } else {
 	    this.frmCategories.form.submit({
 	      waitMsg: TocLanguage.formSubmitWaitMsg,
 	      success: function (form, action) {
-	        this.fireEvent('saveSuccess', action.result.feedback);
+	        this.fireEvent('saveSuccess', action.result.feedback, action.result.categories_id, action.result.text);
 	        this.close();
 	      },
 	      failure: function (form, action) {
