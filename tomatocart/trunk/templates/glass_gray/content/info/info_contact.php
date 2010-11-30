@@ -76,12 +76,16 @@
 
     <?php if( ACTIVATE_CAPTCHA == '1') {?>
       <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'concat_code') . osc_draw_input_field('concat_code', '', 'size="30"'); ?> </li>
-      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage" alt="Captcha" /></li>
+      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage&<?php echo $osC_Session->getName() . '=' . $osC_Session->getID(); ?>" alt="Captcha" /></li>
     <?php } ?>
     
     </ol>
   </div>
 </div>
+
+<?php
+  echo osc_draw_hidden_session_id_field();
+?>
 
 <div class="submitFormButtons" style="text-align: right;">
   <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?>
