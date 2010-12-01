@@ -240,7 +240,7 @@
         }
       ?>
         
-      <form name="frmCustomizations" id="frmCustomizations" action="<?php echo osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&action=save_customization_fields'); ?>" method="post" enctype="multipart/form-data">
+      <form name="frmCustomizations" id="frmCustomizations" action="<?php echo osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&action=save_customization_fields', 'AUTO', true, false); ?>" method="post" enctype="multipart/form-data">
       
         <?php echo $osC_Product->renderCustomizationFieldsList(); ?>
       
