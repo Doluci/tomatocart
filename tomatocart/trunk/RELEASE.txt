@@ -23,6 +23,7 @@ VERSION 1.1.2
  * add category tree to products list grid window enable category and product manipulation at the same time enable category drap & drop and product drap & drop 
  * add IE8 compatible for start menu and image upload
  * remove redundant image files/categories file/download file/third party library/js library
+ * sever side sort support for products grid
 
 VERSION 1.1.1
 --BUG FIX
