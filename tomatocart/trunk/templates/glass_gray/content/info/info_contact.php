@@ -60,7 +60,7 @@
   </div>
 </div>
 
-<form name="contact" action="<?php echo osc_href_link(FILENAME_INFO, 'contact=process'); ?>" method="post">
+<form name="contact" action="<?php echo osc_href_link(FILENAME_INFO, 'contact=process', 'AUTO', true, false); ?>" method="post">
 
 <div class="moduleBox">
   <h6></h6>
@@ -76,7 +76,7 @@
 
     <?php if( ACTIVATE_CAPTCHA == '1') {?>
       <li><?php echo osc_draw_label($osC_Language->get('contact_code_title'), 'concat_code') . osc_draw_input_field('concat_code', '', 'size="30"'); ?> </li>
-      <li><img style = "padding-left: 170px;" src="<?php echo FILENAME_INFO?>?contact=showImage&<?php echo $osC_Session->getName() . '=' . $osC_Session->getID(); ?>" alt="Captcha" /></li>
+      <li><img style = "padding-left: 170px;" src="<?php echo osc_href_link(FILENAME_INFO, 'contact=showImage', 'AUTO', true, false); ?>" alt="Captcha" /></li>
     <?php } ?>
     
     </ol>
