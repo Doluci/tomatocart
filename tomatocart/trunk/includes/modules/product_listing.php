@@ -114,7 +114,6 @@
 
       for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
         $lc_align = '';
-        $osC_Product = new osC_Product($Qlisting->value('products_id'));
 
         switch ($column_list[$col]) {
           case 'PRODUCT_LIST_SKU':
@@ -135,6 +134,7 @@
             break;
           case 'PRODUCT_LIST_PRICE':
             $lc_align = 'right';
+            $osC_Product = new osC_Product($Qlisting->value('products_id'));
             $lc_text = $osC_Product->getPriceFormated(true);
             break;
           case 'PRODUCT_LIST_QUANTITY':
