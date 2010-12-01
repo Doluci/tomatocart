@@ -76,7 +76,7 @@
             $this->_content = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $data['products_id']), $osC_Image->show($data['image'], $data['products_name']));
           }
 
-          $this->_content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $data['products_id']), wordwrap(osc_output_string_protected($data['reviews_text']), 15, '&shy;') . ' ..') . '<br />' . osc_image(DIR_WS_IMAGES . 'stars_' . $data['reviews_rating'] . '.png' , sprintf($osC_Language->get('box_reviews_stars_rating'), $data['reviews_rating']));
+          $this->_content .= osc_link_object(osc_href_link(FILENAME_PRODUCTS, $data['products_id']), wordwrap(osc_output_string_protected($data['reviews_text']), 15, '&nbsp;') . ' ..') . '<br />' . osc_image(DIR_WS_IMAGES . 'stars_' . $data['reviews_rating'] . '.png' , sprintf($osC_Language->get('box_reviews_stars_rating'), $data['reviews_rating']));
         }
       }
     }
