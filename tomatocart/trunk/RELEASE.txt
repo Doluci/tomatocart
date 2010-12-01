@@ -1,3 +1,47 @@
+VERSION 1.1.2
+--BUG FIX
+ * fix bug #263 -- Website in Maintenance
+ * fix bug #300 -- When seo is activated the contact us form does not work
+ * fix bug #301 -- When seo is activated the product customization does not work
+ * fix bug #277 -- Guest Book translation
+ * fix bug #274 -- Weird Visual Error of the right column in IExplorer
+ * fix bug #278 -- Gift Wrapping Mssage
+ * fix bug #261 -- Order pdf print does not support long product name
+ * fix bug #285 -- Set wallpaper failed
+ * fix bug #284 -- Live feed window can not automatically close
+ * fix bug #283 -- tiny_mce cause permission denied error in IE
+ * fix bug #250 -- Adding/editing Categories js error in IE
+ * fix bug -- table name prefix failure: use "CREATE TABLE" instead of "CREATE TABLE IF NOT EXISTS"
+ * fix bug -- add check to disallow currency duplicate 
+
+--FEATURE
+ * Replace &shy; with &nbsp;
+ * use default extjs editor instead of tinymce editor to increase performance
+ * save telephone in order
+ * move product creation in PRODUCT_LIST_PRICE to improve performance 
+ * improve category drap & drop feature 
+ * add category tree to products list grid window enable category and product manipulation at the same time enable category drap & drop and product drap & drop 
+ * add IE8 compatible for start menu and image upload
+ * remove redundant image files/categories file/download file/third party library/js library
+
+VERSION 1.1.1
+--BUG FIX
+ * Can not open categories window in IE, Opera
+ * include box modules when _has_box_modules is true and content modules when _has_content_modules is true
+ * fix bug for invalid token when downloading from admin(backup, email, file manager etc)
+ * correct install.sql to meet the mysql strict mysql mode
+ * initialize Ext.BLANK_IMAGE_URL or prevent system load blank image url from extjs.com
+ * Add variants product to cart error in IE
+ * Sometimes all slide images are gone due to the error of getimagesize function. Check whether slide images exist before get image size 
+ * 1st time the product page is loaded, when you click on the product image within the zoon-in area, the product image will be opened in the current window replacing the whole page instead of displaying it in the Lightbox Layer.
+ * Paypal express, debug information is display during checkout. Remove var_dump information
+ * calculate number of products bug in products categories
+ * import language error for articles, clone articles table failed
+ * telephone is not saved
+ 
+--FEATURE
+ * Use light box to compare products instead of popup a new windows
+
 VERSION 1.1
  * Polls
  * Guest Book
