@@ -99,7 +99,7 @@
       if ( $messageStack->size('contact') === 0 ) {
         osc_email(STORE_OWNER, $department_email, $osC_Language->get('contact_email_subject'), $enquiry . '<br /><br /><br />' . $osC_Language->get('contact_telephone_title') . $telephone, $name, $email_address);
 
-        osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO'));    
+        osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO', true, false));    
       } 
     }
     
