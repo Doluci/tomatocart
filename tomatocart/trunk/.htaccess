@@ -46,6 +46,6 @@ RewriteRule ^([a-zA-Z0-9-]*)/([0-9]+)\-([a-zA-Z0-9-]*)\.html$ products.php?$2&%{
 RewriteRule ^([0-9]+)-t-(.*).html$ products.php?tell_a_friend&$1&%{QUERY_STRING} [L]
 RewriteRule ^([0-9]+)-(.*)$ index.php?cPath=$1&%{QUERY_STRING} [L]
 RewriteRule ^([0-9]+)_(.*)$ index.php?manufacturers=$1&%{QUERY_STRING} [L]
-RewriteRule ^contact.html$ info.php?contact=%{QUERY_STRING} [L]
+RewriteRule ^contact.html$ info.php?contact&%{QUERY_STRING} [L]
 RewriteRule ^sitemap.html$ info.php?sitemap&%{QUERY_STRING} [L]
 RewriteRule ^faqs.html$ info.php?faqs&%{QUERY_STRING} [L]
