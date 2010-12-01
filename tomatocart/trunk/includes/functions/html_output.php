@@ -98,7 +98,7 @@
       $link = str_replace('&&', '&', $link);
     }
 
-    if(isset($osC_Services) && $osC_Services->isStarted('sefu')){
+    if ( ($search_engine_safe === true) && isset($osC_Services) && $osC_Services->isStarted('sefu')) {
       global $toC_Sefu;
       $link = $toC_Sefu->generateURL($link, $page, $parameters);
     }
