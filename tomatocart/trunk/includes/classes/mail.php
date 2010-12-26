@@ -35,9 +35,12 @@
       }
 
       if ( !empty($from_email_address) ) {
-        $from = self::parseEmail($from_email_address);
-        $this->_from = array('name' => $from['name'],
-                             'email_address' => $from['email']);
+        $from_data = self::parseEmail($from_email_address); 
+        if ($from != null) {
+          $from_data['name'] = $from;
+        }
+        $this->_from = array('name' => $from_data['name'],
+                             'email_address' => $from_data['email']);
       }
 
       if ( !empty($subject) ) {
@@ -84,7 +87,7 @@
       $this->_to = array();
       $this->_cc = array();
       $this->_bcc = array();
-      $this->_headers = array('X-Mailer' => 'osCommerce');
+      $this->_headers = array('X-Mailer' => 'TomatoCart');
     }
 
     function setSubject($subject) {
@@ -421,7 +424,7 @@
       if ( empty($this->_from['email_address']) || empty($to_email_addresses) ) {
         return false;
       }
-
+      
       if ( empty($this->_from['name']) ) {
         @ini_set('sendmail_from', $this->_from['email_address']);
       } else {
