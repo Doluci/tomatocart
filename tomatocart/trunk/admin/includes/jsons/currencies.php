@@ -71,7 +71,7 @@
       
       $code = isset($_REQUEST['code']) ? $_REQUEST['code'] : null;
       
-      if ( osC_Currencies_Admin::codeIsExist($code) ) {
+      if ( !is_numeric($_REQUEST['id']) && osC_Currencies_Admin::codeIsExist($code) ) {
         $error = true;
         $feedback[] = $osC_Language->get('ms_error_currency_code_exist');
       }
