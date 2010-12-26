@@ -426,16 +426,17 @@ var Checkout = new Class({
       }.bind(this)); 
     }
     
+
     //btnRedeemGiftCertificate
     if ($defined($('btnRedeemGiftCertificate'))) {
       $('btnRedeemGiftCertificate').addEvent('click', function(e) {
-        this.btnRedeemGiftCertificateClick();          
+        this.btnRedeemGiftCertificateClick(e);          
       }.bind(this)); 
     }
     
     $$('.btnDeleteGiftCertificate').each(function(btn){
       btn.addEvent('click', function(e) {
-        this.btnDeleteGiftCertificateClick(btn.getParent().id);          
+        this.btnDeleteGiftCertificateClick(btn.getParent().id, e);          
       }.bind(this)); 
     }.bind(this));
 		
