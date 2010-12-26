@@ -27,6 +27,7 @@ Toc.homepage_info.HomepageInfoDialog = function (config) {
     {
       text: TocLanguage.btnSave,
       handler: function(){
+        alert('a');
         this.submitForm();
       },
       scope:this
@@ -89,7 +90,9 @@ Ext.extend(Toc.homepage_info.HomepageInfoDialog, Ext.Window, {
   },
   
   submitForm: function() {
-    tinyMCE.triggerSave();
+    <?php if (USE_WYSIWYG_TINYMCE_EDITOR == '1') { ?>
+      tinyMCE.triggerSave();
+    <?php } ?>
   
     this.frmPagehomeInfo.form.submit({
       waitMsg: TocLanguage.formSubmitWaitMsg,
