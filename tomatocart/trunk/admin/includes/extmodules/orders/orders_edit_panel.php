@@ -1057,7 +1057,8 @@ Ext.extend(Toc.orders.OrdersEditPanel, Ext.Panel, {
     this.cboBillingCountries.disable();
     this.cboShippingCountries.disable();
     this.cboBillingAdresses.disable();
-    this.cboShippingAdresses.disable();
+    this.cboShippingAdresses.disable();
+
    
     this.frmOrder.form.submit({
       waitMsg: TocLanguage.formSubmitWaitMsg,
