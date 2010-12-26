@@ -2135,7 +2135,7 @@ Note: If you did not request this action via our password forgotten page, please
     </definition>
     <definition>
       <key>error_gift_certificate_exist</key>
-      <value><![CDATA[The gift certificate does not exist.]]></value>
+      <value><![CDATA[The gift certificate does exist.]]></value>
       <group>checkout</group>
     </definition>
     <definition>
