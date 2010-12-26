@@ -12,9 +12,16 @@
 */
 
   class osC_Access_quantity_discount_groups extends osC_Access {
-    var $_module = 'quantity_discount_groups',        $_group = 'content',        $_icon = 'coins.png',        $_title,        $_sort_order = 500;
+    var $_module = 'quantity_discount_groups',
+        $_group = 'content',
+        $_icon = 'coins.png',
+        $_title,
+        $_sort_order = 500;
         
-    function osC_Access_quantity_discount_groups() {      global $osC_Language;
+    function osC_Access_quantity_discount_groups() {
+      global $osC_Language;
 
-      $this->_title = $osC_Language->get('access_quantity_discount_groups_title');    }  }
+      $this->_title = $osC_Language->get('access_quantity_discount_groups_title');
+    }
+  }
 ?>
