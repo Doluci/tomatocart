@@ -97,9 +97,14 @@ class toC_Sefu {
     //products
     else if ( preg_match("/products.php\?([0-9]+)(.*)/", $link, $matches) > 0 ) {
       if ( (strpos($link, 'action=compare_products_add') === false) && (strpos($link, 'action=wishlist_add') === false) ) {
-        $link = $this->getCategoryUrl($this->getProductCategory($matches[1])) . '/' . 
-                $matches[1] . $this->_reg_anchors['products_id'] . $this->getProductUrl($matches[1]) . '.html';
-        
+        $categories = $this->getCategoryUrl($this->getProductCategory($matches[1]));
+        if (empty($categories)) {
+          $link = $matches[1] . $this->_reg_anchors['products_id'] . $this->getProductUrl($matches[1]) . '.html';
+        } else {
+          $link = $this->getCategoryUrl($this->getProductCategory($matches[1])) . '/' . 
+                  $matches[1] . $this->_reg_anchors['products_id'] . $this->getProductUrl($matches[1]) . '.html';          
+        }
+
         if( !empty($matches[2]) ) {
           $link .= '?' . substr($matches[2], 1);
         }
