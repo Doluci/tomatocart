@@ -1,3 +1,14 @@
+VERSION 1.1.3
+--BUG FIX
+ * fix bug #314 -- HomePage information not saving?
+ * fix bug #297 -- Email From Field is not set in Header
+ * fix bug #309 -- Default Currencies can not be set
+ * fix bug #322 -- The gift code can't be added or deleted
+ * fix bug #296 -- Seo plugin generates wrong .html file
+ * correnct english translation for error_gift_certificate_exist
+ * convert line delimiters to unix style
+ * missing translation of module title in case of uninstallation?
+ 
 VERSION 1.1.2
 --BUG FIX
  * fix bug #263 -- Website in Maintenance
