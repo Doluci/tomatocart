@@ -254,18 +254,6 @@
         $Qdel->bindRaw(':configuration_key', implode('", "', $this->getKeys()));
         $Qdel->execute();
       }
-
-      if (file_exists(dirname(__FILE__) . '/../languages/' . $osC_Language->getCode() . '/modules/' . $this->_group . '/' . $this->_code . '.xml')) {
-        foreach ($osC_Language->extractDefinitions($osC_Language->getCode() . '/modules/' . $this->_group . '/' . $this->_code . '.xml') as $def) {
-          $Qdel = $osC_Database->query('delete from :table_languages_definitions where definition_key = :definition_key and content_group = :content_group');
-          $Qdel->bindTable(':table_languages_definitions', TABLE_LANGUAGES_DEFINITIONS);
-          $Qdel->bindValue(':definition_key', $def['key']);
-          $Qdel->bindValue(':content_group', $def['group']);
-          $Qdel->execute();
-        }
-
-        osC_Cache::clear('languages');
-      }
     }
   }
 ?>
