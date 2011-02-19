@@ -12,7 +12,7 @@ tomatocartApp = TomatoCart Shopping Cart System
 Start = Start
 Logout = Logout
 
-btnSubmit = btnSubmit
+btnSubmit = Submit
 btnSave = Save
 btnClose = Close
 btnSaveAndContinue = Save and Continue Edit
