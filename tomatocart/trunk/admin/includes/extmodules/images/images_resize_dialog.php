@@ -105,6 +105,11 @@ Ext.extend(Toc.images.ImagesResizeDialog, Ext.Window, {
         {header: '<?php echo $osC_Language->get("images_resize_table_heading_total_resized"); ?>', dataIndex: 'count'}
       ]),
       store: new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({
+          timeout: 600000,
+          url: Toc.CONF.CONN_URL,
+          method: 'POST'})
+        ),
         url: Toc.CONF.CONN_URL,
         baseParams: {
           module: 'images',
