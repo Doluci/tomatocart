@@ -453,11 +453,11 @@
           $height = round($orig_height / $factor);
       }
       
-      $im_p = imagecreatetruecolor($dest_width, $dest_height);
-      imagealphablending($im_p, true);
-      $color = imagecolortransparent($im_p, imagecolorallocatealpha($im_p, 255, 255, 255, 127));
-      imagefill($im_p, 0, 0, $color);
-      imagesavealpha($im_p, true);
+      $im_p = @imagecreatetruecolor($dest_width, $dest_height);
+      @imagealphablending($im_p, true);
+      $color = @imagecolortransparent($im_p, imagecolorallocatealpha($im_p, 255, 255, 255, 127));
+      @imagefill($im_p, 0, 0, $color);
+      @imagesavealpha($im_p, true);
 
       $x = 0;
       $y = 0;
@@ -475,36 +475,36 @@
 
       switch ($img_type) {
         case 'jpg':
-          $im = imagecreatefromjpeg($original_image);
+          $im = @imagecreatefromjpeg($original_image);
           break;
 
         case 'gif':
-          $im = imagecreatefromgif($original_image);
+          $im = @imagecreatefromgif($original_image);
           break;
 
         case 'png':
-          $im = imagecreatefrompng($original_image);
+          $im = @imagecreatefrompng($original_image);
           break;
       }
       
-      imagecopyresampled($im_p, $im, $x, $y, 0, 0, $width, $height, $orig_width, $orig_height);
+      @imagecopyresampled($im_p, $im, $x, $y, 0, 0, $width, $height, $orig_width, $orig_height);
 
       switch ($img_type) {
         case 'jpg':
-          imagejpeg($im_p, $dest_image);
+          @imagejpeg($im_p, $dest_image);
           break;
 
         case 'gif':
-          imagegif($im_p, $dest_image);
+          @imagegif($im_p, $dest_image);
           break;
 
         case 'png':
-          imagepng($im_p, $dest_image);
+          @imagepng($im_p, $dest_image);
           break;
       }
 
-      imagedestroy($im_p);
-      imagedestroy($im);
+      @imagedestroy($im_p);
+      @imagedestroy($im);
 
       @chmod($dest_image, 0777);
     } else {
