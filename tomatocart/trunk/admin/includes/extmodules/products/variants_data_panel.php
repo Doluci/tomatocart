@@ -217,8 +217,6 @@ Ext.extend(Toc.products.VariantDataPanel, Ext.Panel, {
   onImagesChange: function() {
     this.fsImages.removeAll();
     this.fsImages.add(this.buildImagesPanel(this.valuesId, this.data.variants_image));
-    
-    this.doLayout();
   },
   
   onProductTypeChange: function (type) {

@@ -154,8 +154,10 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
   onAdd: function(){
     var dlg = this.owner.createProductDialog();
 
-    dlg.on('saveSuccess', function(){
+    dlg.on('saveSuccess', function(result){
       this.onRefresh();
+      
+      this.owner.app.showNotification({title: TocLanguage.msgSuccessTitle, html: result});
     }, this);
     
     dlg.show(this.mainPanel.getCategoriesTree().getCategoriesPath(null));
@@ -165,8 +167,10 @@ Ext.extend(Toc.products.ProductsGrid, Ext.grid.GridPanel, {
     var dlg = this.owner.createProductDialog(record.get("products_id"));
     dlg.setTitle(record.get("products_name"));
     
-    dlg.on('saveSuccess', function() {
+    dlg.on('saveSuccess', function(result) {
       this.onRefresh();
+      
+      this.owner.app.showNotification({title: TocLanguage.msgSuccessTitle, html: result});
     }, this);
     
     dlg.show();
