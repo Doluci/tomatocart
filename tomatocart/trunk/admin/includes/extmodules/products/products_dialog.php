@@ -16,7 +16,7 @@ Toc.products.ProductDialog = function(config) {
   config = config || {};
   
   config.id = 'products-dialog-win';
-  config.title = 'New Product';
+  config.title = '<?php echo $osC_Language->get('action_heading_new_product'); ?>';
   config.layout = 'fit';
   config.width = 870;
   config.height = 540;
@@ -39,14 +39,14 @@ Toc.products.ProductDialog = function(config) {
       scope:this
     },
     {
-      text:'Submit',
+      text: TocLanguage.btnSubmit,
       handler: function(){
         this.submitForm();
       },
       scope:this
     },
     {
-      text: 'Close',
+      text: TocLanguage.btnClose,
       handler: function(){
         this.close();
       },
@@ -185,15 +185,22 @@ Ext.extend(Toc.products.ProductDialog, Ext.Window, {
             
             this.pnlData.cboProductsType.disable();
             this.pnlCustomizations.getStore().reload();
+          
+            var onDsImagesLoad = function () {
+              this.pnlVariants.pnlVariantDataContainer.removeAll(true);
+              this.pnlVariants.pnlVariantDataContainer.doLayout();
+              this.pnlVariants.grdVariants.getStore().baseParams['products_id'] = this.productsId;
+              this.pnlVariants.grdVariants.getStore().reload();       
+
+              this.pnlImages.grdImages.getStore().removeListener('load', onDsImagesLoad, this);
+            }
+            
+            this.pnlImages.grdImages.getStore().on('load', onDsImagesLoad, this);
             this.pnlImages.grdImages.getStore().reload();
 
-            this.pnlVariants.pnlVariantDataContainer.removeAll(true);
-            this.pnlVariants.grdVariants.getStore().baseParams['products_id'] = this.productsId;
-            this.pnlVariants.grdVariants.getStore().reload();
-                        
             this.flagContinueEdit = false;  
             
-            Ext.MessageBox.alert(TocLanguage.msgSuccessTitle, action.result.feedback);
+            //Ext.MessageBox.alert(TocLanguage.msgSuccessTitle, action.result.feedback);
             
             Ext.each(action.result.urls, function(url) {
               this.pnlMeta.txtProductUrl[url.languages_id].setValue(url.url);

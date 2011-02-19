@@ -78,7 +78,7 @@ Ext.extend(Toc.products.VariantsPanel, Ext.Panel, {
 
   buildForm: function(productsId) {
     this.pnlVariantGroups = new Ext.Panel({
-      width: 180,
+      width: 190,
       split: true,
       layout: 'form',
       border: false,
@@ -174,6 +174,13 @@ Ext.extend(Toc.products.VariantsPanel, Ext.Panel, {
       }, this);
       
       this.grdVariants.getSelectionModel().selectFirstRow();
+
+      var cardID = record.get('variants_values');
+      this.pnlVariantDataContainer.getLayout().setActiveItem(cardID);
+      this.setVariantsValues(record.get('variants_groups'));
+        
+      this.pnlVariantDataContainer.doLayout();
+      this.dlgProducts.doLayout();
     }
   },
   
