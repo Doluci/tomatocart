@@ -159,6 +159,8 @@
       }
 
       foreach ( $osC_Language->getAll() as $l) {
+        $value = (isset($data['value'])  && isset($data['value'][$l['id']])) ? trim(trim($data['value'][$l['id']]), ',') : '';
+          
         if (is_numeric($id)) {
           $Qentry = $osC_Database->query('update :table_products_attributes_values set name = :name, module = :module, value = :value, status = :status, sort_order = :sort_order where products_attributes_values_id = :products_attributes_values_id and products_attributes_groups_id = :products_attributes_groups_id and language_id = :language_id');
         } else {
@@ -172,7 +174,7 @@
         $Qentry->bindInt(':status', $data['status']);
         $Qentry->bindValue(':name', $data['name'][$l['id']]);
         $Qentry->bindValue(':module', $data['module']);
-        $Qentry->bindValue(':value', (isset($data['value'])  && isset($data['value'][$l['id']])) ? $data['value'][$l['id']] : '');
+        $Qentry->bindValue(':value', $value);
         $Qentry->bindValue(':sort_order', $data['sort_order']);
         
         $Qentry->setLogging($_SESSION['module'], $entry_id);
