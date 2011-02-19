@@ -68,6 +68,8 @@
     
     function listImagesResizeResult(){
       global $toC_Json;
+      
+      ini_set('max_execution_time', 1800);
        
       $osC_Images = new osC_Image_Admin_resize();
 
