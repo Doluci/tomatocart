@@ -37,6 +37,7 @@ table_heading_customizations_type = Type
 table_heading_variants = Variants
 table_heading_default = Default
 
+action_heading_new_product = New Product
 action_heading_delete_image = Delete Image
 action_heading_batch_copy_products = Batch Copy Products
 action_heading_batch_delete_products = Batch Delete Products
