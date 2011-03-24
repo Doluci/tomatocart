@@ -27,7 +27,6 @@ Toc.homepage_info.HomepageInfoDialog = function (config) {
     {
       text: TocLanguage.btnSave,
       handler: function(){
-        alert('a');
         this.submitForm();
       },
       scope:this
