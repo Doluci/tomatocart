@@ -1618,23 +1618,41 @@
     
     function setStatus($id, $flag) {
       global $osC_Database;
-    
-      $Qstatus = $osC_Database->query('update :table_products set products_status = :products_status where products_id = :products_id');
-      $Qstatus->bindTable(':table_products', TABLE_PRODUCTS);
-      $Qstatus->bindInt(":products_id", $id);
-      $Qstatus->bindValue(":products_status", $flag);
-      $Qstatus->execute();
       
-      if(!$osC_Database->isError()) {
-        osC_Cache::clear('categories');
-        osC_Cache::clear('category_tree');
-        osC_Cache::clear('also_purchased');
-        osC_Cache::clear('sefu-products');
-        osC_Cache::clear('new_products');
-        osC_Cache::clear('feature_products');
+      $error = false;
+    
+      //customers basket
+      if ($flag == 0) {
+        $Qcb = $osC_Database->query('delete from :table_customers_basket where products_id = :products_id or products_id like :products_id');
+        $Qcb->bindTable(':table_customers_basket', TABLE_CUSTOMERS_BASKET);
+        $Qcb->bindInt(':products_id', $id);
+        $Qcb->bindValue(':products_id', (int)$id . '#%');
+        $Qcb->execute();
         
-        return true;
+        if ($osC_Database->isError()) {
+          $error = true;
+        }
       }
+          
+      if ($error == false) {
+        $Qstatus = $osC_Database->query('update :table_products set products_status = :products_status where products_id = :products_id');
+        $Qstatus->bindTable(':table_products', TABLE_PRODUCTS);
+        $Qstatus->bindInt(":products_id", $id);
+        $Qstatus->bindValue(":products_status", $flag);
+        $Qstatus->execute();
+        
+        if(!$osC_Database->isError()) {
+          osC_Cache::clear('categories');
+          osC_Cache::clear('category_tree');
+          osC_Cache::clear('also_purchased');
+          osC_Cache::clear('sefu-products');
+          osC_Cache::clear('new_products');
+          osC_Cache::clear('feature-products');
+          
+          return true;
+        }
+      }
+
       return false;
     }
   }
