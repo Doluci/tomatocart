@@ -41,6 +41,10 @@
         if ($osC_Services->isStarted('breadcrumb')) {
           $breadcrumb->add($osC_Language->get('breadcrumb_create_account'), osc_href_link(FILENAME_ACCOUNT, $this->_module, 'SSL'));
         }
+        
+        $this->addStyleSheet('ext/multibox/multibox.css');
+        $this->addJavascriptFilename('ext/multibox/Overlay.js');
+        $this->addJavascriptFilename('ext/multibox/MultiBox.js');        
 
         $this->addJavascriptPhpFilename('includes/form_check.js.php');
       }
