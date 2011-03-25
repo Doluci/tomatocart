@@ -21,7 +21,7 @@
       $Qentry->bindTable(':table_articles', TABLE_ARTICLES);
       $Qentry->bindTable(':table_articles_description', TABLE_ARTICLES_DESCRIPTION);
       $Qentry->bindTable(':table_articles_categories_description', TABLE_ARTICLES_CATEGORIES_DESCRIPTION);
-      $Qentry->bindInt(':articles_id', $_GET['articles_id']);
+      $Qentry->bindInt(':articles_id', $id);
       $Qentry->bindInt(':language_id', $osC_Language->getID());
       $Qentry->execute();
 

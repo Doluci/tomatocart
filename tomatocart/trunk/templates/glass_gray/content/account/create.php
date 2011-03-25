@@ -80,7 +80,11 @@
   <h6><?php echo $osC_Language->get('create_account_terms_heading'); ?></h6>
 
   <div class="content">
-    <?php echo sprintf($osC_Language->get('create_account_terms_description'), osc_href_link(FILENAME_INFO, 'privacy', 'AUTO')) . '<br /><br /><ol><li>' . osc_draw_checkbox_field('privacy_conditions', array(array('id' => 1, 'text' => $osC_Language->get('create_account_terms_confirm')))) . '</li></ol>'; ?>
+    <?php 
+    $privacy = str_replace('<a href="%s">', '<a href="' . osc_href_link(FILENAME_JSON, 'module=account&action=display_privacy')  . '" class="multibox" rel="width:800,height:400,ajax:true">', $osC_Language->get('create_account_terms_description'));
+    echo $privacy . '<br /><br /><ol><li>' . osc_draw_checkbox_field('privacy_conditions', array(array('id' => 1, 'text' => $osC_Language->get('create_account_terms_confirm')))) . '</li></ol>'; 
+    ?>
+  
   </div>
 </div>
 
@@ -95,3 +99,11 @@
 </div>
 
 </form>
+<script type="text/javascript">
+  window.addEvent("domready",function() {
+    var overlay = new Overlay(); 
+    var box = new MultiBox('multibox', { 
+        overlay: overlay
+    });
+  });
+</script>
