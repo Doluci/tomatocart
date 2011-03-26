@@ -88,6 +88,8 @@
       } else {
         $messageStack->add($this->_module, sprintf($osC_Language->get('field_customer_last_name_error'), ACCOUNT_LAST_NAME));
       }
+      
+      $data['newsletter'] = ( isset($_POST['newsletter']) && ($_POST['newsletter'] == '1') ) ? 1 : 0;
 
       if (ACCOUNT_DATE_OF_BIRTH == '1') {
         if (isset($_POST['dob_days']) && isset($_POST['dob_months']) && isset($_POST['dob_years']) && checkdate($_POST['dob_months'], $_POST['dob_days'], $_POST['dob_years'])) {

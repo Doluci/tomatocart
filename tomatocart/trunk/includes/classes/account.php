@@ -57,7 +57,7 @@
       $Qcustomer->bindInt(':number_of_logons', 0);
       $Qcustomer->bindRaw(':date_account_created', 'now()');
       $Qcustomer->execute();
-
+      
       if ($Qcustomer->affectedRows() === 1) {
         $customer_id = $osC_Database->nextID();
 
