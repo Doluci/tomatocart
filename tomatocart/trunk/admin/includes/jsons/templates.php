@@ -23,39 +23,41 @@
       $files = $osC_DirectoryListing->getFiles(true);
       
   	  foreach ( $files as $file ) {
-        include('../templates/' . $file['name'] . '/template.php');
-    
-        $code = $file['name'];
-        $class = 'osC_Template_' . $code;
-    
-        if ( class_exists($class) ) {
-          $module = new $class();
-          
-          $module_title = $module->getTitle();
-          
-          $action = array();
-          
-          if ( $module->isInstalled() ) {
-            if ( $module->getCode() == DEFAULT_TEMPLATE ) {
-              $module_title .= '&nbsp;(' . $osC_Language->get('default_entry') . ')';
+  	    if ( file_exists('../templates/' . $file['name'] . '/template.php') ) {
+          include('../templates/' . $file['name'] . '/template.php');
+      
+          $code = $file['name'];
+          $class = 'osC_Template_' . $code;
+      
+          if ( class_exists($class) ) {
+            $module = new $class();
+            
+            $module_title = $module->getTitle();
+            
+            $action = array();
+            
+            if ( $module->isInstalled() ) {
+              if ( $module->getCode() == DEFAULT_TEMPLATE ) {
+                $module_title .= '&nbsp;(' . $osC_Language->get('default_entry') . ')';
+                
+                $action[] = array('class' => 'icon-default-record', 'qtip' => $osC_Language->get('field_set_as_default'));
+              } else {
+                $action[] = array('class' => 'icon-default-gray-record', 'qtip' => $osC_Language->get('field_set_as_default'));
+              }
               
-              $action[] = array('class' => 'icon-default-record', 'qtip' => $osC_Language->get('field_set_as_default'));
+              $action[] = array('class' => 'icon-uninstall-record', 'qtip' => $osC_Language->get('icon_uninstall'));
             } else {
-              $action[] = array('class' => 'icon-default-gray-record', 'qtip' => $osC_Language->get('field_set_as_default'));
+              $action[] = array('class' => 'icon-empty-record', 'qtip' => $osC_Language->get('field_set_as_default'));
+              $action[] = array('class' => 'icon-install-record', 'qtip' => $osC_Language->get('icon_install'));
             }
             
-            $action[] = array('class' => 'icon-uninstall-record', 'qtip' => $osC_Language->get('icon_uninstall'));
-          } else {
-            $action[] = array('class' => 'icon-empty-record', 'qtip' => $osC_Language->get('field_set_as_default'));
-            $action[] = array('class' => 'icon-install-record', 'qtip' => $osC_Language->get('icon_install'));
+            $modules[] = array('code' => $module->getCode(),
+                               'title' => $module_title,
+                               'author' => $module->getAuthorName(),
+                               'url' => $module->getAuthorAddress(),
+                               'action' => $action);
           }
-          
-          $modules[] = array('code' => $module->getCode(),
-                             'title' => $module_title,
-                             'author' => $module->getAuthorName(),
-                             'url' => $module->getAuthorAddress(),
-                             'action' => $action);
-        }
+  	    }
       }
     
       $response = array(EXT_JSON_READER_ROOT => $modules);
