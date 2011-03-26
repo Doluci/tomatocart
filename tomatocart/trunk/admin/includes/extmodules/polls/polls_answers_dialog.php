@@ -108,7 +108,7 @@ Ext.extend(Toc.polls.PollsAnswersDialog, Ext.Window, {
           }
         ?>
         {xtype: 'textfield', fieldLabel: '<?php echo $osC_Language->get('field_votes_count'); ?>', name: 'votes_count', readOnly: true, value: 0},
-        {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('table_heading_sort_order'); ?>', name: 'sort_order', value: 0, allowBlank: false},
+        {xtype: 'numberfield', fieldLabel: '<?php echo $osC_Language->get('table_heading_sort_order'); ?>', name: 'sort_order', value: 0, allowBlank: false}
       ]
     });
     
