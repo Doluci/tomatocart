@@ -602,8 +602,8 @@
 
       $records = array();
       foreach ( $osC_Order->getStatusHistory() as $status_history ) {
-		  $records[] = array('date_added' => osC_DateTime::getShort($status_history['date_added'], true),
-		                     'orders_status_history_id' => $status_history['orders_status_history_id'], 
+      $records[] = array('date_added' => osC_DateTime::getShort($status_history['date_added'], true),
+                         'orders_status_history_id' => $status_history['orders_status_history_id'], 
                          'status' => $status_history['status'], 
                          'comments' => nl2br($status_history['comment']), 
                          'customer_notified' => osc_icon((($status_history['customer_notified'] === 1) ? 'checkbox_ticked.gif' : 'checkbox_crossed.gif')));
@@ -713,7 +713,7 @@
       
           require_once('../includes/classes/email_template.php');
           $email_template = toC_Email_Template::getEmailTemplate('admin_order_status_updated');
-          $email_template->setData($id, osc_href_link(FILENAME_CATALOG_ACCOUNT_HISTORY_INFO, 'order_id=' . $id, 'SSL', false, false, true), osC_DateTime::getLong($Qorder->value('date_purchased')), $data['append_comment'], $data['comment'], $Qorder->value('orders_status_name'), $Qorder->value('customers_name'), $Qorder->value('customers_email_address'));
+          $email_template->setData($id, osc_href_link(FILENAME_ACCOUNT, 'orders=' . $id, 'SSL', false, true, true), osC_DateTime::getLong($Qorder->value('date_purchased')), $data['append_comment'], $data['comment'], $Qorder->value('orders_status_name'), $Qorder->value('customers_name'), $Qorder->value('customers_email_address'));
           $email_template->buildMessage();
           $email_template->sendEmail();
         }
