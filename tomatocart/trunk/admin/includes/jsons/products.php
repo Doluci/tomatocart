@@ -824,7 +824,7 @@
             $data['customization_fields'][] = array(
               'customizations_fields_id' => $tmp[0],
               'customizations_type' => $tmp[1],
-              'customizations_is_required' => ($tmp[2] == 'true') ? 1 : 0,
+              'customizations_is_required' => $tmp[2],
               'customizations_name_data' => $toC_Json->decode($tmp[3]));
           }
         }
