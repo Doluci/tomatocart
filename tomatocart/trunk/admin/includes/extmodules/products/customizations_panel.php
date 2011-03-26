@@ -99,6 +99,7 @@ Toc.products.CustomizationsPanel = function(config) {
 Ext.extend(Toc.products.CustomizationsPanel, Ext.grid.GridPanel, {
   onChange: function(row, type, required, name, lanData) {
     var store = this.getStore();
+    required = (required == true) ? 1 : 0;
     
     if (row == -1) {
       var record = Ext.data.Record.create([
