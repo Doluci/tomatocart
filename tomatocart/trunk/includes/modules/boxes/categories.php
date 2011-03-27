@@ -28,7 +28,7 @@
       global $cPath, $osC_CategoryTree, $osC_Template;
 
       $osC_CategoryTree->reset();
-      $osC_CategoryTree->setShowCategoryProductCount((SERVICES_CATEGORY_PATH_CALCULATE_PRODUCT_COUNT == '1') ? true : false);
+      $osC_CategoryTree->setShowCategoryProductCount((BOX_CATEGORIES_SHOW_PRODUCT_COUNT == '1') ? true : false);
       
       if (BOX_CATEGORIES_DISPLAY_DROP_DOWN_MENU == '-1') {
         $osC_CategoryTree->setCategoryPath($cPath, '<b>', '</b>');
