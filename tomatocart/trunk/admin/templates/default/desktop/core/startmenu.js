@@ -62,7 +62,7 @@ Ext.extend(Ext.ux.StartMenu, Ext.menu.Menu, {
             return;
         }
         var el = this.el = new Ext.Layer({
-            cls: Ext.isIE8 ? "x-start-menu ux-start-menu" : "x-menu ux-start-menu",
+            cls: "x-menu ux-start-menu",
             shadow:this.shadow,
             constrain: false,
             parentEl: this.parentEl || document.body,
