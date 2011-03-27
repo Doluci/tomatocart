@@ -40,7 +40,7 @@
   }
 
 // define the project version
-  define('PROJECT_VERSION', 'TomatoCart v1.1.3');
+  define('PROJECT_VERSION', 'TomatoCart v1.1.4');
 
 // set the type of request (secure or not)
   $request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on')) ? 'SSL' : 'NONSSL';
