@@ -1,4 +1,26 @@
-VERSION 1.1.3
+VERSION 1.1.4
+--BUG FIX
+ * fix bug #419 -- product description bullets and numbering
+ * fix bug #421 -- Categories count off still doesn't work in v1.1.3
+ * fix bug #422 -- Logout in Admin V1.1.3 doesn't work
+ * fix bug #389 -- Cusomization error when editing
+ * fix bug #420 -- Polls broken in admin v1.1.3
+ * fix bug #398 -- Template Installation problem + Template List missing
+ * fix bug #386 -- When creating an account, newsletter subscription won't work
+ * fix bug #391 -- Link in the order status from email is invalid
+ * fix bug #395 -- Create account - privacy notice issue
+ * fix bug #414 -- when product is deactived, it is still in the feature product
+ * fix bug #405 -- Deactivate product creates buggy product in saved cart
+ * fix bug #412 -- debug code alert('a'); in homepage info save action 
+ * Strip comma (,) from the end of product attribute values
+ * correct products edit dialog button translation, and fix bug: when user click several times the SaveAndContinue button the variants data will gone.
+ * increase ajax timeout for image resize in case of large number of images
+ * add translation for submit
+ * add translation for new product title
+ * Supresses image resize error report
+ * add missing slide images
+ 
+ VERSION 1.1.3
 --BUG FIX
  * fix bug #314 -- HomePage information not saving?
  * fix bug #297 -- Email From Field is not set in Header
