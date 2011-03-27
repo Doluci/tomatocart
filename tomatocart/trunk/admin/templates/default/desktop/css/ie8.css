@@ -1,15 +1,15 @@
 /*IE8 FIX*/
 
 /*START: Fix the menu issue about the width in IE8*/
-.x-start-menu li {
+.x-menu li {
 	line-height: 100%;
 }
 
-.x-start-menu .ux-start-menu-apps-panel a.x-menu-item {
+.x-menu .ux-start-menu-apps-panel a.x-menu-item {
 	color: #000000 !important;
 }
 
-.x-start-menu a.x-menu-item {
+.x-menu a.x-menu-item {
   color: #222222;
   cursor: pointer;
   display: block;
@@ -20,16 +20,12 @@
   white-space: nowrap;
 }
   
-.x-start-menu a {
+.x-menu a {
 	text-decoration: none !important;
 }
 
-.x-start-menu li {
-	line-height: 100%
-}
-
 .x-menu {
-	width: auto !important;
+	min-width: 170px;
 }
 /*END:Fix menu*/
 
