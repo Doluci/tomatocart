@@ -72,4 +72,11 @@
 /*email message flag*/
   define('CUSTOMIZATION_FIELD_TYPE_INPUT_FILE', 0);
   define('CUSTOMIZATION_FIELD_TYPE_INPUT_TEXT', 1);
+  
+/*information*/
+  define('INFORMATION_ABOUT_US', 1);
+  define('INFORMATION_SHIPPING_RETURNS', 2);
+  define('INFORMATION_PRIVACY_NOTICE', 3);
+  define('INFORMATION_SHIPPING_RETURNS', 4);
+  define('INFORMATION_IMPRINT', 5);
 ?>
