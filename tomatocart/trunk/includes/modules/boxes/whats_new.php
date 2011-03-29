@@ -57,7 +57,7 @@
           $data['products_price'] = $osC_Product->getPriceFormated(true);
         }
 
-        $osC_Cache->writeBuffer($data);
+        $osC_Cache->write('box-whats_new-' . $osC_Language->getCode() . '-' . $osC_Currencies->getCode(), $data);
       }
 
       if (empty($data) === false) {
