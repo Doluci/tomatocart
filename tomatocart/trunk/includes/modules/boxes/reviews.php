@@ -66,7 +66,7 @@
             $Qreview->freeResult();
           }
 
-          $osC_Cache->writeBuffer($data);
+          $osC_Cache->write('box-reviews' . (isset($osC_Product) && is_a($osC_Product, 'osC_Product') && $osC_Product->isValid() ? '-' . $osC_Product->getID() : '') . '-' . $osC_Language->getCode(), $data);
         }
 
         $this->_content = '';
