@@ -73,10 +73,10 @@
       <li>
         <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'), $osC_Language->get('login')); ?>
       </li>
-    <?php } ?>
        <li>
         <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'create', 'SSL'), $osC_Language->get('create_account')); ?>
       </li>
+    <?php } ?>
     <?php if ((MAINTENANCE_MODE == 1) && isset($_SESSION['admin'])) { ?>
       <li id="admin_logout">
         <?php echo osc_link_object(osc_href_link(FILENAME_DEFAULT, 'maintenance=logoff', 'SSL'), $osC_Language->get('admin_logout')); ?>
