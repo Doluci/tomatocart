@@ -99,6 +99,7 @@ box_pre_install_title = Pre-install Check
 box_server_title = Server Capabilities
 box_server_php_version = PHP Version
 box_server_php_settings = PHP Settings
+box_server_safe_mode = safe_mode
 box_server_register_globals = register_globals
 box_server_magic_quotes = magic_quotes
 box_server_file_uploads = file_uploads
