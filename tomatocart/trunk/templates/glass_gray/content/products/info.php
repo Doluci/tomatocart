@@ -498,10 +498,10 @@ window.addEvent('domready', function(){
     productsId: <?php echo $osC_Product->getID(); ?>,
     displayQty:  <?php echo (PRODUCT_INFO_QUANTITY == '1') ? 'true' : 'false'; ?>,
     lang: {
-      txtInStock: '<?php echo $osC_Language->get('in_stock');?>',
-      txtOutOfStock: '<?php echo $osC_Language->get('out_of_stock'); ?>',
-      txtNotAvailable: '<?php echo $osC_Language->get('not_available'); ?>',
-      txtTaxText: '<?php echo $osC_Language->get('including_tax'); ?>'
+      txtInStock: '<?php echo addslashes($osC_Language->get('in_stock'));?>',
+      txtOutOfStock: '<?php echo addslashes($osC_Language->get('out_of_stock')); ?>',
+      txtNotAvailable: '<?php echo addslashes($osC_Language->get('not_available')); ?>',
+      txtTaxText: '<?php echo addslashes($osC_Language->get('including_tax')); ?>'
     }
   });
   
