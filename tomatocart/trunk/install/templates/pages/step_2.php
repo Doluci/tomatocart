@@ -62,6 +62,11 @@
 	          <th align="right"></th>
 	          <th align="right" width="25"></th>
 	        </tr>
+          <tr>
+            <td><?php echo $osC_Language->get('box_server_safe_mode'); ?></td>
+            <td align="right"><?php echo (((int)ini_get('safe_mode') === 0) ? $osC_Language->get('box_server_off') : $osC_Language->get('box_server_on')); ?></td>
+            <td align="right"><img src="images/<?php echo (((int)ini_get('safe_mode') === 0) ? 'ok.png' : 'error.png'); ?>" border="0" width="16" height="16"></td>
+          </tr>
 	        <tr>
 	          <td><?php echo $osC_Language->get('box_server_register_globals'); ?></td>
 	          <td align="right"><?php echo (((int)ini_get('register_globals') === 0) ? $osC_Language->get('box_server_off') : $osC_Language->get('box_server_on')); ?></td>
