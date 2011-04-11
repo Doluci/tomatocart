@@ -33,6 +33,7 @@
       $QguestBook->bindTable(':table_guest_books', TABLE_GUEST_BOOKS);
       $QguestBook->bindInt(':languages_id', $osC_Language->getID());
       $QguestBook->bindInt(':guest_book_list', BOX_GUEST_BOOK_LIST);
+      $QguestBook->setCache('box-guest-book-' . $osC_Language->getCode());
       $QguestBook->execute();
       
       if ($QguestBook->numberOfRows() > 0) {

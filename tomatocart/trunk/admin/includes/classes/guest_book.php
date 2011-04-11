@@ -39,6 +39,8 @@
       $QguestBook->execute();
       
       if ( !$osC_Database->isError() ) {
+        osC_Cache::clear('box-guest-book');
+        
         return true;
       }
   
@@ -66,6 +68,8 @@
       $QguestBook->execute();
       
       if ( !$osC_Database->isError() ) {
+        osC_Cache::clear('box-guest-book');
+        
         return true;
       }
       
@@ -82,6 +86,8 @@
       $QguestBook->execute();     
   
       if (!$osC_Database->isError()) {
+        osC_Cache::clear('box-guest-book');
+        
         return true;
       }
   

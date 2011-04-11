@@ -189,7 +189,6 @@
         $Qterm->bindValue(':text', $this->_raw_keywords);
         $Qterm->bindInt(':search_count', 1);
         $Qterm->bindInt(':show_in_terms', 0);
-        $Qterm->execute();
       }
 
       $Qterm->bindTable(':table_search_terms', TABLE_SEARCH_TERMS);
@@ -333,7 +332,9 @@
       
       $this->_number_of_results = $Qlisting->getBatchSize();
 
-      $this->updateSearchTerm();
+      if ( $this->hasKeywords() ) {
+        $this->updateSearchTerm();  
+      }
       
       return $Qlisting;
     }

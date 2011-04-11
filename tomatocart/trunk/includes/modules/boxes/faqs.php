@@ -27,18 +27,16 @@
     function initialize() {
       global $osC_Database, $osC_Language, $current_category_id;
 
-        $this->_title_link = osc_href_link(FILENAME_INFO,'faqs');
-
-        $Qfaqs = $osC_Database->query('select distinct f.faqs_id, fd.faqs_question from :table_faqs f, :table_faqs_description fd where f.faqs_status = 1 and f.faqs_id = fd.faqs_id and fd.language_id = :language_id order by f.faqs_order desc, fd.faqs_question limit :max_display_faqs');
-        $Qfaqs->bindTable(':table_faqs', TABLE_FAQS);
-        $Qfaqs->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
-        $Qfaqs->bindInt(':language_id', $osC_Language->getID());
-        $Qfaqs->bindInt(':max_display_faqs', BOX_FAQ_MAX_LIST);
-
-        if (BOX_FAQ_MAX_LIST > 0) {
-          $Qfaqs->setCache('faqs-' . $osC_Language->getCode(), BOX_FAQ_MAX_LIST);
-        }
-        $Qfaqs->execute();
+      $this->_title_link = osc_href_link(FILENAME_INFO,'faqs');
+      
+      $Qfaqs = $osC_Database->query('select distinct f.faqs_id, fd.faqs_question from :table_faqs f, :table_faqs_description fd where f.faqs_status = 1 and f.faqs_id = fd.faqs_id and fd.language_id = :language_id order by f.faqs_order desc, fd.faqs_question limit :max_display_faqs');
+      $Qfaqs->bindTable(':table_faqs', TABLE_FAQS);
+      $Qfaqs->bindTable(':table_faqs_description', TABLE_FAQS_DESCRIPTION);
+      $Qfaqs->bindInt(':language_id', $osC_Language->getID());
+      $Qfaqs->bindInt(':max_display_faqs', BOX_FAQ_MAX_LIST);
+      $Qfaqs->setCache('box-faqs-' . $osC_Language->getCode());
+      
+      $Qfaqs->execute();
 
       if ($Qfaqs->numberOfRows() >= 0) {
         $this->_content = '<ul>';

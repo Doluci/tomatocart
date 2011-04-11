@@ -32,10 +32,10 @@
 <?php
   }
 
-  if ($osC_Product->getData('reviews_average_rating') > 0) {
+  if ($osC_Product->getAverageReviewsRating() > 0) {
 ?>
 
-<p><?php echo $osC_Language->get('average_rating') . ' ' . osc_image(DIR_WS_IMAGES . 'stars_' . $osC_Product->getData('reviews_average_rating') . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $osC_Product->getData('reviews_average_rating'))); ?></p>
+<p><?php echo $osC_Language->get('average_rating') . ' ' . osc_image(DIR_WS_IMAGES . 'stars_' . $osC_Product->getAverageReviewsRating() . '.png', sprintf($osC_Language->get('rating_of_5_stars'), $osC_Product->getAverageReviewsRating())); ?></p>
 
 <?php
   }

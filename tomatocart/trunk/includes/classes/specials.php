@@ -69,6 +69,7 @@
         $Qspecial = $osC_Database->query('select specials_new_products_price from :table_specials where products_id = :products_id and status = 1');
         $Qspecial->bindTable(':table_specials', TABLE_SPECIALS);
         $Qspecial->bindInt(':products_id', $id);
+        $Qspecial->setCache('product-specials-' . $id, $id);
         $Qspecial->execute();
 
         if ($Qspecial->numberOfRows() > 0) {
