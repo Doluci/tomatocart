@@ -790,10 +790,15 @@
 
         osC_Cache::clear('categories');
         osC_Cache::clear('category_tree');
+        
+        if (is_numeric($id)) {
+          osC_Cache::clear('product-' . $id);
+        }
+        
         osC_Cache::clear('also_purchased');
         osC_Cache::clear('sefu-products');
         osC_Cache::clear('new_products');
-        osC_Cache::clear('feature_products');
+        osC_Cache::clear('feature-products');
 
         return $products_id;
       }
@@ -835,6 +840,8 @@
           return false;
         }
       }
+      
+      osC_Cache::clear('product-' . $id);
       
       return true;
     }
@@ -1118,6 +1125,7 @@
 
         osC_Cache::clear('categories');
         osC_Cache::clear('category_tree');
+        osC_Cache::clear('product-' . $id);
         osC_Cache::clear('also_purchased');
         osC_Cache::clear('sefu-products');
         osC_Cache::clear('new_products');
@@ -1644,6 +1652,7 @@
         if(!$osC_Database->isError()) {
           osC_Cache::clear('categories');
           osC_Cache::clear('category_tree');
+          osC_Cache::clear('product-' . $id);
           osC_Cache::clear('also_purchased');
           osC_Cache::clear('sefu-products');
           osC_Cache::clear('new_products');

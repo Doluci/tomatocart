@@ -42,7 +42,7 @@ class toC_Faqs_Admin {
     $Qstatus->execute();
 
     osC_Cache::clear('sefu-faqs');
-    osC_Cache::clear('faqs');
+    osC_Cache::clear('box-faqs');
     return true;
     }
 
@@ -107,7 +107,7 @@ class toC_Faqs_Admin {
       $osC_Database->commitTransaction();
 
       osC_Cache::clear('sefu-faqs');
-      osC_Cache::clear('faqs');
+      osC_Cache::clear('box-faqs');
       return true;
     }
     $osC_Database->rollbackTransaction();
@@ -147,7 +147,7 @@ class toC_Faqs_Admin {
         $osC_Database->commitTransaction();
 
         osC_Cache::clear('sefu-faqs');
-        osC_Cache::clear('faqs');
+        osC_Cache::clear('box-faqs');
         return true;
       }
     }
