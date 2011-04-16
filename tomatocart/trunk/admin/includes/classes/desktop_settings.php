@@ -111,8 +111,26 @@
       $settings['sidebartransparency'] = '5';
       $settings['sidebarbackgroundcolor'] = 'FFFFFF';
       $settings['sidebaropen'] = true;
+      $settings['livefeed'] = 0;
       
       return $settings;
+    }
+    
+    function setLastLiveFeed($timestamp) {
+      $this->_settings['livefeed'] = $timestamp;
+      $this->save($this->_settings);
+      
+      return true;          
+    }
+    
+    function getLastLiveFeed() {
+      $timestamp = '';
+      
+      if (isset($this->_settings['livefeed'])) {
+        $timestamp = $this->_settings['livefeed'];
+      } 
+      
+      return $timestamp;          
     }
 
     function saveDashBoards($portlets) {
