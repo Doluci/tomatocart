@@ -44,7 +44,7 @@
       	$this->_filename = $temp_file;
       }
       
-      if ($this->_compression_type == 'zip'){
+      if ($this->_compression_type == 'zip') {
       	require_once('../ext/zip/pclzip.lib.php');
       	$archive = new PclZip($this->_filename->destination . $this->_filename->filename);
       	
@@ -66,7 +66,7 @@
       }
     }
 
-    function insertData($table_name, $data){
+    function insertData($table_name, $data) {
       global $osC_Database;
 
       $fields = array_keys($data);
@@ -74,7 +74,7 @@
 
       $fields = implode(',', $fields);
       for ($i = 0; $i < sizeof($values); $i++) {
-        if( !( $values[$i] == 'now()' ) )
+        if( !( $values[$i] == 'now()' || $values[$i] == 'NULL' ) )
           $values[$i] = "'" . $osC_Database->parseString($values[$i]) . "'";
       }
       $values = implode(',', $values);
@@ -249,7 +249,7 @@
     }
   }
 
-  class osC_Products_Importer extends toC_Importer{
+  class osC_Products_Importer extends toC_Importer {
     var $_image_file = '';
 
     function osC_Products_Importer($parameters){
@@ -276,39 +276,75 @@
         }
       }
     }
+    
+    function isProductExist($products_id) {
+      global $osC_Database;
+      
+      $Qcheck = $osC_Database->query('select * from :table_products where products_id = :products_id');
+      $Qcheck->bindTable(':table_products', TABLE_PRODUCTS);
+      $Qcheck->bindValue(':products_id', $products_id);
+      $Qcheck->execute();
+      
+      if ($Qcheck->numberOfRows() > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
 
     function insertProduct($product, $descriptions, $categories_id, $images){
       global $osC_Database;
 
-      $products_id = toC_Importer::insertData(TABLE_PRODUCTS, $product);
+      $insert = true;
+      $products_id = (int) $product['products_id'];
+      unset($product['products_id']);
+      
+      if (($products_id > 0) && osC_Products_Importer::isProductExist($products_id)) {
+        $insert = false;
+      }
 
-      if(isset($products_id) && $products_id != ''){
-        foreach($descriptions as $description){
+      if($insert == true) {
+        $products_id = toC_Importer::insertData(TABLE_PRODUCTS, $product);
+        
+        //categories
+        if (is_array($categories_id) && !empty($categories_id)) {
+          foreach($categories_id as $category) {
+            $data = array('categories_id' => $category, 'products_id' => $products_id);
+            toC_Importer::insertData(TABLE_PRODUCTS_TO_CATEGORIES, $data);
+          }
+        }
+
+        //description
+        foreach($descriptions as $description) {
           $description['products_id'] = $products_id;
           toC_Importer::insertData(TABLE_PRODUCTS_DESCRIPTION, $description);
         }
-
-        $category['categories_id'] = $categories_id;
-        $category['products_id'] = $products_id;
-        toC_Importer::insertData(TABLE_PRODUCTS_TO_CATEGORIES, $category);
 
         $sort_id = 1;
         foreach($images as $image){
           $image['products_id'] = $products_id;
           $image['default_flag'] = (($sort_id == 1) ? 1 : 0);
           $image['sort_order'] = $sort_id++;
-
+          
           if ( file_exists(DIR_FS_CATALOG . DIR_WS_IMAGES . 'products/_upload/' . $image['image']) ) {
+            $image_id = toC_Importer::insertData(TABLE_PRODUCTS_IMAGES, $image);
             copy('../images/products/_upload/' . $image['image'], '../images/products/originals/' . $image['image']);
 
+            $new_image_name =  $products_id . '_' . $image_id . '_' . $image['image'];
+            @rename('../images/products/originals/' . $image['image'], '../images/products/originals/' . $new_image_name);
+
+            $Qupdate = $osC_Database->query('update :table_products_images set image = :image where id = :id');
+            $Qupdate->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
+            $Qupdate->bindValue(':image', $new_image_name);
+            $Qupdate->bindInt(':id', $image_id);
+            $Qupdate->execute();  
+          
             $osC_Image = new osC_Image_Admin();
             foreach ($osC_Image->getGroups() as $group) {
               if ($group['id'] != '1') {
-                $osC_Image->resize($image['image'], $group['id'], 'products');
+                $osC_Image->resize($new_image_name, $group['id'], 'products');
               }
             }
-
-            toC_Importer::insertData(TABLE_PRODUCTS_IMAGES, $image);
           }
         }
       }
@@ -316,26 +352,40 @@
 
     function parseXmlFile(){
       global $osC_Language;
-
+      
       $products = @simplexml_load_file($this->_filename);
 
       if (is_object($products)) {
         foreach ($products->Product as $product){
-          $data['products_type'] = $product->Type;
-          $data['products_quantity'] = $product->Quantity;
-          $data['products_moq'] = $product->Moq;
-          $data['products_price'] = $product->Price;
-          $data['products_sku'] = $product->Sku;
-          $data['products_model'] = $product->Model;
-          $data['products_weight'] = $product->Weight;
-          $data['products_weight_class'] = $product->WeightClass;
-          $data['products_status'] = $product->Status;
-          $data['products_tax_class_id'] = $product->Tax;
-          $data['manufacturers_id'] = $product->Manufacturer;
-          $data['quantity_unit_class'] = $product->UnitClass;
-          $data['order_increment'] = $product->OrderIncrement;
+          $data['products_id'] = (string)$product->ID;
+          $data['products_type'] = (string)$product->Type;
+          $data['products_quantity'] = (string)$product->Quantity;
+          $data['products_moq'] = (string)$product->Moq;
+          $data['products_max_order_quantity'] = (string)$product->MaxQuantity;
+          $data['products_price'] = (string)$product->Price;
+          $data['products_sku'] = (string)$product->Sku;
+          $data['products_model'] = (string)$product->Model;
+          $data['products_weight'] = (string)$product->Weight;
+          $data['products_weight_class'] = (string)$product->WeightClass;
+          $data['products_status'] = (string)$product->Status;
+          $data['products_tax_class_id'] = (string)$product->Tax;
+          $data['manufacturers_id'] = (string)$product->Manufacturer;
+          $data['quantity_discount_groups_id'] = (string)$product->QuantityDiscountGroup;
+          $data['quantity_unit_class'] = (string)$product->UnitClass;
+          $data['order_increment'] = (string)$product->OrderIncrement;
+          $data['products_attributes_groups_id'] = (string)$product->ProductsAttributesGroup;
           $data['products_date_added'] = 'now()';
-  
+          $data['products_last_modified'] = 'now()';
+          $data['products_date_available'] = 'NULL';
+          $data['products_ordered'] = '0';
+
+          $categories_id = array();
+          if (is_object($product->Categories->Category)) {
+            foreach ($product->Categories->Category as $cat) {
+              $categories_id[] = (string)$cat;
+            }
+          }
+
           if (is_object($product->Descriptions->Description)) {
             $descriptions = array();
             foreach ($product->Descriptions->Description as $descriptionElem) {
@@ -345,31 +395,31 @@
                 }
               }
       
-              $description['products_name'] = $descriptionElem->ProductsName;
-              $description['products_description'] = $descriptionElem->ProductsDescription;
-              $description['products_keyword'] = $descriptionElem->ProductsKeyword;
-              $description['products_tags'] = $descriptionElem->ProductsTags;
-              $description['products_url'] = $descriptionElem->ProductsUrl;
-              $description['products_page_title'] = $descriptionElem->ProductsPageTitle;
-              $description['products_meta_keywords'] = $descriptionElem->ProductsMetaKeywords;
-              $description['products_meta_description'] = $descriptionElem->ProductsMetaDescription;
-              $description['products_viewed'] = $descriptionElem->ProductsViewed;
+              $description['products_name'] = (string)$descriptionElem->ProductsName;
+              $description['products_description'] = (string)$descriptionElem->ProductsDescription;
+              $description['products_keyword'] = (string)$descriptionElem->ProductsKeyword;
+              $description['products_tags'] = (string)$descriptionElem->ProductsTags;
+              $description['products_url'] = (string)$descriptionElem->ProductsUrl;
+              $description['products_friendly_url'] = (string)$descriptionElem->ProductsFriendlyUrl;
+              $description['products_page_title'] = (string)$descriptionElem->ProductsPageTitle;
+              $description['products_meta_keywords'] = (string)$descriptionElem->ProductsMetaKeywords;
+              $description['products_meta_description'] = (string)$descriptionElem->ProductsMetaDescription;
     
               $descriptions[] = $description;
             }
           }
-  
+          
           $productsImages = array();
           if (is_object($product->Images->Image)) {
             foreach ($product->Images->Image as $imgElem) {
-              $productImage['image'] = $imgElem->ProductsImage;
+              $productImage['image'] = (string)$imgElem->ImageName;
               $productImage['date_added'] = 'now()';
     
               $productsImages[] = $productImage;
             }
           }
-          
-          $this->insertProduct($data, $descriptions, $product->CategoriesId, $productsImages);
+
+          $this->insertProduct($data, $descriptions, $categories_id, $productsImages);
         }
         return true;
       }
@@ -386,8 +436,8 @@
       if ($handle) {
         $first_row = true;
         while (($cells = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            
-          if($first_row == true) {
+
+        if($first_row == true) {
             $columns = $cells;
             $first_row = false;
           } else {
@@ -395,6 +445,7 @@
               return false;
             } else {
               $data = array();
+              $data['products_id'] = $cells[0];
               $data['products_type'] = $cells[1];
               $data['products_quantity'] = $cells[2];
               $data['products_moq'] = $cells[3];
@@ -407,15 +458,21 @@
               $data['products_status'] = $cells[10];
               $data['products_tax_class_id'] = $cells[11];
               $data['manufacturers_id'] = $cells[12];
-              $data['quantity_unit_class'] = $cells[13];
-              $data['order_increment'] = $cells[14];
-              $categories_id = $cells[15];
-              $image_str = $cells[16];
+              $data['quantity_discount_groups_id'] = $cells[13];
+              $data['quantity_unit_class'] = $cells[14];
+              $data['order_increment'] = $cells[15];
+              $data['products_attributes_groups_id'] = $cells[16];
               $data['products_date_added'] = 'now()';
-  
+              $data['products_last_modified'] = 'now()';
+              $data['products_date_available'] = 'NULL';
+              $data['products_ordered'] = '0';
+              
+              $categories_id = explode('##', $cells[17]);
+
+              $image_str = $cells[18];
               $images = array();
               if (!empty($image_str)) {
-                $tmp = explode('#', $image_str);
+                $tmp = explode('##', $image_str);
                 foreach ($tmp as $img) {
                   $image['image'] = $img;
                   $image['date_added'] = 'now()';
@@ -424,13 +481,13 @@
                 }
               }
               
-              $num_of_desc = floor((sizeof($cells) - 17) / 10);
+              $num_of_desc = floor((sizeof($cells) - 19) / 10);
               $descriptions = array();
   
               for ($i = 1; $i <= $num_of_desc; $i++) {
                 $address = array();
   
-                $col = $columns[17 + ($i - 1) * 10];
+                $col = $columns[19 + ($i - 1) * 10];
                 $description['language_id'] = 0;
                 foreach ($osC_Language->getAll() as $l){
                   if( strpos($col, $l['code']) !== false ){
@@ -438,20 +495,20 @@
                   }
                 }
   
-                $description['products_name'] = $cells[17 + 10 * ($i - 1) + 0];
-                $description['products_short_description'] = $cells[17 + 10 * ($i - 1) + 1];
-                $description['products_description'] = $cells[17 + 10 * ($i - 1) + 2];
-                $description['products_keyword'] = $cells[17 + 10 * ($i - 1) + 3];
-                $description['products_tags'] = $cells[17 + 10 * ($i - 1) + 4];
-                $description['products_url'] = $cells[17 + 10 * ($i - 1) + 5];
-                $description['products_page_title'] = $cells[17 + 10 * ($i - 1) + 6];
-                $description['products_meta_keywords'] = $cells[17 + 10 * ($i - 1) + 7];
-                $description['products_meta_description'] = $cells[17 + 10 * ($i - 1) + 8];
-                $description['products_viewed'] = $cells[17 + 10 * ($i - 1) + 9];
+                $description['products_name'] = $cells[19 + 10 * ($i - 1) + 0];
+                $description['products_short_description'] = $cells[19 + 10 * ($i - 1) + 1];
+                $description['products_description'] = $cells[19 + 10 * ($i - 1) + 2];
+                $description['products_keyword'] = $cells[19 + 10 * ($i - 1) + 3];
+                $description['products_tags'] = $cells[19 + 10 * ($i - 1) + 4];
+                $description['products_url'] = $cells[19 + 10 * ($i - 1) + 5];
+                $description['products_friendly_url'] = $cells[19 + 10 * ($i - 1) + 6];
+                $description['products_page_title'] = $cells[19 + 10 * ($i - 1) + 7];
+                $description['products_meta_keywords'] = $cells[19 + 10 * ($i - 1) + 8];
+                $description['products_meta_description'] = $cells[19 + 10 * ($i - 1) + 9];
   
                 $descriptions[] = $description;
               }
-  
+
               $this->insertProduct($data, $descriptions, $categories_id, $images);
             }
           }
