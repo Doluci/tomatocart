@@ -81,6 +81,9 @@
       }
 
       if ( $error === false ) {
+        osC_Cache::clear('product-' . $data['products_id']);
+        osC_Cache::clear('product-specials-' . $data['products_id']);
+        
         return true;
       }
 
@@ -90,6 +93,14 @@
     function delete($id) {
       global $osC_Database;
 
+      $Qproduct = $osC_Database->query('select products_id from :table_specials where specials_id = :specials_id');
+      $Qproduct->bindTable(':table_specials', TABLE_SPECIALS);
+      $Qproduct->bindInt(':specials_id', $id);
+      $Qproduct->setLogging($_SESSION['module'], $id);
+      $Qproduct->execute();
+      
+      $products_id = $Qproduct->valueInt('products_id');
+      
       $Qspecial = $osC_Database->query('delete from :table_specials where specials_id = :specials_id');
       $Qspecial->bindTable(':table_specials', TABLE_SPECIALS);
       $Qspecial->bindInt(':specials_id', $id);
@@ -97,6 +108,9 @@
       $Qspecial->execute();
 
       if ( !$osC_Database->isError() ) {
+        osC_Cache::clear('product-' . $products_id);
+        osC_Cache::clear('product-specials-' . $products_id);
+        
         return true;
       }
 
