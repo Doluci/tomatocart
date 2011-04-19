@@ -262,23 +262,23 @@
     function toC_Products_Exporter($parameters){
       parent::toC_Exporter($parameters);
 
-      $this->_products_column = array('products_id'               => 'ID',
-                                      'products_type'             => 'Type', 
-                                      'products_quantity'         => 'Quantity',
-                                      'products_moq'              => 'Moq',
-                                      'products_max_order_quantity' => 'MaxQuantity',  
-                                      'products_price'            => 'Price',
-                                      'products_sku'            => 'SKU',
-                                      'products_model'            => 'Model',
-                                      'products_weight'           => 'Weight',
-                                      'products_weight_class'     => 'WeightClass',
-                                      'products_status'           => 'Status',
-                                      'products_tax_class_id'     => 'Tax',
-                                      'manufacturers_id'          => 'Manufacturer',
-                                      'quantity_unit_class'       => 'UnitClass',
-                                      'order_increment'           => 'OrderIncrement',
-      																'categories_id'             => 'CategoriesId',
-                                      'image_url'                 => 'ImageUrl');
+      $this->_products_column = array('products_id'                   => 'ID',
+                                      'products_type'                 => 'Type', 
+                                      'products_quantity'             => 'Quantity',
+                                      'products_moq'                  => 'Moq',
+                                      'products_max_order_quantity'   => 'MaxQuantity',  
+                                      'products_price'                => 'Price',
+                                      'products_sku'                  => 'SKU',
+                                      'products_model'                => 'Model',
+                                      'products_weight'               => 'Weight',
+                                      'products_weight_class'         => 'WeightClass',
+                                      'products_status'               => 'Status',
+                                      'products_tax_class_id'         => 'Tax',
+                                      'manufacturers_id'              => 'Manufacturer',
+                                      'quantity_discount_groups_id'   => 'QuantityDiscountGroup',
+                                      'quantity_unit_class'           => 'UnitClass',
+                                      'order_increment'               => 'OrderIncrement',
+      																'products_attributes_groups_id' => 'ProductsAttributesGroup');
 
       $this->_products_description_column = array('products_name'              => 'ProductsName',
                                                   'products_short_description' => 'ProductsShortDescription',
@@ -286,13 +286,13 @@
                                                   'products_keyword'           => 'ProductsKeyword',
                                                   'products_tags'              => 'ProductsTags',
                                                   'products_url'               => 'ProductsUrl',
+                                                  'products_friendly_url'      => 'ProductsFriendlyUrl',
                                                   'products_page_title'        => 'ProductsPageTitle',
                                                   'products_meta_keywords'     => 'ProductsMetaKeywords',
-                                                  'products_meta_description'  => 'ProductsMetaDescription',
-                                                  'products_viewed'            => 'ProductsViewed');
+                                                  'products_meta_description'  => 'ProductsMetaDescription');
       
-      $this->_products_images_column = array('products_id'    => 'productsID',
-                                             'image'          => 'ProductsImage',
+      $this->_products_images_column = array('id'             => 'ImagesID',
+                                             'image'          => 'ImageName',
                                              'sort_order'     => 'SortOrder',
                                              'default_flag'   => 'DefaultFlag');
 
@@ -302,31 +302,40 @@
     function renderData(){
       global $osC_Database, $osC_Language;
 
-      $Qproducts = $osC_Database->query('select p.products_id, p.products_type, p.products_quantity, p.products_moq, p.products_max_order_quantity, p.products_price, p.products_sku, p.products_model, p.products_weight, p.products_weight_class, p.products_status, p.products_tax_class_id,  p.manufacturers_id, p.quantity_unit_class, p.order_increment, c.categories_id from :table_products p left join :table_weight_class wc on(wc.weight_class_id = p.products_weight_class and wc.language_id = :language_id) left join :table_manufacturers m on(m.manufacturers_id = p.manufacturers_id) left join :table_tax_class t on(t.tax_class_id = p.products_tax_class_id) left join :table_products_to_categories c on(c.products_id = p.products_id)');
+      $Qproducts = $osC_Database->query('select * from :table_products');
       $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
-      $Qproducts->bindTable(':table_weight_class', TABLE_WEIGHT_CLASS);
-      $Qproducts->bindTable(':table_manufacturers', TABLE_MANUFACTURERS);
-      $Qproducts->bindTable(':table_tax_class', TABLE_TAX_CLASS);
-      $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-      $Qproducts->bindInt(':language_id', $osC_Language->getID());
       $Qproducts->execute();
 
       $products = array();
       while ( $Qproducts->next() ) {
         $product = $Qproducts->toArray();
         
-        $Qimage = $osC_Database->query('select products_id, image, default_flag from :table_products_images where products_id = :products_id');
+        //categories
+        $Qcategories = $osC_Database->query('select * from :table_products_to_categories where products_id = :products_id');
+        $Qcategories->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+        $Qcategories->bindInt(':products_id', $Qproducts->valueInt('products_id'));
+        $Qcategories->execute();
+
+        $categories = array();
+        while($Qcategories->next()){
+          $categories[] = $Qcategories->valueInt('categories_id');
+        }
+        $product['categories'] = $categories;
+        
+        //images
+        $Qimage = $osC_Database->query('select id, image, default_flag from :table_products_images where products_id = :products_id');
         $Qimage->bindTable(':table_products_images', TABLE_PRODUCTS_IMAGES);
         $Qimage->bindInt(':products_id', $Qproducts->valueInt('products_id'));
         $Qimage->execute();
         
-        $image = array();
+        $images = array();
         while ($Qimage->next()) {
-          $image[] = $Qimage->toArray();
+          $images[] = $Qimage->toArray();
         }
-        $product['image'] = $image;
-
-        $Qdescription= $osC_Database->query('select language_id, products_name, products_short_description, products_description, products_keyword, products_keyword, products_tags, products_url, products_page_title, products_meta_keywords, products_meta_description, products_viewed from :table_products_description where products_id = :products_id');
+        $product['images'] = $images;
+        
+        //description
+        $Qdescription = $osC_Database->query('select * from :table_products_description where products_id = :products_id');
         $Qdescription->bindTable(':table_products_description', TABLE_PRODUCTS_DESCRIPTION);
         $Qdescription->bindInt(':products_id', $Qproducts->valueInt('products_id'));
         $Qdescription->execute();
@@ -336,7 +345,6 @@
           $description[$Qdescription->valueInt('language_id')] = $Qdescription->toArray();
         }
         $product['description'] = $description;
-        
         $products[] = $product;
       }
 
@@ -353,6 +361,9 @@
       foreach ($this->_products_column as $field => $title) {
         $columns[] = $title;
       }
+      
+      $columns[] = 'Categories';
+      $columns[] = 'Images';
 
       foreach ($osC_Language->getAll() as $l) {
         foreach($this->_products_description_column as $field => $description){
@@ -371,18 +382,17 @@
             $values[] = $value;
           }
           
-          if ( $field == 'image' && is_array($value) && !empty($value) ) {
-            $images = null;
+          if ($field == 'categories') {
+            $tmp = implode('##', $value);
+            $values[] = $tmp;
+          }
+          
+          if ( $field == 'images' ) {
+            $tmp = array();
             foreach ($value as $image) {
-              foreach ($image as $image_field => $image_value) {
-                if ( $image_field == 'image' && !empty($image_value) ) {
-                  $images[] = $image_value; 
-                }
-              }
+              $tmp[] = $image['image'];
             }
-            $images = implode('#', $images);
-            
-            $values[] = $images;
+            $values[] = implode('##', $tmp);
           }
 
           if( $field == 'description' && is_array($value) && !empty($value) ) {
@@ -401,6 +411,7 @@
             }
           }
         }
+
         fputcsv($handle, $values, $this->_csv_delimiter, $this->_csv_enclosure);
       }
 
@@ -420,6 +431,17 @@
         foreach($product as $field => $value){
           if(isset($this->_products_column[$field])){
             fwrite($handle, '<' . $this->_products_column[$field] . '><![CDATA[' . $value . ']]></' . $this->_products_column[$field] . '>' . "\n");
+          }
+          
+          
+          if ( $field == 'categories' && !empty($value) ) {
+            fwrite($handle, '<Categories>' . "\n");
+            
+            foreach ($value as $cat) {
+              fwrite($handle, '<Category>' . $cat . '</Category>' . "\n");
+            }
+            
+            fwrite($handle, '</Categories>' . "\n");
           }
 
           if ( $field == 'description' && is_array($value) && !empty($value) ) {
@@ -444,9 +466,8 @@
             fwrite($handle, '</Descriptions>' . "\n");
           }
           
-          if ($field == 'image' && is_array($value) && !empty($value) ) {
+          if ($field == 'images' && is_array($value) && !empty($value) ) {
             fwrite($handle, '<Images>' . "\n");
-            
             foreach ($value as $image){
               fwrite($handle, '<Image>' . "\n");
               
