@@ -1,5 +1,9 @@
 VERSION 1.1.4
 --BUG FIX
+ * fix bug #340 -- Please Waiting - English correction needed
+ * fix bug #358 -- TocVariants, add backslashes before characters that need to be quoted in thetxtInStock, txtOutOfStock constant string.
+ * fix bug #372 -- Create account link
+ * fix bug #379 -- FAQ box went wrong [MAJOR CACHE PROBLEM]
  * fix bug #419 -- product description bullets and numbering
  * fix bug #421 -- Categories count off still doesn't work in v1.1.3
  * fix bug #422 -- Logout in Admin V1.1.3 doesn't work
@@ -19,7 +23,13 @@ VERSION 1.1.4
  * add translation for new product title
  * Supresses image resize error report
  * add missing slide images
- 
+ * implement cache mechanism to products, faq and guest book
+ * improve the live feed feature, display the live feed only once
+ * improve import/export function. 
+   --support multiple categories import
+   --support multiple images upload (upload image to _upload folder via FTP or zipped image file)
+   --Use products_id as the flag to indicate new product(pid == -1) or old product (pid > 0). If the pid exists in the db, the product will be omit.
+   
  VERSION 1.1.3
 --BUG FIX
  * fix bug #314 -- HomePage information not saving?
