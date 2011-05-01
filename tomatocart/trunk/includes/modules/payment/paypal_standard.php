@@ -43,7 +43,7 @@
 
           $Qcheck = $osC_Database->query('select zone_id from :table_zones_to_geo_zones where geo_zone_id = :geo_zone_id and zone_country_id = :zone_country_id order by zone_id');
           $Qcheck->bindTable(':table_zones_to_geo_zones', TABLE_ZONES_TO_GEO_ZONES);
-          $Qcheck->bindInt(':geo_zone_id', MODULE_PAYMENT_PAYPAL_IPN_ZONE);
+          $Qcheck->bindInt(':geo_zone_id', MODULE_PAYMENT_PAYPAL_STANDARD_ZONE);
           $Qcheck->bindInt(':zone_country_id', $osC_ShoppingCart->getBillingAddress('country_id'));
           $Qcheck->execute();
 
