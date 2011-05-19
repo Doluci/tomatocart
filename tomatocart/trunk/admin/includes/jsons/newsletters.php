@@ -379,7 +379,7 @@
         
         if (sizeof($audience) > 0) {
           $osC_Mail = new osC_Mail(null, null, null, EMAIL_FROM, $email['title']);
-          $osC_Mail->setBodyPlain($email['content']);
+          $osC_Mail->setBodyHTML($email['content']);
   
           foreach ($audience as $key => $value) {
             $osC_Mail->clearTo();
@@ -459,7 +459,7 @@
 
       if ( $Qrecipients->numberOfRows() > 0 ) {
         $osC_Mail = new osC_Mail(null, null, null, EMAIL_FROM, $email['title']);
-        $osC_Mail->setBodyPlain($email['content']);
+        $osC_Mail->setBodyHTML($email['content']);
 
         while ( $Qrecipients->next() ) {
           $osC_Mail->clearTo();
