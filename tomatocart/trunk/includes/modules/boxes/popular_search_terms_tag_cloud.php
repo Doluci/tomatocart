@@ -41,7 +41,7 @@
           'count' => $Qterms->valueInt('search_count'));
       }
       
-      require('includes/classes/tag_cloud.php');
+      require_once('includes/classes/tag_cloud.php');
       $cloud = new toC_Tag_Cloud($search_terms);
       
       $this->_content = $cloud->generateTagCloud();
@@ -52,7 +52,7 @@
 
       parent::install();
 
-      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'BOX_BEST_SELLERS_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now())");
+      $osC_Database->simpleQuery("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Cache Contents', 'BOX_POPULAR_SEARCH_TERM_CACHE', '60', 'Number of minutes to keep the contents cached (0 = no cache)', '6', '0', now())");
     }
 
     function getKeys() {
