@@ -29,64 +29,67 @@
     function initialize() {
       global $osC_Database, $osC_Language, $osC_Currencies;
 
-      if (defined('BOX_SHOP_BY_PRICE_' . $osC_Currencies->getCode())) {
-        $prices = explode(";", constant('BOX_SHOP_BY_PRICE_' . $osC_Currencies->getCode()));
-
-        $this->_content = '<ol>';
-
-        $pfrom = 0;
-        $pto = 0;
-
-        if(isset($_GET['pfrom']) && !empty($_GET['pfrom'])){
-          $pfrom = $_GET['pfrom'];
-        }
-
-        if(isset($_GET['pto']) && !empty($_GET['pto'])){
-          $pto = $_GET['pto'];
-        }
-
-        for($n = 0; $n <= sizeof($prices); $n++){
-          $filters = array();
-          if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
-            $filters[] = 'cPath=' . $_GET['cPath'];
+      $constant = constant('BOX_SHOP_BY_PRICE_' . $osC_Currencies->getCode());
+      if ( !empty($constant) ) {
+        $prices = explode(";", $constant);
+        
+        if (is_array($prices) && sizeof($prices) > 0) {
+          $this->_content = '<ol>';
+  
+          $pfrom = 0;
+          $pto = 0;
+  
+          if(isset($_GET['pfrom']) && !empty($_GET['pfrom'])){
+            $pfrom = $_GET['pfrom'];
           }
-          
-          if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
-            $filters[] = 'manufacturers=' . $_GET['manufacturers'];
+  
+          if(isset($_GET['pto']) && !empty($_GET['pto'])){
+            $pto = $_GET['pto'];
           }
-          
-          if (isset($_GET['keywords']) && !empty($_GET['keywords'])) {
-            $filters[] = 'keywords=' . $_GET['keywords'];
-          }
-          
-          if ($n == 0) {
-            $price_section = $osC_Currencies->displayRawPrice(0) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
-
-            if ($pfrom == 0 && $pto == $prices[$n]) {
-              $price_section = '<b>' . $price_section . '</b>';
+  
+          for($n = 0; $n <= sizeof($prices); $n++){
+            $filters = array();
+            if (isset($_GET['cPath']) && !empty($_GET['cPath'])) {
+              $filters[] = 'cPath=' . $_GET['cPath'];
             }
-
-            $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
-          } else if ($n == sizeof($prices)) {
-            $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' + ';
-
-            if ($pfrom == $prices[$n-1] && $pto == 0) {
-              $price_section = '<b>' . $price_section . '</b>';
+            
+            if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+              $filters[] = 'manufacturers=' . $_GET['manufacturers'];
             }
-
-            $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters)), $price_section) . '</li>';
-          } else {
-            $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
-
-            if ($pfrom == $prices[$n-1] && $pto == $prices[$n]) {
-              $price_section = '<b>' . $price_section . '</b>';
+            
+            if (isset($_GET['keywords']) && !empty($_GET['keywords'])) {
+              $filters[] = 'keywords=' . $_GET['keywords'];
             }
-
-            $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
+            
+            if ($n == 0) {
+              $price_section = $osC_Currencies->displayRawPrice(0) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
+  
+              if ($pfrom == 0 && $pto == $prices[$n]) {
+                $price_section = '<b>' . $price_section . '</b>';
+              }
+  
+              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . 0 . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
+            } else if ($n == sizeof($prices)) {
+              $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' + ';
+  
+              if ($pfrom == $prices[$n-1] && $pto == 0) {
+                $price_section = '<b>' . $price_section . '</b>';
+              }
+  
+              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . '&' . implode('&', $filters)), $price_section) . '</li>';
+            } else {
+              $price_section = $osC_Currencies->displayRawPrice($prices[$n-1]) . ' ~ ' . $osC_Currencies->displayRawPrice($prices[$n]);
+  
+              if ($pfrom == $prices[$n-1] && $pto == $prices[$n]) {
+                $price_section = '<b>' . $price_section . '</b>';
+              }
+  
+              $this->_content .= '<li>' . osc_link_object(osc_href_link(FILENAME_SEARCH, 'keywords=&x=0&y=0&pfrom=' . $prices[$n-1] . '&pto=' . $prices[$n] . '&' . implode('&', $filters)), $price_section) . '</li>';
+            }
           }
+  
+          $this->_content .= '</ol>';
         }
-
-        $this->_content .= '</ol>';
       }
     }
 
