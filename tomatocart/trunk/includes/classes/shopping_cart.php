@@ -933,7 +933,12 @@
                                       'telephone_number' => $Qaddress->value('entry_telephone'),
                                       'fax' => $Qaddress->value('entry_fax'));
 
+	  $address_changed = false;
       if ( is_array($previous_address) && ( ($previous_address['id'] != $this->_billing_address['id']) || ($previous_address['country_id'] != $this->_billing_address['country_id']) || ($previous_address['zone_id'] != $this->_billing_address['zone_id']) || ($previous_address['state'] != $this->_billing_address['state']) || ($previous_address['postcode'] != $this->_billing_address['postcode']) ) ) {
+        $address_changed = true;
+      }
+      
+      if ( ( $this->isVirtualCart() && ($previous_address == false) ) || $address_changed) {
         $this->_calculate();
       }
     }
@@ -1137,10 +1142,11 @@
       return $this->_gift_certificate_redeem_amount;
     }
     
-    function setCouponCode($coupon_code) {
+    function setCouponCode($coupon_code, $calculate = true) {
       $this->_coupon_code = $coupon_code;
       
-      $this->_calculate();
+      if ($calculate)
+      	$this->_calculate();
     }
       
     function getCouponCode() {
