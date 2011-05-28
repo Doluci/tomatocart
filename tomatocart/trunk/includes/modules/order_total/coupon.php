@@ -75,7 +75,7 @@
         $tax_groups = array();
         $products = array();
 
-        $has_restrict_products = $toC_Coupon->containRestrictProducts();
+        $has_restrict_products = $toC_Coupon->hasRestrictProducts();
 
         if($has_restrict_products)
           $products = $toC_Coupon->getRestrictProducts();
@@ -129,7 +129,7 @@
         $osC_ShoppingCart->addToTotal($coupon_amount * (-1));
 
         if($toC_Coupon->isIncludeTax() == true) {
-          $ratio = $coupon_amount / $valid_order_total;
+          $ratio = ($valid_order_total == 0) ? 0 : ($coupon_amount / $valid_order_total);
 
           foreach ($osC_ShoppingCart->_tax_groups as $key => $value) {
             if(isset($tax_groups[$key])){
@@ -163,9 +163,14 @@
       }
       $osC_ShoppingCart->setCouponAmount($coupon_amount);
 
-      $this->output[] = array('title' => $this->_title . ' (' . $coupon_code . ') : ',
-                               'text' => '-' . $osC_Currencies->format($coupon_amount),
-                              'value' => $coupon_amount * (-1));
+			if ($coupon_amount > 0) {
+	      $this->output[] = array('title' => $this->_title . ' (' . $coupon_code . ') : ',
+	                              'text' => '-' . $osC_Currencies->format($coupon_amount),
+	                              'value' => $coupon_amount * (-1));
+		  } else {
+		  	$osC_ShoppingCart->setCouponCode(null, false);
+		  }
+
     }
   }
 ?>

@@ -162,8 +162,7 @@
 </div>
 
 <?php
-  global $osC_OrderTotal_coupon;
-  if(isset($osC_OrderTotal_coupon) && is_object($osC_OrderTotal_coupon) && $osC_OrderTotal_coupon->isEnabled()){
+  if(defined('MODULE_ORDER_TOTAL_COUPON_STATUS') && (MODULE_ORDER_TOTAL_COUPON_STATUS == 'true')){
 ?>
 <div class="moduleBox">
   <h6><?php echo '<b>' . $osC_Language->get('coupons_redeem_heading') . '</b>'; ?></h6>
@@ -198,8 +197,7 @@
 ?>
 
 <?php
-  global $osC_OrderTotal_gift_certificate;
-  if(isset($osC_OrderTotal_gift_certificate) && is_object($osC_OrderTotal_gift_certificate) && $osC_OrderTotal_gift_certificate->isEnabled()){
+  if(defined('MODULE_ORDER_TOTAL_GIFT_CERTIFICATE_STATUS') && (MODULE_ORDER_TOTAL_GIFT_CERTIFICATE_STATUS == 'true')){
 ?>
 <div class="moduleBox">
   <h6><?php echo '<b>' . $osC_Language->get('gift_certificates_redeem_heading') . '</b>'; ?></h6>
