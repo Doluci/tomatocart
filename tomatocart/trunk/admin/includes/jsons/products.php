@@ -72,6 +72,9 @@
                     $osC_Image->resize($new_image_name, $group['id']);
                   }
                 }
+                
+                //clear product cache
+                osC_Cache::clear('product-' . $_REQUEST['products_id']);
               }
             }
           }
