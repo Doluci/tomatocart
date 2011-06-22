@@ -235,7 +235,7 @@
     function loadCategoriesTree() {
       global $toC_Json, $osC_Language;
       
-      $osC_CategoryTree = new osC_CategoryTree();
+      $osC_CategoryTree = new osC_CategoryTree(true, true, false);
       $categories_array = array();
 
       $categories_array = $osC_CategoryTree->buildExtJsonTreeArray();

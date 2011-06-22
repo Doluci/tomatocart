@@ -370,20 +370,27 @@
     function setStatus($id, $flag, $product_flag) {
       global $osC_Database;
       
+      include_once('../includes/classes/category_tree.php');
+      $osC_CategoryTree = new osC_CategoryTree(true, true, false);
+      
       $error = false;
       
-      $Qstatus = $osC_Database->query('update :table_categories set categories_status = :categories_status where categories_id = :categories_id');
+      $subcategories_array = array($id);
+      $subcategories_array = $osC_CategoryTree->getChildren($id, $subcategories_array);
+      $categories_id = implode(',', $subcategories_array);
+      
+      $Qstatus = $osC_Database->query('update :table_categories set categories_status = :categories_status where categories_id in (:categories_id)');
       $Qstatus->bindTable(':table_categories', TABLE_CATEGORIES);
-      $Qstatus->bindInt(":categories_id", $id);
+      $Qstatus->bindRaw(":categories_id", $categories_id);
       $Qstatus->bindValue(":categories_status", $flag);
       $Qstatus->execute();
       
       if( !$osC_Database->isError() ) {
         if ( ($flag == 0) && ($product_flag == 1) ) {
-          $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id = :categories_id)');
+          $Qupdate = $osC_Database->query('update :table_products set products_status = 0 where products_id in (select products_id from :table_products_to_categories where categories_id in (:categories_id))');
           $Qupdate->bindTable(':table_products', TABLE_PRODUCTS);
           $Qupdate->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
-          $Qupdate->bindInt(":categories_id", $id);
+          $Qupdate->bindRaw(":categories_id", $categories_id);
           $Qupdate->execute();
         }
       }
