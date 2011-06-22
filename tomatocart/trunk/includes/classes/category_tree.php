@@ -35,7 +35,7 @@
         $category_product_count_start_string = '&nbsp;(',
         $category_product_count_end_string = ')';
 
-    function osC_CategoryTree($load_from_database = true) {
+    function osC_CategoryTree($load_from_database = true, $load_all_categories = false, $load_from_cache = true) {
       global $osC_Database, $osC_Cache, $osC_Language;
 
       if (SERVICES_CATEGORY_PATH_CALCULATE_PRODUCT_COUNT == '1') {
@@ -43,13 +43,27 @@
       }
 
       if ($load_from_database === true) {
-        if ($osC_Cache->read('category_tree-' . $osC_Language->getCode(), 720)) {
-          $this->data = $osC_Cache->getCache();
-        } else {
-          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_url, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id and c.categories_status = 1 order by c.parent_id, c.sort_order, cd.categories_name');
+        $is_cache_loaded = false;
+        
+        if ($load_from_cache === true) {
+          if ($osC_Cache->read('category_tree-' . $osC_Language->getCode(), 720)) {
+            $this->data = $osC_Cache->getCache();
+            $is_cache_loaded = true;
+          } 
+        } 
+        
+        if ($is_cache_loaded === false) {
+          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_url, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id');
           $Qcategories->bindTable(':table_categories', TABLE_CATEGORIES);
           $Qcategories->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
           $Qcategories->bindInt(':language_id', $osC_Language->getID());
+          
+          if ($load_all_categories === false) {
+            $Qcategories->appendQuery('and c.categories_status = :categories_status');
+            $Qcategories->bindInt(':categories_status', 1);
+          }
+          
+          $Qcategories->appendQuery('order by c.parent_id, c.sort_order, cd.categories_name');
           $Qcategories->execute();
 
           $this->data = array();
@@ -63,8 +77,10 @@
           if ($this->show_category_product_count === true) {
             $this->calculateCategoryProductCount();
           }
-
-          $osC_Cache->writeBuffer($this->data);
+          
+          if ($load_from_cache === true) {
+            $osC_Cache->writeBuffer($this->data);
+          }
         }
       }
     }
