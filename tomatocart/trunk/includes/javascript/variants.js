@@ -55,7 +55,9 @@ var TocVariants = new Class({
       this.disableInfoBox();
     } else {
       if (product['quantity'] > 0) {
-        $('productInfoPrice').set('text', product['display_price']);
+        if (this.options.hasSpecial == 0) {
+          $('productInfoPrice').set('text', product['display_price']);
+        }
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
           $('productInfoQty').set('text', product['quantity']);

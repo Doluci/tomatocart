@@ -603,6 +603,20 @@
     function getImages() {
       return $this->_data['images'];
     }
+    
+    function hasSpecial() {
+      global $osC_Services, $osC_Specials;
+
+      if ( is_object($osC_Services) && $osC_Services->isStarted('specials') ) {
+        $special = $osC_Specials->getPrice($this->_data['id']);
+        
+        if ( is_numeric($special) && ($special > 0) ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
 
     function hasImage() {
       foreach ($this->_data['images'] as $image) {
