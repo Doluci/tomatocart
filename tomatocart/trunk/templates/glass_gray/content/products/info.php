@@ -497,12 +497,12 @@ window.addEvent('domready', function(){
     variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
     productsId: <?php echo $osC_Product->getID(); ?>,
     displayQty:  <?php echo (PRODUCT_INFO_QUANTITY == '1') ? 'true' : 'false'; ?>,
-    hasSpecial: <?php echo $osC_Product->hasSpecial(); ?>,
+    hasSpecial: <?php echo $osC_Product->hasSpecial() ? 1 : 0; ?>,
     lang: {
       txtInStock: '<?php echo addslashes($osC_Language->get('in_stock'));?>',
       txtOutOfStock: '<?php echo addslashes($osC_Language->get('out_of_stock')); ?>',
       txtNotAvailable: '<?php echo addslashes($osC_Language->get('not_available')); ?>',
-      txtTaxText: '<?php echo addslashes($osC_Language->get('including_tax')); ?>'
+      txtTaxText: '<?php echo addslashes(( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '' )); ?>'
     }
   });
   
