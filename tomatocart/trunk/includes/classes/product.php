@@ -18,7 +18,7 @@
         $_customer_group_discount = null;
 
     function osC_Product($id, $customers_id =null) {
-      global $osC_Database, $osC_Services, $osC_Language, $osC_Image, $osC_Cache;
+      global $osC_Database, $osC_Services, $osC_Language, $osC_Image, $osC_Cache, $osC_Currencies;
 
       if (!empty($id)) {
         if ( $osC_Cache->read('product-' . $id . '-' . $osC_Language->getCode()) ) {
@@ -45,6 +45,7 @@
           if ($Qproduct->numberOfRows() === 1) {
             $this->_data = $Qproduct->toArray();
   
+            //images
             $this->_data['images'] = array();
   
             $Qimages = $osC_Database->query('select id, image, default_flag from :table_products_images where products_id = :products_id order by sort_order');
@@ -56,6 +57,7 @@
               $this->_data['images'][] = $Qimages->toArray();
             }
   
+            //categories
             $Qcategory = $osC_Database->query('select categories_id from :table_products_to_categories where products_id = :products_id limit 1');
             $Qcategory->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
             $Qcategory->bindInt(':products_id', $this->_data['id']);
@@ -63,6 +65,7 @@
   
             $this->_data['category_id'] = $Qcategory->valueInt('categories_id');
             
+            //attachments
             $Qattachments = $osC_Database->query('select attachments_name, pa.attachments_id, filename, cache_filename, attachments_description from :table_products_attachments pa, :table_products_attachments_description pad, :table_products_attachments_to_products pa2p where pa.attachments_id = pad.attachments_id and pa2p.attachments_id = pa.attachments_id and pa2p.products_id = :products_id and pad.languages_id = :language_id');
             $Qattachments->bindTable(':table_products_attachments', TABLE_PRODUCTS_ATTACHMENTS);
             $Qattachments->bindTable(':table_products_attachments_description', TABLE_PRODUCTS_ATTACHMENTS_DESCRIPTION);
@@ -79,6 +82,7 @@
                                                     'description' => $Qattachments->value('attachments_description'));
             }
             
+            //accessories
             $Qaccessories = $osC_Database->query('select accessories_id from :table_products_accessories pa where pa.products_id =  :products_id');
             $Qaccessories->bindTable(':table_products_accessories', TABLE_PRODUCTS_ACCESSORIES);
             $Qaccessories->bindInt(":products_id", $this->_data['id']);
@@ -88,8 +92,10 @@
               $this->_data['accessories'][] = $Qaccessories->value('accessories_id');
             }
             
+            //variants
             $this->iniProductVariants();
             
+            //attributes
             $Qattributes = $osC_Database->query('select pav.name, pav.module, pav.value as selections, pa.value from :table_products_attributes pa, :table_products_attributes_values pav where pa.products_attributes_values_id = pav.products_attributes_values_id and pa.language_id = pav.language_id and pa.products_id = :products_id and pa.language_id = :language_id');
             $Qattributes->bindTable(':table_products_attributes', TABLE_PRODUCTS_ATTRIBUTES);
             $Qattributes->bindTable(':table_products_attributes_values', TABLE_PRODUCTS_ATTRIBUTES_VALUES);
@@ -115,6 +121,7 @@
             }
             $this->_data['attributes'] = $attributes;
             
+            //customizations
             $Qcustomizations = $osC_Database->query('select cf.customization_fields_id, products_id, type, is_required, name from :table_customization_fields cf inner join :table_customization_fields_description cfd on cf.customization_fields_id = cfd.customization_fields_id where cf.products_id = :products_id and cfd.languages_id = :languages_id');
             $Qcustomizations->bindTable(':table_customization_fields', TABLE_CUSTOMIZATION_FIELDS);
             $Qcustomizations->bindTable(':table_customization_fields_description', TABLE_CUSTOMIZATION_FIELDS_DESCRIPTION);
@@ -152,6 +159,15 @@
           }
           
           $osC_Cache->write('product-' . $id . '-' . $osC_Language->getCode(), $this->_data);
+        }
+        
+        //format the variants display price
+        if ( isset($this->_data['variants']) && is_array($this->_data['variants']) ) {
+          $products_variants = $this->_data['variants'];
+          
+          foreach ($products_variants as $products_id_string => $data) {
+            $this->_data['variants'][$products_id_string]['display_price'] = $osC_Currencies->displayPrice($data['price'], $this->_data['tax_class_id']);
+          }
         }
         
         //the customer group and discount group is not cached
@@ -325,7 +341,8 @@
         $products_variants[$product_id_string]['is_default'] = $Qvariants->valueInt('is_default');
         $products_variants[$product_id_string]['sku'] = $Qvariants->value('products_sku');
         $products_variants[$product_id_string]['price'] = $Qvariants->value('products_price');
-        $products_variants[$product_id_string]['display_price'] = $osC_Currencies->displayPrice($Qvariants->value('products_price'), $this->_data['tax_class_id']);
+//display price should not be cached, it should be retrieved at runtime
+//      $products_variants[$product_id_string]['display_price'] = $osC_Currencies->displayPrice($Qvariants->value('products_price'), $this->_data['tax_class_id']);
         $products_variants[$product_id_string]['status'] = $Qvariants->valueInt('products_status');
 //quantity will not be cached, it will be retrieved at runtime
 //        $products_variants[$product_id_string]['quantity'] = $Qvariants->value('products_quantity');

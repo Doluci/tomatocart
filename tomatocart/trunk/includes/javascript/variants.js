@@ -13,6 +13,7 @@
 var TocVariants = new Class({
   Implements: [Options],
   options: {
+    hasSpecial: 0,
     lang: {
       txtInStock: 'In Stock',
       txtOutOfStock: 'Out Of Stock',
@@ -56,7 +57,7 @@ var TocVariants = new Class({
     } else {
       if (product['quantity'] > 0) {
         if (this.options.hasSpecial == 0) {
-          $('productInfoPrice').set('text', product['display_price']);
+          $('productInfoPrice').set('text', product['display_price'] + ' ' + this.options.lang.txtTaxText);
         }
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
