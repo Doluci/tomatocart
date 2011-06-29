@@ -39,6 +39,7 @@ Toc.modules_geoip.ModulesGeoIPGrid = function(config) {
       ]),
       autoLoad: true
   });  
+  config.ds.on('load', function(){this.body.unmask();}, this);
   
   config.rowActions = new Ext.ux.grid.RowActions({
     tpl: new Ext.XTemplate(
@@ -77,6 +78,7 @@ Toc.modules_geoip.ModulesGeoIPGrid = function(config) {
 
 Ext.extend(Toc.modules_geoip.ModulesGeoIPGrid, Ext.grid.GridPanel, {
   onAction: function(action, code) {
+    this.body.mask(TocLanguage.loadingText);
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {
