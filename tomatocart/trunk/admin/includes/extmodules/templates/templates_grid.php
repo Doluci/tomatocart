@@ -39,6 +39,7 @@ Toc.templates.TemplatesGrid = function(config) {
       ]),
       autoLoad: true
   });  
+  config.ds.on('load', function(){this.body.unmask();}, this);
   
   config.rowActions = new Ext.ux.grid.RowActions({
     tpl: new Ext.XTemplate(
@@ -84,6 +85,7 @@ Toc.templates.TemplatesGrid = function(config) {
 Ext.extend(Toc.templates.TemplatesGrid, Ext.grid.GridPanel, {
   
   onSetDefault: function(record) {
+    this.body.mask(TocLanguage.loadingText);
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {
@@ -105,6 +107,7 @@ Ext.extend(Toc.templates.TemplatesGrid, Ext.grid.GridPanel, {
   },
 
   onAction: function(action, code) {
+    this.body.mask(TocLanguage.loadingText);
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {
