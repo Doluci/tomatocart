@@ -13,7 +13,8 @@
 
   class toC_Desktop_Settings {
     var $_settings = null,
-        $_user_name = null;
+        $_user_name = null,
+        $_modules = array();
     
     function toC_Desktop_Settings() {
       $this->_user_name = $_SESSION['admin']['username'];
@@ -23,7 +24,8 @@
     
     function initialize() {
       global $osC_Database;
-            
+
+      //initiallize settings
       $Qsettings = $osC_Database->query('select user_settings from :table_administrators where user_name = :user_name');
       $Qsettings->bindTable(':table_administrators', TABLE_ADMINISTRATORS);
       $Qsettings->bindValue(':user_name', $this->_user_name);
@@ -39,6 +41,30 @@
       }else {
         $this->_settings = $settings['desktop'];
       }
+      
+      //initialize modules
+      $access = osC_Access::getLevels();
+      ksort($access);
+
+      $modules = array();
+      foreach ( $access as $group => $links ) {
+        $modules[] = $group;
+        
+        foreach ( $links as $link ) {
+          $module = $link['module'];
+        
+          if ( is_array($link['subgroups']) && !empty($link['subgroups']) ) {
+            $modules[] = $module;
+            
+            foreach ( $link['subgroups'] as $subgroup ) {
+              $modules[] = $module;
+            }
+          }else {
+            $modules[] = $module;
+          }
+        }
+      }
+      $this->_modules = $modules;
     }
     
     function saveDesktop($data) {
@@ -315,10 +341,20 @@
       return $menu;
     }
     
-    function isWizardComplete() {
-      $wizardcomplete = $this->_settings['wizard_complete'];
+    function hasAccess($module) {
+      if (in_array($module, $this->_modules)) {
+        return true;
+      }
       
-      return $wizardcomplete;
+      return false;
+    }
+    
+    function isWizardComplete() { 
+      if ( $this->hasAccess('configuration_wizard') ) {
+        return $this->_settings['wizard_complete'];
+      } 
+      
+      return true;
     }
     
     function setWizardComplete() {
