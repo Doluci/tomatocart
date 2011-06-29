@@ -36,7 +36,8 @@ Toc.services.ServicesGrid = function(config) {
         'action'
       ]),
       autoLoad: true
-  });  
+  });
+	config.ds.on('load', function(){this.body.unmask();}, this);
 
   config.rowActions = new Ext.ux.grid.RowActions({
     tpl: new Ext.XTemplate(
@@ -83,6 +84,7 @@ Ext.extend(Toc.services.ServicesGrid, Ext.grid.GridPanel, {
   },
     
   onAction: function(action, code) {
+    this.body.mask(TocLanguage.loadingText);
     Ext.Ajax.request({
       url: Toc.CONF.CONN_URL,
       params: {

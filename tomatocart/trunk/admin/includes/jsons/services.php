@@ -40,8 +40,10 @@
         
   	    if ( !in_array($class, $installed) ) {
           $action[] = array('class' => 'icon-install-record', 'qtip' => $osC_Language->get('icon_install'));
+        } else if ($module->uninstallable == false) {
+          $action[] = array('class' => 'icon-uninstall-gray-record', 'qtip' => $osC_Language->get('icon_uninstall'));
         } else {
-          $action[] = array('class' => 'icon-uninstall-record', 'qtip' => $osC_Language->get('icon_install'));
+          $action[] = array('class' => 'icon-uninstall-record', 'qtip' => $osC_Language->get('icon_uninstall'));
         }
         
         $modules[] = array(
