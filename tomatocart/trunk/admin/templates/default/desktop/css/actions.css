@@ -125,6 +125,10 @@
   background-image: url(../../images/icons/16x16/delete.png) !important;
 }
 
+.icon-uninstall-gray-record {
+  background-image: url(../../images/icons/16x16/delete-gray.png) !important;
+}
+
 .icon-move-record {
   background-image: url(../../images/icons/16x16/move.png) !important;
 }
