@@ -132,13 +132,15 @@
       $rate = array();
 
       foreach ($this->_quotes as $quote) {
-        foreach ($quote['methods'] as $method) {
-          if (empty($rate) || ($method['cost'] < $rate['cost'])) {
-            $rate = array('id' => $quote['id'] . '_' . $method['id'],
-                          'title' => $quote['module'] . ((empty($method['title']) === false) ? ' (' . $method['title'] . ')' : ''),
-                          'cost' => $method['cost'],
-                          'tax_class_id' => $quote['tax_class_id'],
-                          'is_cheapest' => false);
+        if (!empty($quote['methods'])) {
+          foreach ($quote['methods'] as $method) {
+            if (empty($rate) || ($method['cost'] < $rate['cost'])) {
+              $rate = array('id' => $quote['id'] . '_' . $method['id'],
+                            'title' => $quote['module'] . ((empty($method['title']) === false) ? ' (' . $method['title'] . ')' : ''),
+                            'cost' => $method['cost'],
+                            'tax_class_id' => $quote['tax_class_id'],
+                            'is_cheapest' => false);
+            }
           }
         }
       }
@@ -185,7 +187,7 @@
 
         foreach ($include_quotes as $module) {
           $quotes = $GLOBALS[$module]->quote();
-
+          
           if (is_array($quotes)) {
             $this->_quotes[] = $quotes;
           }
