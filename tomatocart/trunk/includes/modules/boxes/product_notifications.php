@@ -53,6 +53,10 @@
 
             $this->_content .= '<div style="clear: both;"></div>';
           }
+        } else {
+              $this->_content = '<div style="float: left; width: 55px;">' . osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=notify_add', 'AUTO'), osc_image(DIR_WS_IMAGES . 'box_products_notifications.gif', sprintf($osC_Language->get('box_product_notifications_add'), $osC_Product->getTitle()))) . '</div>' .
+                                osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=notify_add', 'AUTO'), sprintf($osC_Language->get('box_product_notifications_add'), $osC_Product->getTitle())) . 
+                                '<div style="clear: both;"></div>';
         }
       }
     }
