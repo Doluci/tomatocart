@@ -46,27 +46,7 @@
       $use_full_address = true;
     }
 
-    if ($connection == 'AUTO') {
-      if ( ($request_type == 'SSL') && (ENABLE_SSL === true) ) {
-        $link = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
-      } else {
-        $link = HTTP_SERVER . DIR_WS_HTTP_CATALOG;
-      }
-    } elseif ( ($connection == 'SSL') && (ENABLE_SSL === true) ) {
-      if ($request_type == 'SSL') {
-        $link = ($use_full_address === false) ? '' : HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
-      } else {
-        $link = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
-      }
-    } else {
-      if ($request_type == 'NONSSL') {
-        $link = ($use_full_address === false) ? '' : HTTP_SERVER . DIR_WS_HTTP_CATALOG;
-      } else {
-        $link = HTTP_SERVER . DIR_WS_HTTP_CATALOG;
-      }
-    }
-
-    $link .= $page;
+    $link = $page;
 
     if (!empty($parameters)) {
       $link .= '?' . osc_output_string($parameters);
@@ -104,8 +84,29 @@
     }
     
     $link = str_replace('&', '&amp;', $link);
+    
+    //check the link prefix
+    if ($connection == 'AUTO') {
+      if ( ($request_type == 'SSL') && (ENABLE_SSL === true) ) {
+        $link_prefix = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
+      } else {
+        $link_prefix = HTTP_SERVER . DIR_WS_HTTP_CATALOG;
+      }
+    } elseif ( ($connection == 'SSL') && (ENABLE_SSL === true) ) {
+      if ($request_type == 'SSL') {
+        $link_prefix = ($use_full_address === false) ? '' : HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
+      } else {
+        $link_prefix = HTTPS_SERVER . DIR_WS_HTTPS_CATALOG;
+      }
+    } else {
+      if ($request_type == 'NONSSL') {
+        $link_prefix = ($use_full_address === false) ? '' : HTTP_SERVER . DIR_WS_HTTP_CATALOG;
+      } else {
+        $link_prefix = HTTP_SERVER . DIR_WS_HTTP_CATALOG;
+      }
+    }
 
-    return $link;
+    return $link_prefix . $link;
   }
 
 /**

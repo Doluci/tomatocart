@@ -16,8 +16,8 @@
       global $toC_Compare_Products;
 
       $toC_Compare_Products->reset();
-      
-      osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action'))));
+
+      osc_redirect(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')), 'NONSSL', true, true, true));
     }
   }
 ?>
