@@ -615,7 +615,7 @@
             if ( strpos($tmp_id,'>') ) {
               $tmp_id = substr($attachments[$i]["id"], 1,strlen($attachments[$i]["id"]) - 2);
             }
-            $id = "cid:" . $tmp_id;
+            $image_id = "cid:" . $tmp_id;
 
 //            $url = $GO_MODULES->modules['email']['url']."attachment.php?account_id=".$account['id']."&mailbox=".urlencode($mailbox)."&amp;uid=".$uid."&amp;part=".$attachments[$i]["number"]."&amp;transfer=".$attachments[$i]["transfer"]."&amp;mime=".$attachments[$i]["mime"]."&amp;filename=".urlencode($attachments[$i]["name"]);
 //            $data['body'] = str_replace($id, $url, $data['body']);
@@ -628,7 +628,7 @@
       if ($h = fopen($file, 'w')) {
         $cached_message = var_export($data, true);
         $date = date("r");
-        $cached_message_string = '<?php //created: {' . $date . '}' . "\n\n" . '$cacheFile = ' . $cached_message . "\n\n" . '?>';
+        $cached_message_string = '<?php //created: {' . $date . 'accounts_id: ' . $this->_data['accounts_id'] . ';;;id:' . $id . ';;;time_stamp:' . $data['fetch_timestamp'] . '}' . "\n\n" . '$cacheFile = ' . $cached_message . "\n\n" . '?>';
         
         fputs($h, $cached_message_string);
         fclose($h);
