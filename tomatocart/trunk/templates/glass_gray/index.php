@@ -331,6 +331,11 @@
   });  
 </script>
 
+<?php 
+  if ($osC_Services->isStarted('google_analytics')) {
+    echo SERVICES_GOOGLE_ANALYTICS_CODE;
+  }
+?>
 
 <?php
   if ($osC_Services->isStarted('piwik')) {
