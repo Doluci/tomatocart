@@ -164,8 +164,7 @@
 //                            'banner',
                             'specials',
                             'reviews',
-                            'recently_visited',
-                            'piwik');
+                            'recently_visited');
 
           $installed = array();
 
