@@ -93,6 +93,14 @@ Ext.extend(Toc.services.ServiceConfigDialog, Ext.Window, {
                 value: field.value
               })
             );
+          } else if(field.type == 'textarea'){
+            this.moduleForm.add(
+              new Ext.form.TextArea({
+                fieldLabel: '<b>' + field.title + '</b><br/>' + field.description,
+                name: field.name,
+                value: field.value
+              })
+            );
           } else if(field.type == 'combobox'){
             combo = new Ext.form.ComboBox({
               fieldLabel: '<b>' + field.title + '</b><br/>' + field.description,
