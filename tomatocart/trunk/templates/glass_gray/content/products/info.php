@@ -510,15 +510,15 @@ window.addEvent('domready', function(){
  <?php } ?>
   
   //add mouse over events to mini images
+  var imgElem = $$('.mojozoom_imgctr').getElement('img');
   var miniImages = $$(".mini");
   if (miniImages.length > 0) {
     miniImages.each(function(img) {
       img.addEvent('mouseover', function(e) {
         if ($defined(e)) {e.preventDefault();}
-        
-        var oldImg = $$('.mojozoom_imgctr').getElement('img').get('src');
+
+        var oldImg = imgElem.get('src');
         if (oldImg != this.get("large-img")) {
-          img = $$('.mojozoom_imgctr').getElement('img');
           img.set('src', this.get("large-img"));
           
           new Fx.Tween($('product_image'), {
