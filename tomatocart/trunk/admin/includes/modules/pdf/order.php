@@ -164,10 +164,12 @@
         $this->_pdf->SetX(40);
         $this->_pdf->MultiCell(120, 5, $totals['title'], 0, 'R');
   
+        $total_text = str_replace('&nbsp;', ' ', $totals['text']);
+        
         $this->_pdf->SetFont(TOC_PDF_FONT, 'B', 8);
         $this->_pdf->SetY($y_table_position);
         $this->_pdf->SetX(145);
-        $this->_pdf->MultiCell(40, 5, strip_tags($totals['text']), 0, 'R');
+        $this->_pdf->MultiCell(40, 5, strip_tags($total_text), 0, 'R');
       }
 
       $this->_pdf->Output("Order", "I");
