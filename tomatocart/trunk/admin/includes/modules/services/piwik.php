@@ -14,7 +14,7 @@
   class osC_Services_piwik_Admin {
     var $title,
         $description,
-        $uninstallable = false,
+        $uninstallable = true,
         $depends,
         $precedes;
 
