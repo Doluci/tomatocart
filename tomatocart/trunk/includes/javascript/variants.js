@@ -61,7 +61,7 @@ var TocVariants = new Class({
         }
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
-          $('productInfoQty').set('text', product['quantity']);
+          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
         }
         $('productInfoAvailable').set('text', this.options.lang.txtInStock);
         
@@ -70,8 +70,13 @@ var TocVariants = new Class({
         
         this.changeImage(product['image']);
       } else {
-        $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
-        this.disableInfoBox();
+          $('productInfoAvailable').set('text', this.options.lang.txtOutOfStock);
+          $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
+          
+          //if not allow checkout then disable the info box
+          if (!this.options.allowCheckout) {
+            this.disableInfoBox();
+          }
       }
     }
   },
