@@ -281,7 +281,7 @@ A:hover {
   padding: 0;
 }
 
-#navigationInner li:hover, #navigationInner li.navVisited:hover {
+#navigationInner a:hover, #navigationInner a.navVisited:hover {
   display: block;
   color: #FFFFFF;
   text-decoration: none;
@@ -301,7 +301,7 @@ A:hover {
   top: 0;
 }
 
-#navigationInner li:hover span.navLeftHook {
+#navigationInner a:hover span.navLeftHook {
   background: url(images/nav_hover_left.png) no-repeat left top;
   z-index: 10;
 }
@@ -315,7 +315,7 @@ A:hover {
   top: 0;
 }
 
-#navigationInner li:hover span.navRightHook {
+#navigationInner a:hover span.navRightHook {
   background: url(images/nav_hover_right.png) no-repeat left top;
 }
 
@@ -328,7 +328,7 @@ A:hover {
   bottom: -5px;
 }
 
-#navigationInner ul li:hover span.navHoverDownHook {
+#navigationInner ul a:hover span.navHoverDownHook {
   background: url(images/nav_hover_down_arrow.png) no-repeat left top;
 }
 
