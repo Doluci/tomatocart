@@ -68,7 +68,7 @@
           $this->addPageTags('description', $meta_description);
         }
 
-        $Qproducts = $osC_Database->query('select products_id from :table_products_to_categories where categories_id = :categories_id limit 1');
+        $Qproducts = $osC_Database->query('select products_id from :table_products_to_categories ptc left join :table_products p on ptc.products_id = p.products_id where p.products_status = 1 and categories_id = :categories_id limit 1');
         $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
         $Qproducts->bindInt(':categories_id', $current_category_id);
         $Qproducts->execute();
@@ -78,7 +78,7 @@
 
           $this->_process();
         } else {
-          $Qparent = $osC_Database->query('select categories_id from :table_categories where parent_id = :parent_id limit 1');
+          $Qparent = $osC_Database->query('select categories_id from :table_categories where categories_status = 1 and parent_id = :parent_id limit 1');
           $Qparent->bindTable(':table_categories', TABLE_CATEGORIES);
           $Qparent->bindInt(':parent_id', $current_category_id);
           $Qparent->execute();
