@@ -104,6 +104,15 @@
   require('../includes/classes/weight.php');
   require('../includes/classes/xml.php');
   require('../includes/classes/datetime.php');
+  
+  //check http host
+  if ($_SERVER['HTTP_HOST'] != HTTP_COOKIE_DOMAIN) {
+    if ($_SERVER['HTTPS'] == 'on') {
+      osc_redirect_admin(HTTPS_SERVER . DIR_WS_HTTP_CATALOG . DIR_FS_ADMIN);
+    } else {
+      osc_redirect_admin(HTTP_SERVER . DIR_WS_HTTP_CATALOG . DIR_FS_ADMIN);
+    }
+  }
 
 // set the language
   require('includes/classes/language.php');
