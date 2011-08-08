@@ -56,5 +56,5 @@
 </div>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_link_object(osc_href_link(FILENAME_DEFAULT), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_DEFAULT), $osC_Language->get('button_continue')); ?>
 </div>

@@ -35,7 +35,7 @@
 <p><?php echo $osC_Language->get('contact_email_sent_successfully'); ?></p>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_link_object(osc_href_link(FILENAME_INFO, 'contact'), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_INFO, 'contact'), $osC_Language->get('button_continue')); ?>
 </div>
 
 <?php
@@ -88,7 +88,7 @@
 ?>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?>
+  <?php echo toc_draw_button($osC_Language->get('button_continue')); ?>
 </div>
 
 </form>

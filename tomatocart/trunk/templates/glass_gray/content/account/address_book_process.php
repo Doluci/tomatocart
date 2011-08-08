@@ -46,7 +46,7 @@
 </div>
 
 <div class="submitFormButtons">
-  <span style="float: right;"><?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?></span>
+  <span style="float: right;"><?php echo toc_draw_button($osC_Language->get('button_continue')); ?></span>
   
 <?php
     if ($osC_NavigationHistory->hasSnapshot()) {
@@ -57,7 +57,7 @@
       $back_link = osc_href_link(FILENAME_ACCOUNT, 'address_book', 'SSL');
     }
       
-    echo osc_link_object($back_link, osc_draw_image_button('button_back.gif', $osC_Language->get('button_back')));
+    echo toc_draw_link_button($back_link, $osC_Language->get('button_back'));
 ?>
 
 </div>
@@ -69,7 +69,7 @@
 ?>
 
 <div class="submitFormButtons">
-  <?php osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'address_book', 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'address_book', 'SSL'), $osC_Language->get('button_back')); ?>
 </div>
 
 <?php

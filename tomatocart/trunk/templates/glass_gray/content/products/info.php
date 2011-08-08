@@ -205,7 +205,7 @@
       <tr>
         <td colspan="2" align="center" valign="top" style="padding-top: 15px" id="shoppingCart">
           <?php
-            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID()) . '"');
+            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . toc_draw_button($osC_Language->get('button_add_to_cart'), 'submit', 'ajaxAddToCart', 'style="vertical-align:middle;" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID(), 'medium') . '"');
           ?>
         </td>
       </tr>
@@ -245,7 +245,7 @@
         <?php echo $osC_Product->renderCustomizationFieldsList(); ?>
       
         <div class="submitFormButtons" style="text-align: right;">
-          <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?>
+          <?php echo toc_draw_button($osC_Language->get('button_continue')); ?>
         </div>
       </form>
     </div>
@@ -381,7 +381,7 @@
             
               <div class="submitFormButtons">
                 <input type="hidden" id="radio_lines" name="radio_lines" value="<?php echo $i; ?>"/>
-                <?php echo osc_draw_image_submit_button('submit_reviews.gif', $osC_Language->get('submit_reviews')); ?>
+                <?php echo toc_draw_button($osC_Language->get('submit_reviews')); ?>
               </div>
             
             </form>

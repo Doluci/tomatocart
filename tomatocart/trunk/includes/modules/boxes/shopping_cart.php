@@ -38,8 +38,8 @@
                     '<ul class="products collapsed" id="ajaxCartContentProducts"><li></li></ul>' .
                     '<p id="ajaxCartContentNoProducts" class="collapsed">' . $osC_Language->get('No products') . '</p>' .
                     '<div id="ajaxCartButtons">' .
-                      osc_link_object(osc_href_link(FILENAME_CHECKOUT), osc_draw_image_button('button_ajax_cart.png'), 'style="margin-right:30px;"') .
-                      osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'payment'), osc_draw_image_button('button_ajax_cart_checkout.png')) .
+                      toc_draw_link_button(osc_href_link(FILENAME_CHECKOUT), $osC_Language->get('button_cart'), '', 'style="margin-right:30px;"') .
+                      toc_draw_link_button(osc_href_link(FILENAME_CHECKOUT, 'payment'), $osC_Language->get('button_checkout')) .
                       '<div style="visibility:hidden">' . 
                         '<span>clear-bug-div</span>' .
                       '</div>' .
@@ -55,7 +55,7 @@
              '.strike {text-decoration:line-through;}' . chr(13) .
              '#ajaxCartContentShort span{ padding: 0 2px;}' . chr(13) .
              '#ajaxCartButtons {margin-top:10px;}' . chr(13) .
-             '#ajaxCartButtons a {padding: 1px;text-align: center;text-decoration: none;}' . chr(13) .
+             '#ajaxCartButtons a {text-align: center;text-decoration: none;}' . chr(13) .
              '#ajaxCartOrderTotals span.orderTotalText {float: right}' . chr(13) .
              '#ajaxCartContentLong ul.products {text-align: left;}' .  chr(13) .
              '#ajaxCartContentLong ul li {padding: 6px 0;font-size: 9px;position: relative;line-height:16px;}' . chr(13) .

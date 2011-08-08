@@ -38,15 +38,15 @@
         <td valign="top"><?php echo '<b>' . $osC_Language->get('order_date') . '</b> ' . osC_DateTime::getLong($Qhistory->value('date_purchased')) . '<br /><b>' . $order_type . '</b> ' . osc_output_string_protected($order_name); ?></td>
         <td width="150" valign="top"><?php echo '<b>' . $osC_Language->get('order_products') . '</b> ' . osC_Order::numberOfProducts($Qhistory->valueInt('orders_id')) . '<br /><b>' . $osC_Language->get('order_cost') . '</b> ' . strip_tags($Qhistory->value('order_total')); ?></td>
         <td width="100" align="center">
-          <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'orders=' . $Qhistory->valueInt('orders_id') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'SSL'), osc_draw_image_button('small_view.gif', $osC_Language->get('button_view'))); ?></div>
-          <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_PDF, 'module=account&pdf=print_order&orders_id=' . $Qhistory->valueInt('orders_id')), osc_draw_image_button('button_print.png', $osC_Language->get('button_print')), "target=_blank"); ?></div>
+          <div style = "padding: 2px;"><?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'orders=' . $Qhistory->valueInt('orders_id') . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'SSL'), $osC_Language->get('button_view')); ?></div>
+          <div style = "padding: 2px;"><?php echo toc_draw_link_button(osc_href_link(FILENAME_PDF, 'module=account&pdf=print_order&orders_id=' . $Qhistory->valueInt('orders_id')), $osC_Language->get('button_print')); ?></div>
         <?php 
           if (($Qhistory->valueInt('returns_flag') == 1) && (ALLOW_RETURN_REQUEST == 1)) { 
             $order = new osC_Order($Qhistory->valueInt('orders_id'));
             
             if ($order->hasNotReturnedProduct()) {
         ?>
-          <div style = "padding: 2px;"><?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'orders=new_return_request&orders_id=' . $Qhistory->valueInt('orders_id'), 'SSL'), osc_draw_image_button('button_return_item.png')); ?></div>
+          <div style = "padding: 2px;"><?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'orders=new_return_request&orders_id=' . $Qhistory->valueInt('orders_id'), 'SSL'), $osC_Language->get('button_return_item')); ?></div>
         <?php 
             }
           } ?>    
@@ -81,5 +81,5 @@
 ?>
 
 <div class="submitFormButtons">
-  <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('button_back')); ?>
 </div>

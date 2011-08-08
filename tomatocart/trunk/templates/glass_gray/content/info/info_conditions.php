@@ -17,5 +17,5 @@
 <p><?php echo $osC_Language->get('conditions'); ?></p>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_link_object(osc_href_link(FILENAME_INFO), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_INFO), $osC_Language->get('button_continue')); ?>
 </div>
