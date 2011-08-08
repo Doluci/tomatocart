@@ -42,6 +42,7 @@
 
       if ($this->link = @$connect_function($this->server, $this->username, $this->password)) {
         $this->setConnected(true);
+        $this->resetSQLMode();
         $this->setUTF();
         
         return true;
@@ -76,6 +77,10 @@
       } else {
         return false;
       }
+    }
+    
+    function resetSQLMode() {
+      @mysql_query("SET @@sql_mode = ''");
     }
 
     function setUTF() {
