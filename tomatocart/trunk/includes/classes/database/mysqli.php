@@ -29,6 +29,7 @@
     function connect() {
       if ($this->link = @mysqli_connect($this->server, $this->username, $this->password)) {
         $this->setConnected(true);
+        $this->resetSQLMode();
         $this->setUTF();
 
         return true;
@@ -63,6 +64,10 @@
       } else {
         return false;
       }
+    }
+      
+    function resetSQLMode() {
+      @mysqli_query( $this->link, "SET @@sql_mode = ''" ); 
     }
     
     function setUTF() {
