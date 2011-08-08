@@ -175,7 +175,7 @@
       <br/>
       <?php echo '<b>' . $osC_Language->get('fields_coupons_redeem_code') . '</b>'; ?>
       <?php echo osc_draw_input_field('coupon_redeem_code'); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('button_redeem.gif', $osC_Language->get('button_coupon_redeem'), 'id="btnRedeemCoupon" style="vertical-align: middle"'); ?>
+      <?php echo toc_draw_button($osC_Language->get('button_coupon_redeem'), 'button', '', 'id="btnRedeemCoupon" style="vertical-align: middle"'); ?>
     </div>
 <?php
     }else{
@@ -185,7 +185,7 @@
       <br/>
       <?php echo '<b>' . $osC_Language->get('fields_coupons_redeem_code') . '</b>'; ?>
       <?php echo $osC_ShoppingCart->getCouponCode(); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('small_delete.gif', $osC_Language->get('button_delete'), 'id="btnDeleteCoupon" style="vertical-align: middle"'); ?>
+      <?php echo toc_draw_button($osC_Language->get('button_coupon_redeem'), 'button', '', 'id="btnDeleteCoupon" style="vertical-align: middle"'); ?>
     </div>
 <?php
     }
@@ -206,7 +206,7 @@
 <?php
     if  ($osC_ShoppingCart->hasGiftCertificate()){
       foreach ($osC_ShoppingCart->getGiftCertificateCodes() as $gift_certificate) {
-        echo '<p id="' . $gift_certificate . '">' . $gift_certificate . '&nbsp;[' . $osC_Currencies->format($osC_ShoppingCart->getGiftCertificateRedeemAmount($gift_certificate)) . ']' . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . osc_draw_image_submit_button('small_delete.gif', $osC_Language->get('button_delete'), 'class="btnDeleteGiftCertificate" style="vertical-align: middle"') . '</p>';
+        echo '<p id="' . $gift_certificate . '">' . $gift_certificate . '&nbsp;[' . $osC_Currencies->format($osC_ShoppingCart->getGiftCertificateRedeemAmount($gift_certificate)) . ']' . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . toc_draw_button($osC_Language->get('button_delete'), 'btnDeleteGiftCertificate', 'style="vertical-align: middle"') . '</p>';
       }
     }
 ?>
@@ -214,7 +214,7 @@
       <br/>
       <?php echo '<b>' . $osC_Language->get('fields_gift_certificates_redeem_code') . '</b>'; ?>
       <?php echo osc_draw_input_field('gift_certificate_redeem_code', null, 'id="gift_certificate_code"'); ?>&nbsp;&nbsp;
-      <?php echo osc_draw_image_submit_button('button_redeem.gif', $osC_Language->get('button_gift_certificate_redeem'), 'id="btnRedeemGiftCertificate" style="vertical-align: middle"'); ?>
+      <?php echo toc_draw_button($osC_Language->get('button_gift_certificate_redeem'), 'button', '', 'id="btnRedeemGiftCertificate" style="vertical-align: middle"'); ?>
     </div>
   </div>
 </div>
@@ -233,7 +233,7 @@
 <br />
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'), 'id="btnSavePaymentMethod" style="cursor: pointer"'); ?>
+  <?php echo toc_draw_button($osC_Language->get('button_continue'), 'button', '', 'id="btnSavePaymentMethod" style="cursor: pointer"'); ?>
   </div>
 
 </form>

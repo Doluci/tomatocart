@@ -215,5 +215,5 @@
   }
 ?>
 <div class="submitFormButtons">
-  <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'orders' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'orders' . (isset($_GET['page']) ? '&page=' . $_GET['page'] : ''), 'SSL'), $osC_Language->get('button_back')); ?>
 </div>

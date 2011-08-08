@@ -34,7 +34,7 @@
 </div>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?>
+    <?php echo toc_draw_button($osC_Language->get('button_continue')); ?>
 </div>
 
 </form>

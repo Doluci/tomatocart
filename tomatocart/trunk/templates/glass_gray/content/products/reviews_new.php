@@ -50,9 +50,9 @@
 </div>
 
 <div class="submitFormButtons">
-  <span style="float: right;"><?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')); ?></span>
+  <span style="float: right;"><?php echo toc_draw_button($osC_Language->get('button_continue')); ?></span>
 
-  <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, 'reviews&' . $osC_Product->getID()), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_PRODUCTS, 'reviews&' . $osC_Product->getID()), $osC_Language->get('button_back')); ?>
 </div>
 
 </form>

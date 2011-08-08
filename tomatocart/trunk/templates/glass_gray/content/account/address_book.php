@@ -60,8 +60,8 @@
     }
 ?>
 
-        </td>
-        <td align="right"><?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'address_book=' . $Qaddresses->valueInt('address_book_id') . '&edit', 'SSL'), osc_draw_image_button('small_edit.gif', $osC_Language->get('button_edit'))) . '&nbsp;' . osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'address_book=' . $Qaddresses->valueInt('address_book_id') . '&delete', 'SSL'), osc_draw_image_button('small_delete.gif', $osC_Language->get('button_delete'))); ?></td>
+        </td>                                   
+        <td align="right"><?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'address_book=' . $Qaddresses->valueInt('address_book_id') . '&edit', 'SSL'), $osC_Language->get('button_edit')) . '&nbsp;' . toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'address_book=' . $Qaddresses->valueInt('address_book_id') . '&delete', 'SSL'), $osC_Language->get('button_delete')); ?></td>
       </tr>
       <tr>
         <td colspan="2" style="padding: 0px 0px 10px 10px;"><?php echo osC_Address::format($Qaddresses->toArray(), '<br />'); ?></td>
@@ -80,13 +80,12 @@
 
 <?php
   if ($Qaddresses->numberOfRows() < MAX_ADDRESS_BOOK_ENTRIES) {
-    echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'address_book&new', 'SSL'), osc_draw_image_button('button_add_address.gif', $osC_Language->get('button_add_address')));
+    echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'address_book&new', 'SSL'), $osC_Language->get('button_add_address'));
   } else {
     echo sprintf($osC_Language->get('address_book_maximum_entries'), MAX_ADDRESS_BOOK_ENTRIES);
   }
 ?>
 
   </span>
-
-  <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, null, 'SSL'), $osC_Language->get('button_back')); ?>
 </div>

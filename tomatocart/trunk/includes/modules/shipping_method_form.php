@@ -137,7 +137,7 @@
 <br />
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'), 'id="btnSaveShippingMethod" style="cursor: pointer"'); ?>
+  <?php echo toc_draw_button($osC_Language->get('button_continue'), 'button', '', 'id="btnSaveShippingMethod" style="cursor: pointer"'); ?>
 </div>
 
 </form>

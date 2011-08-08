@@ -41,8 +41,8 @@
          <td align="center"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()), $osC_Image->show($osC_Product->getImage(), $osC_Product->getTitle(), 'hspace="5" vspace="5"')) . '<br />' . $osC_Product->getTitle() . '<br />' . $osC_Currencies->format($osC_Product->getPrice()); ?></td>         
          <td valign="top"><?php echo $Qproducts->value('comments'); ?></td>
          <td align="center" valign="top"><?php echo osC_DateTime::getShort($Qproducts->value('date_added')); ?></td>
-         <td align="center" valign="top"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'))); ?></td>
-       </tr>    
+         <td align="center" valign="top"><?php echo toc_draw_link_button(osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID() . '&action=cart_add'), $osC_Language->get('button_add_to_cart')); ?></td>
+       </tr>
               
   <?php    
     }
@@ -50,6 +50,6 @@
     </table>
     
     <div class="submitFormButtons" style="text-align: right;">
-      <?php echo osc_link_object(osc_href_link(FILENAME_DEFAULT), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
+      <?php echo toc_draw_link_button(osc_href_link(FILENAME_DEFAULT), $osC_Language->get('button_continue')); ?>
     </div>
 </div>

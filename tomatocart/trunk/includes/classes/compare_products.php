@@ -71,7 +71,7 @@
           $osC_Product = new osC_Product($products_id);
           $image = $osC_Product->getImages();
           
-          $products_images .= '<td width="120" valign="top" align="center">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Image->show($image[0]['image'], $osC_Product->getTitle())) . '<br /><br />' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id . '&action=cart_add'), osc_draw_image_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'))) . '</td>';
+          $products_images .= '<td width="120" valign="top" align="center">' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $products_id), $osC_Image->show($image[0]['image'], $osC_Product->getTitle())) . '<br /><br />' . toc_draw_link_button(osc_href_link(FILENAME_PRODUCTS, $products_id . '&action=cart_add'), $osC_Language->get('button_add_to_cart')) . '</td>';
           $products_titles .= '<td valign="top" align="center">' . $osC_Product->getTitle() . '</td>';
           $products_price .= '<td valign="top" align="center">' . $osC_Product->getPriceFormated(true) . '</td>';
           $products_weight .= '<td valign="top" align="center">' . $osC_Weight->display($osC_Product->getWeight(), $osC_Product->getWeightClass()) . '</td>';

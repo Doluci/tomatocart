@@ -41,12 +41,12 @@
   
          <tr class="<?php echo ((($rows/2) == floor($rows/2)) ? 'productListing-even' : 'productListing-odd'); ?>">        
            <td align="center"><?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id']), $osC_Image->show($product['image'], $product['name'], 'hspace="5" vspace="5"')) . '<br />' . $product['name'] . '<br />' . $osC_Currencies->format($product['price']); ?></td>         
-           <td valign="top"><?php echo osc_draw_textarea_field('comments[' . $product['products_id'] . ']', $product['comments'], 20, 5, 'id="comments_' . $product['products_id'] . '"'); ?></td>
+           <td valign="top"><?php echo osc_draw_textarea_field('comments[' . $product['products_id'] . ']', $product['comments'], 16, 5, 'id="comments_' . $product['products_id'] . '"'); ?></td>
            <td align="center" valign="top"><?php echo $product['date_added']; ?></td>
            <td align="center" valign="top">
-             <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'wishlist=delete&products_id=' . $product['products_id']), osc_draw_image_button('button_delete.gif', $osC_Language->get('button_delete'))); ?>
+              <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'wishlist=delete&products_id=' . $product['products_id']), $osC_Language->get('button_delete')); ?>           
              <br />&nbsp;<br/>
-             <?php echo osc_link_object(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add'), osc_draw_image_button('button_add_to_cart.png', $osC_Language->get('button_add_to_cart'))); ?>
+             <?php echo toc_draw_link_button(osc_href_link(FILENAME_PRODUCTS, $product['products_id'] . '&action=cart_add'), $osC_Language->get('button_add_to_cart')); ?>
            </td>
          </tr>    
               
@@ -56,7 +56,7 @@
       </table>
       
       <div class="submitFormButtons" style="text-align: right;">
-        <?php echo osc_draw_image_submit_button('button_update.gif') . '&nbsp;' . osc_link_object('javascript:window.history.go(-1);', osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+        <?php echo toc_draw_button($osC_Language->get('button_update')) . '&nbsp;' . toc_draw_link_button('javascript:window.history.go(-1);', $osC_Language->get('button_back')); ?>
       </div>
             
      </form>
@@ -68,7 +68,7 @@
     </div>
       
     <div class="submitFormButtons" style="text-align: right;">
-      <?php echo osc_link_object('javascript:window.history.go(-1);', osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
+      <?php echo toc_draw_link_button('javascript:window.history.go(-1);', $osC_Language->get('button_back')); ?>
     </div>
     
   <?php
@@ -95,7 +95,7 @@
         </div>   
 
         <div class="submitFormButtons" style="text-align: right;">
-          <?php echo osc_draw_image_submit_button('button_continue.gif'); ?>
+          <?php echo toc_draw_button($osC_Language->get('button_continue')); ?>
         </div>
       
       </form>

@@ -220,6 +220,38 @@
     else
       return osc_image($default_image_file, $title, null, null, $parameters);
   }
+  
+/**
+ * Outputs a link button
+ *
+ * @param string $link The URL address to link the button to
+ * @param string $text The button text to set the link on
+ * @param string $size The button size
+ * @param string $color The button color
+ * @param string $class additional class for the button
+ * @param string $parameters Additional parameters for the button
+ * @access public
+ */
+
+  function toc_draw_link_button($link, $text, $class = '', $parameters = null, $size = 'small', $color = 'blue') {
+    return '<a href="' . $link . '" class="button ' . $size . ' ' . $color . ' ' . $class . '" ' . (!empty($parameters) ? ' ' . $parameters : '') . '><nobr>' . $text . '</nobr></a>';
+  }
+  
+  /**
+ * Outputs an button
+ *
+ * @param string $title The button text to set the link on
+ * @param string $type The button type
+ * @param string $size The button size
+ * @param string $color The button color
+ * @param string $class additional class for the button
+ * @param string $parameters Additional parameters for the button
+ * @access public
+ */
+
+  function toc_draw_button($title, $type='submit', $class = '', $parameters = null, $size = 'small', $color = 'blue') {
+    return '<input type="' . $type . '" value="' . osc_output_string($title) . '" alt="' . osc_output_string($title) . '" class="button ' . $size . ' ' . $color . ' ' . $class . '" ' . (!empty($parameters) ? ' ' . $parameters : '') . ' />';
+  }
 
 /**
  * Outputs a form input field (text/password)
