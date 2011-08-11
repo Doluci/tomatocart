@@ -56,7 +56,7 @@
           'newsletters_id' => $Qnewsletters->valueInt('newsletters_id'),
           'title' =>  $Qnewsletters->value('title'),
           'size' => $Qnewsletters->valueInt('content_length'),
-          'module' => $$newsletter_module_class->getTitle(),
+          'module' => $Qnewsletters->value('module'),
           'sent' => $sent,
           'action' => $action
         );           
