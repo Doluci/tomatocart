@@ -58,8 +58,8 @@
         $tmp = explode('#', $products_id_string);
         $variants_string = $tmp[1];
       }
-      
-      echo toc_draw_link_button(osc_href_link(FILENAME_CHECKOUT, osc_get_product_id($products['id']) . (!empty($variants_string) ? '&variants=' . $variants_string : '') . '&action=cart_remove', 'SSL'), $osC_Language->get('button_delete'));
+       
+      echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, osc_get_product_id($products['id']) . (!empty($variants_string) ? '&variants=' . $variants_string : '') . '&action=cart_remove', 'SSL'), osc_draw_image_button('small_delete.gif', $osC_Language->get('button_delete')));
 ?>
 
         </td>
@@ -175,12 +175,12 @@
 </div>
 
 <div class="submitFormButtons">
-  <span style="float: right;"><?php echo toc_draw_link_button(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), $osC_Language->get('button_checkout')); ?></span>
+  <span style="float: right;"><?php echo osc_link_object(osc_href_link(FILENAME_CHECKOUT, 'checkout', 'SSL'), osc_draw_image_button('button_checkout.gif', $osC_Language->get('button_checkout'))); ?></span>
 
-  <?php echo toc_draw_button($osC_Language->get('button_update_cart')); ?>
+  <?php echo osc_draw_image_submit_button('button_update_cart.gif', $osC_Language->get('button_update_cart')); ?>
 
   <span style="padding-left: 120px">
-    <?php echo toc_draw_button($osC_Language->get('button_continue_shopping'), 'button', '', 'onclick="javascript:history.go(-1);return false;"'); ?>
+    <?php echo osc_draw_image_submit_button('button_continue_shopping.gif', $osC_Language->get('button_continue_shopping'), 'onclick="javascript:history.go(-1);return false;"'); ?>
   </span>
   
 </div>
@@ -212,7 +212,7 @@
 <p><?php echo $osC_Language->get('shopping_cart_empty'); ?></p>
 
 <div class="submitFormButtons" style="text-align: right;">
-  <?php echo toc_draw_link_button(osc_href_link(FILENAME_DEFAULT), $osC_Language->get('button_continue')); ?>
+  <?php echo osc_link_object(osc_href_link(FILENAME_DEFAULT), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?>
 </div>
 
 <?php

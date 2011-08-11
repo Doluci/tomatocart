@@ -243,7 +243,7 @@
     echo $osC_Payment->process_button();
   }
 
-  echo '<div style="text-align:right;">' . toc_draw_button($osC_Language->get('button_confirm_order'), 'submit', '', 'id="btnConfirmOrder"') . '</form></div>';
+  echo '<div style="text-align:right;">' . osc_draw_image_submit_button('button_confirm_order.gif', $osC_Language->get('button_confirm_order'), 'id="btnConfirmOrder"') . '</form></div>';
 ?>
 
 </div>

@@ -112,7 +112,7 @@
 </div>
 
 <div class="submitFormButtons" style="float: right">
-  <?php echo toc_draw_button($osC_Language->get('button_continue')) . '&nbsp;' . toc_draw_link_button('javascript:window.history.go(-1);', $osC_Language->get('button_back')); ?>
+  <?php echo osc_draw_image_submit_button('button_continue.gif', $osC_Language->get('button_continue')) . '&nbsp;' . osc_link_object('javascript:window.history.go(-1);', osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
 </div>
 
 </form>

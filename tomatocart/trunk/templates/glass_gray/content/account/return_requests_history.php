@@ -88,7 +88,9 @@
           <?php 
             if ($Qhistory->value('orders_returns_status_id') == ORDERS_RETURNS_STATUS_CONFIRMED) { 
           ?>
-              <td colspan="2" align="right"><?php echo toc_draw_link_button(osc_href_link(FILENAME_PDF, 'module=account&pdf=return_slip&orders_returns_id=' . $Qhistory->value('orders_returns_id')), $osC_Language->get('button_print')); ?></td>
+          
+              <td colspan="2" align="right"><?php echo osc_link_object(osc_href_link(FILENAME_PDF, 'module=account&pdf=return_slip&orders_returns_id=' . $Qhistory->value('orders_returns_id')), osc_draw_image_button('button_print.png', $osC_Language->get('return_slip'))); ?></td>
+          
           <?php 
            }              
           ?>
@@ -121,5 +123,5 @@
   }
 ?>
 <div class="submitFormButtons">
-  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT . '?orders', null, 'SSL'), $osC_Language->get('button_back')); ?>
+  <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT . '?orders', null, 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
 </div>

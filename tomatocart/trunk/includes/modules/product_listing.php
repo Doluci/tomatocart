@@ -164,9 +164,9 @@
           case 'PRODUCT_LIST_BUY_NOW':
             $lc_align = 'center';
             if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-              $lc_text = toc_draw_link_button(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), $osC_Language->get('button_buy_now'), 'ajaxAddToCart', 'id="ac_productlisting_'. $Qlisting->value('products_id') . '"') . '&nbsp;<br />';
+              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_'. $Qlisting->value('products_id') . '"')) . '&nbsp;<br />';
             }else {
-              $lc_text = toc_draw_link_button(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), $osC_Language->get('button_buy_now'), 'ajaxAddToCart', 'id="ac_productlisting_'. $Qlisting->value('products_id') . '"') . '&nbsp;<br />';
+              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'))) . '&nbsp;<br />';
             }  
             $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<br />';
             $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 

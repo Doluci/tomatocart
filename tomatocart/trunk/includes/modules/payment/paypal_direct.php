@@ -192,7 +192,7 @@
           $orders_id = osC_Order::insert();
             
           $comments = 'PayPal Website Payments Pro (US) Direct Payments [' . 'ACK: ' . $response_array['ACK'] . '; TransactionID: ' . $response_array['TRANSACTIONID'] . ';' . ']';
-          osC_Order::process($orders_id, MODULE_PAYMENT_PAYPAL_DIRECT_ORDER_STATUS_ID, $comments);
+          osC_Order::process($orders_id, ORDERS_STATUS_PAID, $comments);
         }
       }else {
         $messageStack->add_session('checkout', $osC_Language->get('payment_paypal_direct_error_all_fields_required'), 'error');
