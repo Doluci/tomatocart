@@ -205,7 +205,7 @@
           $comments = 'PayPal Website Payments Pro (US) Direct Payments perform successfully.';
           
           $orders_id = osC_Order::insert();
-          osC_Order::process($orders_id, MODULE_PAYMENT_PAYPAL_UK_DIRECT_ORDER_STATUS_ID, $comments);
+          osC_Order::process($orders_id, ORDERS_STATUS_PAID, $comments);
         }
       }else {
         $messageStack->add_session('checkout', $error_message, 'error');

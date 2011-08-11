@@ -31,7 +31,7 @@
 </div>
 
 <div class="submitFormButtons">
-  <span style="float: right;"><?php echo toc_draw_button($osC_Language->get('button_search')); ?></span>
+  <span style="float: right;"><?php echo osc_draw_image_submit_button('button_search.gif', $osC_Language->get('button_search')); ?></span>
 
   <?php echo osc_link_object('javascript:popupWindow(\'' . osc_href_link(FILENAME_SEARCH, 'help') . '\');', $osC_Language->get('search_help_tips')); ?>
 </div>

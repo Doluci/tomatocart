@@ -65,7 +65,7 @@
           <td valign="top"><?php echo nl2br($Qslips->value('comments'));?></td>
         </tr>
     </table>    
-    <p align="right"><?php echo toc_draw_link_button(osc_href_link(FILENAME_PDF, 'module=account&pdf=credit_slip&credit_slip_id=' . $Qslips->value('credit_slips_id')), $osC_Language->get('button_print')); ?></p>
+    <p align="right"><?php echo osc_link_object(osc_href_link(FILENAME_PDF, 'module=account&pdf=credit_slip&credit_slip_id=' . $Qslips->value('credit_slips_id')), osc_draw_image_button('button_print.png', $osC_Language->get('credit_slips'))); ?></p>
   </div>
 </div>
 
@@ -93,5 +93,5 @@
   }
 ?>
 <div class="submitFormButtons">
-  <?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'orders', 'SSL'), $osC_Language->get('button_back')); ?>
+  <?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT . '?orders', null, 'SSL'), osc_draw_image_button('button_back.gif', $osC_Language->get('button_back'))); ?>
 </div>

@@ -43,8 +43,8 @@
         $this->_content .= '</ul>';
         $this->_content .= 
           '<p>' .
-            '<span style="float: right">' . toc_draw_link_button(osc_href_link(FILENAME_JSON, 'module=products&action=compare_products'), $osC_Language->get('button_compare_now'), 'multibox', 'rel="width:800,height:400,ajax:true"') . '</span>' .
-            toc_draw_link_button(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=compare_products_clear'), $osC_Language->get('button_clear')) . '&nbsp;&nbsp;' .
+            '<span style="float: right">' . osc_link_object(osc_href_link(FILENAME_JSON, 'module=products&action=compare_products'), osc_draw_image_button('small_compare_now.png', $osC_Language->get('button_compare_now')), 'class="multibox" rel="width:800,height:400,ajax:true"') . '</span>' .
+            osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), osc_get_all_get_params(array('action')) . '&action=compare_products_clear'), osc_draw_image_button('small_clear.png', $osC_Language->get('button_clear'))) . '&nbsp;&nbsp;' .
           '</p>';
       
         $js .= '<script type="text/javascript">

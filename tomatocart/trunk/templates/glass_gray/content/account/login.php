@@ -37,7 +37,7 @@
     
         <p><?php echo sprintf($osC_Language->get('login_returning_customer_password_forgotten'), osc_href_link(FILENAME_ACCOUNT, 'password_forgotten', 'SSL')); ?></p>
     
-        <p align="right"><?php echo toc_draw_button($osC_Language->get('button_sign_in')); ?></p>
+        <p align="right"><?php echo osc_draw_image_submit_button('button_login.gif', $osC_Language->get('button_sign_in')); ?></p>
       </div>
     
       </form>
@@ -51,7 +51,7 @@
       <div>
         <p><?php echo $osC_Language->get('login_new_customer_text'); ?></p>
     
-        <p align="right"><?php echo toc_draw_link_button(osc_href_link(FILENAME_ACCOUNT, 'create', 'SSL'), $osC_Language->get('button_continue')); ?></p>
+        <p align="right"><?php echo osc_link_object(osc_href_link(FILENAME_ACCOUNT, 'create', 'SSL'), osc_draw_image_button('button_continue.gif', $osC_Language->get('button_continue'))); ?></p>
       </div>
     </div>
     <div style="clear: both"></div>
