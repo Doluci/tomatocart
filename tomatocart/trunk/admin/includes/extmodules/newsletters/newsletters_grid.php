@@ -226,15 +226,15 @@ Ext.extend(Toc.newsletters.NewslettersGrid, Ext.grid.GridPanel, {
     var newslettersId = record.get('newsletters_id');
     
     switch(module) {
-      case 'E-Mail':
+      case 'email':
         var dlg = this.owner.createSendEmailsDialog();
         break;
       
-      case 'Newsletter': 
+      case 'newsletter': 
         var dlg = this.owner.createSendNewslettersDialog();
         break;
       
-      case 'Product Notifications':
+      case 'product_notification':
         var dlg = this.owner.createSendProductNotificationsDialog();
         dlg.show(newslettersId);
     }
