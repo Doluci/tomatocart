@@ -70,6 +70,7 @@
 
         $Qproducts = $osC_Database->query('select products_id from :table_products_to_categories ptc left join :table_products p on ptc.products_id = p.products_id where p.products_status = 1 and categories_id = :categories_id limit 1');
         $Qproducts->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
+        $Qproducts->bindTable(':table_products', TABLE_PRODUCTS);
         $Qproducts->bindInt(':categories_id', $current_category_id);
         $Qproducts->execute();
 
