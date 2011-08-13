@@ -1,3 +1,42 @@
+VERSION 1.1.5
+--BUG FIX
+ * fix bug #521 -- Problem with displaying product pages in BG lang.
+ * fix bug #496 -- When a categorie is disabled in another categorie - image categorie still viewable
+ * the sql strict mode is switched off
+ * fix bug #487 -- Products Variants Table has Not Null on filename and cache_filename(the sql strict is switched off)
+ * fix bug #496 -- When a categorie is disabled in another categorie - image categorie still viewable
+ * fix bug #500 -- admin can not login. If the cookie domian does not match the host in the url. Such as www.mysite.com/admin and mysite.com/admin.
+ * fix bug #504 -- The navigation bar on hover image change works in Internet Explorer 9 but not in Google Chrome
+ * fix bug #384 -- Ajax Picture doesn't work with chrome
+ * fix bug #295 -- Categorie Tree Object Disable causes php Core
+ * fix bug #465 -- Can't given Space after any Currency Sign
+ * fix bug #445 -- Variants without stock gives wrong display in product info V1.1.4
+ * add google analytics support
+ * Since v1.1.5 piwik will be deactived by default since it generate large log data
+ * fix bug #401 -- Cant view the content and read received emails
+ * fix bug #448 -- View Cart Error
+ * fix bug #449 -- Cannot get past Step 1 in Checkout Process
+                   This bug is caused by more clicked on the payment installation button. Try to remove all the payment module and reinstall them again, then the problem will be resolved.
+ * fix bug #463 -- When deleting product in the Compare box - actions not correct
+ * fix bug #481 -- Payments Module does not set Order Status Correctly
+ * fix bug #486 -- Product Notification box only visible when a user isLoggedOn()
+ * fix bug #494 -- Desktop >> Module Setting >> Autorun doesn't work for created administrators
+ * mask the panel when the user click on the install button to prevent user click on the install button several times for modules:
+   shipping, payments, order_total, geoip, templates and templates_modules. If the module are installed several time.. it will cause store front crash
+ * fix bug #480 -- Cannot disable service "Category Path"
+                   Does not allow core modules to be uninstalled
+ * fix bug #491 -- Variant price doesn't change when changing currency
+ * fix bug #472 -- Include Tax in price does not show in products with variants
+ * fix bug #473 -- Special price not displayed for product in info.php
+ * fix bug #424 -- ON Front page error, check both not null and is array to database cache content
+ * fix bug #456 -- Cannot send email through Newsletter or Product Notifications module
+ * fix bug #447 -- If the zone is enabled in Paypal Standard & Express then paypal will not be shown in the payment list.
+ * fix bug #460 -- wrong configuration constant in includes/modules/boxes/popular_search_terms_tag_cloud.php
+ * fix bug #445 -- Polls - if votes are 0 and by clicking "result" in frontpage - always loading
+ * fix bug #455 -- Warning: number_format() expects parameter 1 to be double, string given in C:\...
+ * fix bug #466 -- Restrictions on coupons doesn't work causing serious issues!!
+ * fix bug #432 -- Coupon Code for Downloadable Product
+
 VERSION 1.1.4
 --BUG FIX
  * fix bug #340 -- Please Waiting - English correction needed
