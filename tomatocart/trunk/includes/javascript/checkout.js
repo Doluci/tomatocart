@@ -20,6 +20,7 @@ var Checkout = new Class({
   
   options: {
     remoteUrl: 'json.php',
+    registerUrl: null,
     sessionName: 'sid',
     sessionId: null,
     isLoggedOn: false,
@@ -137,11 +138,15 @@ var Checkout = new Class({
         $('checkoutMethodForm').getElement('div').set('html', result.form);
         
         $('btnNewCustomer').addEvent('click', function(e) {
-          this.loadBillingInformationForm();
-          this.gotoPanel('billingInformationForm');
+        	if ($('checkoutMethodForm').getElement("input[checked]").get('value') ==  'register') {
+        	  window.location = this.options.registerUrl;
+        	}else {
+            this.loadBillingInformationForm();
+            this.gotoPanel('billingInformationForm');
+        	}
         }.bind(this));
       }
-    });
+    }.bind(this));
   },
   
   loadBillingInformationForm: function() {
@@ -224,8 +229,6 @@ var Checkout = new Class({
       }
     } else {
       params.billing_email_address = $('billing_email_address').value;
-      params.billing_password = $('billing_password').value;
-      params.billing_confirm_password = $('billing_confirm_password').value;
     }
     
     this.showNotify($('btnSaveBillingInformation'));
