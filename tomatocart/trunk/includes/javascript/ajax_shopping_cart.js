@@ -400,7 +400,7 @@ var AjaxShoppingCart = new Class({
   
   				  $('ajaxCartContentProducts').removeClass('collapsed');
   				} else {
-  				   $('ajaxCartProduct' + product.id).getElement('.price').set('text', product.price);
+  				   $('ajaxCartProduct' + product.id).getElement('.price').set('html', product.price);
   				   $('ajaxCartProduct' + product.id).getElement('.quantity').set('html', product.quantity);
   				   
             //customization fields
