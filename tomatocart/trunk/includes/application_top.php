@@ -10,7 +10,6 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
-
 // start the timer for the page parse time log
   define('PAGE_PARSE_START_TIME', microtime());
 
@@ -122,6 +121,14 @@
     if ( !isset($_SESSION['admin']) || empty($_SESSION['admin']) ) {
       require('templates/system/offline.php');
       exit;
+    }
+  }
+  
+  if ($_SERVER['HTTP_HOST'] != HTTP_COOKIE_DOMAIN) {
+    if ($_SERVER['HTTPS'] == 'on') {
+      osc_redirect_admin(HTTPS_SERVER . DIR_WS_HTTP_CATALOG . DIR_FS_ADMIN);
+    } else {
+      osc_redirect_admin(HTTP_SERVER . DIR_WS_HTTP_CATALOG . DIR_FS_ADMIN);
     }
   }
 ?>
