@@ -122,7 +122,7 @@ TEXTAREA {
   border: 1px solid #B6B6B6;
 }
 
-UL {
+UL, OL {
   padding: 0px;
   margin: 0px;
   list-style: none;
@@ -133,17 +133,13 @@ LI {
   padding: 3px 0px 3px 0px;
 }
 
-OL LI {
-  margin: 3px 0px 3px 30px;
-}
-
 A {
   color: #616060;
   text-decoration: none;
 }
 
 A:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 *:focus {
@@ -361,7 +357,7 @@ A:hover {
 }
 
 #headerBar #bookmark {
-	background-image: none;
+  background-image: none;
   padding-left: 0;
 }
 
@@ -584,6 +580,10 @@ A:hover {
   border-bottom: 1px solid #8B8A8A;
 }
 
+#pageContent .productListing .productListing-name p {
+  border: none;
+}
+
 .productListing .productImage {
   margin-top:3px;
 }
@@ -614,8 +614,66 @@ A:hover {
   line-height: 150%;
 }
 
+.productListing-name {
+  width: 180px;
+}
+
+.productGrid-name {
+  display:block;
+  height: 20px;
+}
+
+.productListing .reviews_total a {
+  display: block;
+  margin-top:5px;
+  text-decoration: none;
+}
+
+.productListing .reviews_total a:hover {
+  text-decoration: underline;
+}
+
+.productsGrid {
+  margin-top: 10px; 
+  float:left; 
+  width: 33%; 
+  text-align: center;
+}
+
+.productsGrid-item {
+  text-align: center;
+  margin: 7px 0;
+}
+
+.productsGrid-item p {
+  margin-bottom: 0;
+  height: 50px;
+  line-height: 15px;
+}
+
+.productsGrid-item .reviewTotal {
+  margin-left: 5px;
+}
+
 .listingPageLinks {
   margin: 5px;
+}
+
+.productViewStyle {
+  margin: 10px 0;
+}
+
+.productViewStyle span {
+  margin: 0 2px;
+}
+
+.productSorts {
+  margin: 5px 0;
+}
+
+.productSorts label {
+  width: auto;
+  margin: 5px 4px 5px 0;
 }
 
 /* popupCart */
@@ -657,6 +715,7 @@ A:hover {
   padding: 4px;
 }
 
+.selectedVariant {font-weight:bolder;}
 /*productImage*/
 .moduleBox .new_products .productImage, #specials .productImage {
   border: 3px solid #dddddd;  
@@ -1037,3 +1096,4 @@ span.error {
 .accessories .image {float: left; width: 100px}
 .accessories .desc {float: right; width: 400px}
 .accessories .desc h6 a{color: #616060}
+
