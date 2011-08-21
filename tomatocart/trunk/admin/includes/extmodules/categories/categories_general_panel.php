@@ -92,6 +92,26 @@ Ext.extend(Toc.categories.GeneralPanel, Ext.Panel, {
         border: false,
         items: [{fieldLabel: '&nbsp;<?php echo $osC_Language->get('status_disabled'); ?>', boxLabel: '<?php echo $osC_Language->get('status_disabled'); ?>', xtype:'radio', name: 'categories_status', hideLabel: true, inputValue: '0'}]
       }]});
+      
+    items.push({
+      layout: 'column',
+      border: false,
+      items:[{
+        id: 'categories_mode',
+        layout: 'form',
+        labelSeparator: ' ',
+        border: false,
+        items:[{fieldLabel: '&nbsp;<?php echo $osC_Language->get('field_options'); ?>', xtype:'radio', name: 'categories_mode', boxLabel: '<?php echo $osC_Language->get('available_for_order'); ?>', xtype:'radio', inputValue: '1', checked: true}]
+      },{
+        layout: 'form',
+        border: false,
+        items: [{boxLabel: '<?php echo $osC_Language->get('show_price'); ?>', xtype:'radio', name: 'categories_mode', hideLabel: true, inputValue: '2'}]
+      },{
+        layout: 'form',
+        border: false,
+        items: [{boxLabel: '<?php echo $osC_Language->get('online_only'); ?>', xtype:'radio', name: 'categories_mode', hideLabel: true, inputValue: '3'}]
+      }]
+    });
     
     items.push({xtype: 'numberfield', fieldLabel: '&nbsp;<?php echo $osC_Language->get("field_sort_order"); ?>', name: 'sort_order'});
     
