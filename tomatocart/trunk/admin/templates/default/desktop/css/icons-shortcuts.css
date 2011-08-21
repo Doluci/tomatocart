@@ -60,6 +60,10 @@
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/products_attributes.png', sizingMethod='scale');
 }
 
+.icon-google_base_manage_items-shortcut img {
+  background-image: url(../../images/icons/48x48/google_base.png);
+}
+
 .icon-specials-shortcut img {
   background-image: url(../../images/icons/48x48/specials.png);
   filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='templates/default/images/icons/48x48/specials.png', sizingMethod='scale');
