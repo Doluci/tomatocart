@@ -27,12 +27,6 @@
 
       $this->_page_title = $osC_Language->get('success_heading');
 
-      if ($osC_Customer->isLoggedOn() === false) {
-        $osC_NavigationHistory->setSnapshot();
-
-        osc_redirect(osc_href_link(FILENAME_ACCOUNT, 'login', 'SSL'));
-      }
-      
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_checkout_success'), osc_href_link(FILENAME_CHECKOUT, $this->_module, 'SSL'));
       }
