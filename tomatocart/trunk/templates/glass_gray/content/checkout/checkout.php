@@ -145,6 +145,7 @@ $step = 1;
   window.addEvent('domready', function() {
     checkout = new tocCheckout({
       remoteUrl: '<?php echo osc_href_link('json.php', null, 'SSL', false, false, true); ?>',
+      registerUrl: '<?php echo osc_href_link(FILENAME_ACCOUNT, 'create', 'SSL');?>',
       isLoggedOn: <?php echo ($osC_Customer->isLoggedOn() === true) ? 'true' : 'false';?>,
       sessionName: '<?php echo $osC_Session->getName(); ?>',
       template: '<?php echo $osC_Template->getCode(); ?>',
