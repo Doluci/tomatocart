@@ -24,8 +24,13 @@ var TocVariants = new Class({
   
   initialize: function(options) {
     this.setOptions(options);
-    this.initializeComboBox();
-    this.updateView();
+    
+    if (this.options.varaints_view == 'combobox') {
+      this.initializeComboBox();
+    }else if (this.options.varaints_view == 'list') {
+      this.initializeList();
+      
+    }
   },
   
   initializeComboBox: function() {
@@ -36,14 +41,53 @@ var TocVariants = new Class({
     }.bind(this));
   },
   
+  initializeList: function() {
+    this.options.listVariants.each(function(listGroup) {
+      listGroup.getElements('li').each(function(listItem, index) {
+        var listLink = listItem.getElement('a');
+        
+        listLink.addEvent('click', function(e) {
+          var event = new Event(e);
+          event.stop();
+          
+          if (!listLink.hasClass('selectedVariant')) {
+            listLink.addClass('selectedVariant');
+          }
+          
+          listItem.getSiblings('li').each(function(sibling) {
+            var siblingLink = sibling.getElement('a');
+            if (siblingLink.hasClass('selectedVariant')) {
+              siblingLink.removeClass('selectedVariant');
+            }
+          });
+          
+          this.updateView();
+        }.bind(this));
+      }.bind(this));
+    }.bind(this));
+  },
+  
   getProductsIdString: function() {
     var groups = [];
-    this.options.combVariants.each(function(combobox) {
-      var id = combobox.id.toString();
-      var groups_id = id.substring(9, id.indexOf(']'));
+    
+    if (this.options.varaints_view == 'combobox') {
+      this.options.combVariants.each(function(combobox) {
+        var id = combobox.id.toString();
+        var groups_id = id.substring(9, id.indexOf(']'));
       
-      groups.push(groups_id + ':' + combobox.value);
-    }.bind(this));
+        groups.push(groups_id + ':' + combobox.value);
+      }.bind(this));
+    }else if (this.options.varaints_view == 'list') {
+      this.options.listVariants.each(function(listGroup) {
+        var id = listGroup.getProperty('id').toString();
+        var groups_id = id.substring(9, id.indexOf(']'));
+        
+        listLinkId = listGroup.getElement('li a.selectedVariant').getProperty('id');
+        var variant_value_id = listLinkId.substring(13, listLinkId.indexOf(']'));
+        
+        groups.push(groups_id + ':' + variant_value_id);
+      }.bind(this));
+    }
     
     return this.options.productsId + '#' + groups.join(';');
   },
@@ -58,7 +102,10 @@ var TocVariants = new Class({
       if (product['quantity'] > 0) {
         if (this.options.hasSpecial == 0) {
           $('productInfoPrice').set('text', product['display_price'] + ' ' + this.options.lang.txtTaxText);
+        }else {
+          $('productInfoPrice').set('html', product['display_price'] + ' ' + this.options.lang.txtTaxText);
         }
+        
         $('productInfoSku').set('text', product['sku']);
         if (this.options.displayQty == true) {
           $('productInfoQty').set('text', product['quantity'] + ' ' + this.options.unitClass);
