@@ -11,196 +11,235 @@
   as published by the Free Software Foundation.
 */
 
-// create column list
+  // create column list
   $define_list = array('PRODUCT_LIST_SKU' => PRODUCT_LIST_SKU, 
                        'PRODUCT_LIST_NAME' => PRODUCT_LIST_NAME,
+                       'PRODUCT_LIST_REVIEWS' => PRODUCT_LIST_REVIEWS,
                        'PRODUCT_LIST_MANUFACTURER' => PRODUCT_LIST_MANUFACTURER,
-                       'PRODUCT_LIST_PRICE' => PRODUCT_LIST_PRICE,
                        'PRODUCT_LIST_QUANTITY' => PRODUCT_LIST_QUANTITY,
                        'PRODUCT_LIST_WEIGHT' => PRODUCT_LIST_WEIGHT,
-                       'PRODUCT_LIST_IMAGE' => PRODUCT_LIST_IMAGE,
-                       'PRODUCT_LIST_BUY_NOW' => PRODUCT_LIST_BUY_NOW);
-
+                       'PRODUCT_LIST_IMAGE' => PRODUCT_LIST_IMAGE);
+  
+  if (isset($osC_Category) && !empty($osC_Category)) {
+    if (($osC_Category->getMode() == CATEGORIES_MODE_AVAILABLE_FOR_ORDER) || ($osC_Category->getMode() == CATEGORIES_MODE_SHOW_PRICE) ) {
+      $define_list['PRODUCT_LIST_PRICE'] = PRODUCT_LIST_PRICE;
+    }
+    
+    if ($osC_Category->getMode() == CATEGORIES_MODE_AVAILABLE_FOR_ORDER) {
+      $define_list['PRODUCT_LIST_BUY_NOW'] = PRODUCT_LIST_BUY_NOW;
+    }
+  }else {
+    $define_list['PRODUCT_LIST_PRICE'] = PRODUCT_LIST_PRICE;
+    $define_list['PRODUCT_LIST_BUY_NOW'] = PRODUCT_LIST_BUY_NOW;
+  }
+  
   asort($define_list);
-
+  
   $column_list = array();
   reset($define_list);
   while (list($key, $value) = each($define_list)) {
     if ($value > 0) $column_list[] = $key;
   }
-
-  if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ) {
-?>
-
-<div class="listingPageLinks">
-  <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?></span>
-
-  <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
-</div>
-
-<?php
-  }
 ?>
 
 <div>
-
-<?php
-  if ($Qlisting->numberOfRows() > 0) {
-?>
-
-  <table border="0" width="100%" cellspacing="0" cellpadding="2" class="productListing">
-    <tr>
-
-<?php
-    for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
-      $lc_key = false;
-      $lc_align = 'center';
-
-      switch ($column_list[$col]) {
-        case 'PRODUCT_LIST_SKU':
-          $lc_text = $osC_Language->get('listing_sku_heading');
-          $lc_key = 'sku';
-          break;
-        case 'PRODUCT_LIST_NAME':
-          $lc_text = $osC_Language->get('listing_products_heading');
-          $lc_key = 'name';
-          break;
-        case 'PRODUCT_LIST_MANUFACTURER':
-          $lc_text = $osC_Language->get('listing_manufacturer_heading');
-          $lc_key = 'manufacturer';
-          break;
-        case 'PRODUCT_LIST_PRICE':
-          $lc_text = $osC_Language->get('listing_price_heading');
-          $lc_key = 'price';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_QUANTITY':
-          $lc_text = $osC_Language->get('listing_quantity_heading');
-          $lc_key = 'quantity';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_WEIGHT':
-          $lc_text = $osC_Language->get('listing_weight_heading');
-          $lc_key = 'weight';
-          $lc_align = 'right';
-          break;
-        case 'PRODUCT_LIST_IMAGE':
-          $lc_text = $osC_Language->get('listing_image_heading');
-          $lc_align = 'center';
-          break;
-        case 'PRODUCT_LIST_BUY_NOW':
-          $lc_text = $osC_Language->get('listing_buy_now_heading');
-          $lc_align = 'center';
-          break;
-      }
-
-      if ($lc_key !== false) {
-        $lc_text = osc_create_sort_heading($lc_key, $lc_text);
-      }
-
-      echo '      <td align="' . $lc_align . '" class="productListing-heading">&nbsp;' . $lc_text . '&nbsp;</td>' . "\n";
-    }
-?>
-
-    </tr>
-
-<?php
-    $rows = 0;
-
-    while ($Qlisting->next()) {
-      $rows++;
-
-      echo '    <tr class="' . ((($rows/2) == floor($rows/2)) ? 'productListing-even' : 'productListing-odd') . '">' . "\n";
-
-      for ($col=0, $n=sizeof($column_list); $col<$n; $col++) {
-        $lc_align = '';
+  <?php
+    if ($Qlisting->numberOfRows() > 0) {
+      $sortings = array();
+      $list_headings = array();
+      
+      for ($col = 0, $n = sizeof($column_list); $col < $n; $col++) {
+        $lc_key = false;
+        $lc_align = 'center';
 
         switch ($column_list[$col]) {
           case 'PRODUCT_LIST_SKU':
-            $lc_align = '';
-            $lc_text = '&nbsp;' . $Qlisting->value('products_sku') . '&nbsp;';
+            $lc_text = $osC_Language->get('listing_sku_heading');
+            $lc_key = 'sku';
             break;
           case 'PRODUCT_LIST_NAME':
-            $lc_align = '';
-            if (isset($_GET['manufacturers'])) {
-              $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $Qlisting->value('products_name')) . (($Qlisting->value('products_short_description') === NULL) || ($Qlisting->value('products_short_description') === '') ? '' : '<p>' . $Qlisting->value('products_short_description') . '</p>');
-            } else {
-              $lc_text = '&nbsp;' . osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $Qlisting->value('products_name')) . (($Qlisting->value('products_short_description') === NULL) || ($Qlisting->value('products_short_description') === '') ? '' : '<p>' . $Qlisting->value('products_short_description') . '</p>') . '&nbsp;';
-            }
+            $lc_text = $osC_Language->get('listing_products_heading');
+            $lc_key = 'name';
+            break;
+          case 'PRODUCT_LIST_REVIEWS':
+            $lc_text = $osC_Language->get('listing_products_reviews_heading');
             break;
           case 'PRODUCT_LIST_MANUFACTURER':
-            $lc_align = '';
-            $lc_text = '&nbsp;' . osc_link_object(osc_href_link(FILENAME_DEFAULT, 'manufacturers=' . $Qlisting->valueInt('manufacturers_id')), $Qlisting->value('manufacturers_name')) . '&nbsp;';
+            $lc_text = $osC_Language->get('listing_manufacturer_heading');
+            $lc_key = 'manufacturer';
             break;
           case 'PRODUCT_LIST_PRICE':
+            $lc_text = $osC_Language->get('listing_price_heading');
+            $lc_key = 'price';
             $lc_align = 'right';
-            $osC_Product = new osC_Product($Qlisting->value('products_id'));
-            $lc_text = $osC_Product->getPriceFormated(true);
             break;
           case 'PRODUCT_LIST_QUANTITY':
+            $lc_text = $osC_Language->get('listing_quantity_heading');
+            $lc_key = 'quantity';
             $lc_align = 'right';
-            $lc_text = '&nbsp;' . $Qlisting->valueInt('products_quantity') . '&nbsp;';
             break;
           case 'PRODUCT_LIST_WEIGHT':
+            $lc_text = $osC_Language->get('listing_weight_heading');
+            $lc_key = 'weight';
             $lc_align = 'right';
-            $lc_text = '&nbsp;' . $osC_Weight->display($Qlisting->value('products_weight'), $Qlisting->value('products_weight_class')) . '&nbsp;';
             break;
           case 'PRODUCT_LIST_IMAGE':
+            $lc_text = $osC_Language->get('listing_image_heading');
             $lc_align = 'center';
-            if (isset($_GET['manufacturers'])) {
-              if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')), 'id="productImage'. $Qlisting->value('products_id') . '"');
-              }else {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . '&manufacturers=' . $_GET['manufacturers']), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')));
-              }  
-            } else {
-              if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')), 'id="productImage'. $Qlisting->value('products_id') . '"');
-              }else {
-                $lc_text = osc_link_object(osc_href_link(FILENAME_PRODUCTS, $Qlisting->value('products_id') . ($cPath ? '&cPath=' . $cPath : '')), $osC_Image->show($Qlisting->value('image'), $Qlisting->value('products_name')));
-              }                
-            }
             break;
           case 'PRODUCT_LIST_BUY_NOW':
+            $lc_text = $osC_Language->get('listing_buy_now_heading');
             $lc_align = 'center';
-            if ($Qlisting->value('products_type') == PRODUCT_TYPE_SIMPLE) {
-              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'), 'class="ajaxAddToCart" id="ac_productlisting_'. $Qlisting->value('products_id') . '"')) . '&nbsp;<br />';
-            }else {
-              $lc_text = osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=cart_add'), osc_draw_image_button('button_buy_now.gif', $osC_Language->get('button_buy_now'))) . '&nbsp;<br />';
-            }  
-            $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=compare_products_add'), $osC_Language->get('add_to_compare')) . '&nbsp;<br />';
-            $lc_text .= osc_link_object(osc_href_link(basename($_SERVER['SCRIPT_FILENAME']), $Qlisting->value('products_id') . '&' . osc_get_all_get_params(array('action')) . '&action=wishlist_add'), $osC_Language->get('add_to_wishlist')); 
-                        
             break;
         }
-
-        echo '      <td ' . ((empty($lc_align) === false) ? 'align="' . $lc_align . '" ' : '') . ' valign="top" class="productListing-data">' . $lc_text . '</td>' . "\n";
+        
+        $list_headings[] = array('lc_align' => $lc_align, 'lc_text' => $lc_text);
+        
+        if ($lc_key !== false) {
+          // Put sortable field into array
+          $sortings[] = array('id' => $lc_key, 'text' => $lc_text . '(asc)');
+          $sortings[] = array('id' => $lc_key . '|d', 'text' => $lc_text . '(desc)');
+        }
+      }
+      
+      if (!empty($sortings)) {
+        $frm_sort = '<div class="productSorts">' .
+        
+        $frm_sort .= '<form name="sort" action="' . osc_href_link(basename($_SERVER['SCRIPT_FILENAME'])) . '" method="get">';
+        $frm_sort .= '<label>' . $osC_Language->get('products_sort_label') . '</label>';
+        
+        $params = explode('&', osc_get_all_get_params(array('page', 'sort')));
+        foreach ($params as $key => $value) {
+          $key_value = explode('=', $value);
+          $frm_sort .= osc_draw_hidden_field($key_value[0], $key_value[1]);
+        }
+        
+        $frm_sort .= osc_draw_pull_down_menu('sort', $sortings, $_GET['sort'], ' onchange="this.form.submit()"');
+        
+        $frm_sort .= '</form>';
+        $frm_sort .= '</div>';
+        
+        echo $frm_sort;
+      }
+      ?>
+      
+      <!-- AddThis Button BEGIN -->
+      <?php 
+        if (defined('PRODUCT_LIST_SOCIAL_BOOKMARKS') && PRODUCT_LIST_SOCIAL_BOOKMARKS == 1) {
+      ?>
+          <div class="addthis_toolbox addthis_default_style" style="float: right;">
+            <a href="http://www.addthis.com/bookmark.php?v=250&amp;username=jackyin" class="addthis_button_compact">Share</a>
+            <span class="addthis_separator">|</span>
+            <a class="addthis_button_preferred_1"></a>
+            <a class="addthis_button_preferred_2"></a>
+            <a class="addthis_button_preferred_3"></a>
+            <a class="addthis_button_preferred_4"></a>
+          </div>
+          <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=jackyin"></script>
+      
+      <?php 
+        }
+      ?>
+      <!-- AddThis Button END -->
+       
+   <?php
+      if ($osC_Template->getGroup() == substr(FILENAME_DEFAULT, 0, strpos(FILENAME_DEFAULT, '.php'))) {
+        $group = FILENAME_DEFAULT;
+        
+        if (isset($_GET['manufacturers']) && !empty($_GET['manufacturers'])) {
+          $params = 'manufacturers=' . $_GET['manufacturers'];
+        }else {
+          $params = 'cPath=' . $cPath;
+        }
+      }else if ($osC_Template->getGroup() == substr(FILENAME_SEARCH, 0, strpos(FILENAME_SEARCH, '.php'))) {
+        $group = FILENAME_SEARCH;
+        $params =  'keywords=' . $_GET['keywords'];
+      }else if ($osC_Template->getGroup() == substr(FILENAME_PRODUCTS, 0, strpos(FILENAME_PRODUCTS, '.php'))) {
+        $group = FILENAME_PRODUCTS;
+        $params = 'new';
+      }
+      
+      if (isset($_GET['sort']) && !empty($_GET['sort'])) {
+        $params .= '&sort=' . $_GET['sort'];
+      }
+      
+      $list_view = '<span><strong>' . $osC_Language->get('products_list_view') . '</strong></span>' . 
+                   '<span>' . osc_link_object(osc_href_link($group, $params . '&view=grid'), $osC_Language->get('products_grid_view')) . '</span>';
+        
+      $grid_view = '<span>' . osc_link_object(osc_href_link($group, $params . '&view=list'), $osC_Language->get('products_list_view')) . '</span>' .
+                   '<span><strong>' . $osC_Language->get('products_grid_view') . '</strong></span>';
+      
+      
+      $product_view_style = '<div class="productViewStyle">' .
+                              '<span>' . $osC_Language->get('products_views_label') . '</span>';
+      
+      if ( isset($_GET['view']) && $_GET['view'] == 'list' ) {
+        $_SESSION['product_view_style'] = 'list';
+        
+        $product_view_style .= $list_view;
+      }else if ( isset($_GET['view']) && $_GET['view'] == 'grid') {
+        $_SESSION['product_view_style'] = 'grid';
+        
+        $product_view_style .= $grid_view;
+      }else if ( isset($_SESSION['product_view_style']) && $_SESSION['product_view_style'] == 'list' ) {
+        $product_view_style .= $list_view;
+      }else if ( isset($_SESSION['product_view_style']) && $_SESSION['product_view_style'] == 'grid' ) {
+        $product_view_style .= $grid_view;
+      }else {
+        $_SESSION['product_view_style'] = 'list';
+        
+        $product_view_style .= $list_view;
       }
 
-      echo '    </tr>' . "\n";
+      $product_view_style .= '</div>';
+      
+      echo $product_view_style;
+      
+      if ( ($Qlisting->numberOfRows() > 0) && ( (PREV_NEXT_BAR_LOCATION == '1') || (PREV_NEXT_BAR_LOCATION == '3') ) ) {
+    ?>
+    
+        <div class="listingPageLinks">
+          <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?></span>
+        
+          <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
+        </div>
+      
+    <?php
+      }
+      
+      if (isset($_SESSION['product_view_style']) && !empty($_SESSION['product_view_style'])) {
+        if ($_SESSION['product_view_style'] == 'list') {
+          require('includes/modules/products_list.php');
+        }else if ($_SESSION['product_view_style'] == 'grid') {
+          require('includes/modules/products_grid.php');
+        }
+      }else {
+        if (!isset($_GET['view']) || (isset($_GET['view']) && $_GET['view'] == 'list')) {
+          require('includes/modules/products_list.php');
+        }else if (isset($_GET['view']) && $_GET['view'] == 'grid') {
+          require('includes/modules/products_grid.php');
+        }
+      }
+    }else {
+      echo $osC_Language->get('no_products_in_category');
     }
-?>
-
-  </table>
-
-<?php
-  } else {
-    echo $osC_Language->get('no_products_in_category');
-  }
-?>
-
+  ?>
 </div>
+
+<?php 
+  echo $frm_sort;
+  echo $product_view_style;
+?>
 
 <?php
   if ( ($Qlisting->numberOfRows() > 0) && ((PREV_NEXT_BAR_LOCATION == '2') || (PREV_NEXT_BAR_LOCATION == '3')) ) {
 ?>
-
-<div class="listingPageLinks">
-  <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?></span>
-
-  <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
-</div>
-
+    <div class="listingPageLinks">
+      <span style="float: right;"><?php echo $Qlisting->getBatchPageLinks('page', osc_get_all_get_params(array('page', 'info', 'x', 'y'))); ?></span>
+    
+      <?php echo $Qlisting->getBatchTotalPages($osC_Language->get('result_set_number_of_products')); ?>
+    </div>
 <?php
   }
 ?>

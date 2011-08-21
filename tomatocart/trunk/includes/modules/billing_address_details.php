@@ -48,8 +48,6 @@
       if ($osC_Customer->isLoggedOn() === false) {
     ?>
       <li><?php echo osc_draw_label($osC_Language->get('email_address'), null, 'billing_email_address', true) . osc_draw_input_field('billing_email_address', $email_address); ?> </li>
-      <li><?php echo osc_draw_label($osC_Language->get('field_customer_password'), null, 'billing_password', true) . osc_draw_password_field('billing_password'); ?></li>
-      <li style="margin-bottom: 10px"><?php echo osc_draw_label($osC_Language->get('field_customer_password_confirmation'), null, 'billing_confirm_password', true) . osc_draw_password_field('billing_confirm_password'); ?></li>
     <?php
       }
     ?>

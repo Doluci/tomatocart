@@ -42,7 +42,18 @@
   </div>
 
   <div class="content">
+    <ul class="checkoutOptions">
+       <li class="registerAccount"><input type="radio" name="checkout_option" value="register" checked="checked" /><label>Rgister Account</label></li>
+       <?php
+          if (ALLOW_GUEST_TO_CHECKOUT == 1) {
+       ?>
+       <li class="guestCheckout"><input type="radio" name="checkout_option" value="guest" /><label>Guest Checkout</label></li>
+       <?php
+          }
+       ?>
+    </ul>
     <p><?php echo $osC_Language->get('login_new_customer_text');?></p>
+    
 
     <div class="submitFormButtons" style="text-align: right;">
       <?php echo osc_draw_image_button('button_continue.gif', null, 'id="btnNewCustomer" style="cursor: pointer"'); ?>
