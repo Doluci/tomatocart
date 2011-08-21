@@ -32,7 +32,7 @@
       $start = empty($_REQUEST['start']) ? 0 : $_REQUEST['start']; 
       $limit = empty($_REQUEST['limit']) ? MAX_DISPLAY_SEARCH_RESULTS : $_REQUEST['limit']; 
       
-      $Qorders = $osC_Database->query('select o.invoice_number, o.tracking_no, o.orders_id, o.customers_ip_address, o.customers_name, o.payment_method, o.date_purchased, o.last_modified, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total from :table_orders o, :table_orders_total ot, :table_orders_status s where o.orders_id = ot.orders_id and ot.class = "total" and o.orders_status = s.orders_status_id and s.language_id = :language_id ');
+      $Qorders = $osC_Database->query('select o.invoice_number, o.tracking_no, o.orders_id, o.customers_ip_address, o.customers_name, o.billing_name, o.payment_method, o.date_purchased, o.last_modified, o.currency, o.currency_value, s.orders_status_name, ot.text as order_total from :table_orders o, :table_orders_total ot, :table_orders_status s where o.orders_id = ot.orders_id and ot.class = "total" and o.orders_status = s.orders_status_id and s.language_id = :language_id ');
       
       if ( isset($_REQUEST['orders_id']) && is_numeric($_REQUEST['orders_id']) ) {
         $Qorders->appendQuery(' and o.orders_id = :orders_id ');
@@ -128,9 +128,14 @@
           $action[] = array('class' => 'icon-invoice-gray-record', 'qtip' => $osC_Language->get('tip_create_invoice'));
         }
         
+        $customers_name = $Qorders->valueProtected('customers_name');
+        if (empty($customers_name))  {
+          $customers_name = $Qorders->valueProtected('billing_name');
+        }
+        
         $records[] = array('orders_id' => $Qorders->valueInt('orders_id'),
                            'invoice' => (empty($invoice_number) ? '' : osc_image('images/invoices.png', $osC_Language->get('tip_invoice_number') . $invoice_number)),
-                           'customers_name' => $Qorders->valueProtected('customers_name'),
+                           'customers_name' => $customers_name,
                            'order_total' => strip_tags($Qorders->value('order_total')),
                            'date_purchased' => osC_DateTime::getShort($Qorders->value('date_purchased')),
                            'tracking_no' => $Qorders->value('tracking_no'),
