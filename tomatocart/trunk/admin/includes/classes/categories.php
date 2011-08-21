@@ -62,16 +62,17 @@
       $osC_Database->startTransaction();
 
       if ( is_numeric($id) ) {
-        $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
+        $Qcat = $osC_Database->query('update :table_categories set categories_status = :categories_status, categories_mode = :categories_mode, sort_order = :sort_order, last_modified = now() where categories_id = :categories_id');
         $Qcat->bindInt(':categories_id', $id);
       } else {
-        $Qcat = $osC_Database->query('insert into :table_categories (parent_id, categories_status, sort_order, date_added) values (:parent_id, :categories_status, :sort_order, now())');
+        $Qcat = $osC_Database->query('insert into :table_categories (parent_id, categories_status, categories_mode, sort_order, date_added) values (:parent_id, :categories_status, :categories_mode, :sort_order, now())');
         $Qcat->bindInt(':parent_id', $data['parent_id']);
       }
 
       $Qcat->bindTable(':table_categories', TABLE_CATEGORIES);
       $Qcat->bindInt(':sort_order', $data['sort_order']);
       $Qcat->bindInt(':categories_status', $data['categories_status']);
+      $Qcat->bindInt(':categories_mode', $data['categories_mode']);
       $Qcat->setLogging($_SESSION['module'], $id);
       $Qcat->execute();
       
