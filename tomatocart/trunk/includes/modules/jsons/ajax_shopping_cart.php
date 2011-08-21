@@ -10,6 +10,7 @@
   it under the terms of the GNU General Public License v2 (1991)
   as published by the Free Software Foundation.
 */
+  require_once('includes/classes/product.php');
 
   class toC_Json_Ajax_shopping_cart {
   	const PRODUCTS_NAME_LENGTH = 18;
@@ -96,21 +97,56 @@
     }
     
     function _getShoppingCart() {
-      global $osC_ShoppingCart, $osC_Currencies, $osC_Language;
+      global $osC_ShoppingCart, $osC_Currencies, $osC_Specials, $osC_Language;
 
       $cart = array();
       
       //products
       $products = array();
-      foreach($osC_ShoppingCart->getProducts() as $products_id => $data) {
-        $product = array('id' => $products_id,
-                         'link' => osc_href_link(FILENAME_PRODUCTS, osc_get_product_id($products_id)),
+      foreach($osC_ShoppingCart->getProducts() as $products_id_string => $data) {
+        $osC_Product = new osC_Product(osc_get_product_id($products_id_string));
+        
+        $product = explode('#', $products_id_string, 2);
+        $variants_array = array();
+
+        if (!$osC_Product->isGiftCertificate()) {
+          if (isset($product[1])) {
+            $variants = explode(';', $product[1]);
+  
+            foreach ($variants as $set) {
+              $variant = explode(':', $set);
+  
+              if (!is_numeric($variant[0]) || !is_numeric($variant[1])) {
+                continue 2; // skip product
+              }
+  
+              $variants_array[$variant[0]] = $variant[1];
+            }
+          }
+        }
+        
+        $price = $osC_Product->getPrice($variants_array, $data['quantity']);
+        
+        if ($osC_Product->hasSpecial()) {
+          $special_price = $osC_Specials->getPrice($osC_Product->getID());
+          
+          if ($osC_Product->hasVariants()) {
+            $special_percentage = $special_price / $osC_Product->getData('price');
+            
+            $special_price = $price * $special_percentage;
+          }
+          
+          $price = '<s>' . $osC_Currencies->displayPrice($price, $osC_Product->getData('tax_class_id')) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($special_price, $osC_Product->getData('tax_class_id')) . '</span>';
+        }
+        
+        $product = array('id' => $products_id_string,
+                         'link' => osc_href_link(FILENAME_PRODUCTS, $osC_Product->getID()),
                          'name' => (substr($data['name'], 0, self::PRODUCTS_NAME_LENGTH)) . (strlen($data['name']) > self::PRODUCTS_NAME_LENGTH ? '..' : ''),
                          'title' => $data['name'],
                          'quantity' => $data['quantity'] . ' x ',
-                         'price' => $osC_Currencies->displayPrice($data['price'], $data['tax_class_id'], $data['quantity']));
+                         'price' => $price);
         
-        //variants
+        //variantsol
         if (is_array($data['variants']) && !empty($data['variants'])) {
           $product['variants'] = array_values($data['variants']);
         }
