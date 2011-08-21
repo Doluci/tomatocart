@@ -18,7 +18,7 @@
         $_customer_group_discount = null;
 
     function osC_Product($id, $customers_id =null) {
-      global $osC_Database, $osC_Services, $osC_Language, $osC_Image, $osC_Cache, $osC_Currencies;
+      global $osC_Database, $osC_Services, $osC_Language, $osC_Image, $osC_Cache, $osC_Currencies, $osC_Specials;
 
       if (!empty($id)) {
         if ( $osC_Cache->read('product-' . $id . '-' . $osC_Language->getCode()) ) {
@@ -58,7 +58,7 @@
             }
   
             //categories
-            $Qcategory = $osC_Database->query('select categories_id from :table_products_to_categories where products_id = :products_id limit 1');
+            $Qcategory = $osC_Database->query('select categories_id from :table_products_to_categories ptc where products_id = :products_id limit 1');
             $Qcategory->bindTable(':table_products_to_categories', TABLE_PRODUCTS_TO_CATEGORIES);
             $Qcategory->bindInt(':products_id', $this->_data['id']);
             $Qcategory->execute();
@@ -166,7 +166,15 @@
           $products_variants = $this->_data['variants'];
           
           foreach ($products_variants as $products_id_string => $data) {
-            $this->_data['variants'][$products_id_string]['display_price'] = $osC_Currencies->displayPrice($data['price'], $this->_data['tax_class_id']);
+            if ($this->hasSpecial()) {
+              $special_price = $osC_Specials->getPrice($this->_data['id']);
+              $special_percentage = $special_price / $this->_data['price'];
+              $variant_price = $data['price'] * $special_percentage;
+              
+              $this->_data['variants'][$products_id_string]['display_price'] = '<s>' . $osC_Currencies->displayPrice($data['price'], $this->_data['tax_class_id']) . '</s>' . '&nbsp;' . $osC_Currencies->displayPrice($variant_price, $this->_data['tax_class_id']);
+            }else {
+              $this->_data['variants'][$products_id_string]['display_price'] = $osC_Currencies->displayPrice($data['price'], $this->_data['tax_class_id']);
+            }
           }
         }
         
@@ -372,6 +380,31 @@
       $this->_data['variants_groups_values'] = $groups_values;
     }
     
+    function getVariantsList() {
+      $variants_list = array();
+      
+      foreach($this->_data['variants_groups'] as $groups_id => $groups_name) {
+        $default_variants = $this->_data['default_variant']['groups_id'];
+        $variants_values_ids = $this->_data['variants_groups_values'][$groups_id];
+        
+        $variants_values = array();
+        foreach($variants_values_ids as $variants_values_id) {
+          $variants_value = array();
+          $variants_value['id'] = $variants_values_id;
+          $variants_value['text'] = $this->_data['variants_values'][$variants_values_id];
+          
+          if (in_array($variants_values_id, $default_variants )) {
+            $variants_value['is_default'] = true;
+          }
+          
+          $variants_values[] = $variants_value;
+        }
+        $variants_list[] = array('groups_id' => $groups_id, 'groups_name' => $groups_name, 'variants_values' => $variants_values);
+      }
+      
+      return $variants_list;
+    }
+    
     function hasQuantityDiscount(){
       return (isset($this->_data['quantity_discount']) && !empty($this->_data['quantity_discount']));
     }
@@ -574,7 +607,6 @@
     }
     
     function getPrice($variants = null, $quantity = 1) {
-
       //get product price
       $product_price = $this->_data['price'];
       if (is_array($variants) && !empty($variants)) {
@@ -595,7 +627,7 @@
       $product_price = round($product_price * (1 - $qty_discount/100) * (1 - $customer_grp_discount/100), 2);
       return $product_price;
     }
-
+    
     function getPriceFormated($with_special = false) {
       global $osC_Services, $osC_Specials, $osC_Currencies;
 
@@ -603,8 +635,16 @@
       if ($this->isGiftCertificate() && $this->isOpenAmountGiftCertificate()) {
         $price = $osC_Currencies->displayPrice($this->_data['open_amount_min_value'], $this->_data['tax_class_id']) . ' ~ ' . $price = $osC_Currencies->displayPrice($this->_data['open_amount_max_value'], $this->_data['tax_class_id']);;
       } else {
-        if (($with_special === true) && is_object($osC_Services) && $osC_Services->isStarted('specials') && ($new_price = $osC_Specials->getPrice($this->_data['id']))) {
-          $price = '<s>' . $osC_Currencies->displayPrice($this->_data['price'], $this->_data['tax_class_id']) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($new_price, $this->_data['tax_class_id']) . '</span>';
+        if (($with_special === true) && $this->hasSpecial()) {
+          $special_price = $osC_Specials->getPrice($this->_data['id']);
+          
+          if ($this->hasVariants()) {
+            $special_percentage = $special_price / $this->_data['price'];
+            
+            $special_price = $this->getPrice() * $special_percentage; 
+          }
+          
+          $price = '<s>' . $osC_Currencies->displayPrice($this->getPrice(), $this->_data['tax_class_id']) . '</s> <span class="productSpecialPrice">' . $osC_Currencies->displayPrice($special_price, $this->_data['tax_class_id']) . '</span>';
         } else {
           $price = $osC_Currencies->displayPrice($this->getPrice(), $this->_data['tax_class_id']);
         }
@@ -616,7 +656,7 @@
     function getCategoryID() {
       return $this->_data['category_id'];
     }
-
+    
     function getImages() {
       return $this->_data['images'];
     }
@@ -634,7 +674,7 @@
 
       return false;
     }
-
+    
     function hasImage() {
       foreach ($this->_data['images'] as $image) {
         if ($image['default_flag'] == '1') {
