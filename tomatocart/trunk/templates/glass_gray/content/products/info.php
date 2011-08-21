@@ -46,9 +46,15 @@
    
     <table id="productInfo" border="0" cellspacing="0" cellpadding="2" style="float: right; width: 270px">
     
-      <tr>
-        <td colspan="2" id="productInfoPrice"><?php echo $osC_Product->getPriceFormated(true) . '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '' ); ?></td>
-      </tr>
+    <?php
+      if ( ($osC_Category->getMode() == CATEGORIES_MODE_AVAILABLE_FOR_ORDER) || ($osC_Category->getMode() == CATEGORIES_MODE_SHOW_PRICE) ) {
+    ?>
+        <tr>
+          <td colspan="2" id="productInfoPrice"><?php echo $osC_Product->getPriceFormated(true) . '&nbsp;' . ( (DISPLAY_PRICE_WITH_TAX == '1') ? $osC_Language->get('including_tax') : '' ); ?></td>
+        </tr>
+    <?php
+      }
+    ?>
       
       <tr>
         <td class="label" width="45%"><?php echo $osC_Language->get('field_sku'); ?></td>
@@ -191,13 +197,34 @@
 
   <?php 
       if ($osC_Product->hasVariants()) {
-        $combobox_array = $osC_Product->getVariantsComboboxArray();
-
-        foreach ($combobox_array as $groups_name => $combobox) {
-          echo '<tr class="variantCombobox">
-                 <td class="label" valign="top">' . $groups_name . ':</td>
-                 <td>' . $combobox . '</td>
-               </tr>';          
+        if (PRODUCT_INFO_VARIANTS_LIST == 1) {
+          $variants_list = $osC_Product->getVariantsList();
+        
+          foreach($variants_list as $variant_list) {
+            echo '<tr>' . 
+                    '<td class="label">' . $variant_list['groups_name'] . ':</td>' .
+                    '<td width="100%">' .
+                      '<ul class="variantList" id="variants[' . $variant_list['groups_id'] . ']">';
+                        foreach($variant_list['variants_values'] as $variants_value) {
+                          if ($variants_value['is_default'] == true) {
+                            echo '<li style="float:left;padding: 4px;"><a href="#" id="variantValue[' . $variants_value['id'] . ']" class="selectedVariant">' . $variants_value['text'] . '</a></li>';
+                          }else {
+                            echo '<li style="float:left;padding: 4px;"><a href="#" id="variantValue[' . $variants_value['id'] . ']">' . $variants_value['text'] . '</a></li>';
+                          }
+                        }
+                echo '</ul>' . 
+                    '</td>' .
+                  '</tr>';
+          }
+        }else {
+          $combobox_array = $osC_Product->getVariantsComboboxArray();
+ 
+          foreach ($combobox_array as $groups_name => $combobox) {
+            echo '<tr class="variantCombobox">
+                    <td class="label" valign="top">' . $groups_name . ':</td>
+                    <td>' . $combobox . '</td>
+                 </tr>';          
+          }
         }
       }
    ?>
@@ -205,7 +232,13 @@
       <tr>
         <td colspan="2" align="center" valign="top" style="padding-top: 15px" id="shoppingCart">
           <?php
-            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;' . osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID()) . '"');
+            echo '<b>' . $osC_Language->get('field_short_quantity') . '</b>&nbsp;' . osc_draw_input_field('quantity', $osC_Product->getMOQ(), 'size="3"') . '&nbsp;';
+            
+            if ($osC_Category->getMode() == CATEGORIES_MODE_AVAILABLE_FOR_ORDER) {
+              echo osc_draw_image_submit_button('button_in_cart.gif', $osC_Language->get('button_add_to_cart'), 'style="vertical-align:middle;" class="ajaxAddToCart" id="ac_productsinfo_' . osc_get_product_id($osC_Product->getID()) . '"');
+            }else if ($osC_Category->getMode() == CATEGORIES_MODE_ONLINE_ONLY){
+              echo '<strong>' . $osC_Language->get('online_only_mode') . '</strong>';
+            }
           ?>
         </td>
       </tr>
@@ -493,6 +526,8 @@ window.addEvent('domready', function(){
     ?>
   new TocVariants({
     combVariants: $$('tr.variantCombobox select'),
+    listVariants: $$('ul.variantList'),
+    varaints_view: '<?php echo (PRODUCT_INFO_VARIANTS_LIST == 1) ? 'list' : 'combobox'; ?>',
     variants: <?php echo $toC_Json->encode($osC_Product->getVariants()); ?>,
     productsId: <?php echo $osC_Product->getID(); ?>,
     allowCheckout: <?php echo (STOCK_ALLOW_CHECKOUT == '1') ? 'true' : 'false'; ?>,
