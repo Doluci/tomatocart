@@ -25,6 +25,10 @@
     function getID() {
       return $this->_data['id'];
     }
+    
+    function getMode() {
+      return $this->_data['mode'];
+    }
 
     function getTitle() {
       return $this->_data['name'];
