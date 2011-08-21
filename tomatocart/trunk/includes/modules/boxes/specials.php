@@ -47,9 +47,10 @@
 
           if ($Qspecials->numberOfRows()) {
             $data = $Qspecials->toArray();
+            
+            $osC_Product = new osC_Product($Qspecials->valueInt('products_id'));
 
-            $data['products_price'] = '<s>' . $osC_Currencies->displayPrice($Qspecials->valueDecimal('products_price'), $Qspecials->valueInt('products_tax_class_id')) . '</s>&nbsp;<span class="productSpecialPrice">' . $osC_Currencies->displayPrice($Qspecials->valueDecimal('specials_new_products_price'), $Qspecials->valueInt('products_tax_class_id')) . '</span>';
-
+            $data['products_price'] = $osC_Product->getPriceFormated(true);
             
             $osC_Cache->write('box-specials-' . $osC_Language->getCode() . '-' . $osC_Currencies->getCode(), $data);
           }
