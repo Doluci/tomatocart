@@ -148,6 +148,7 @@ DROP TABLE IF EXISTS toc_categories;
 CREATE TABLE toc_categories (
   categories_id int(11) NOT NULL auto_increment,
   categories_image varchar(64) default NULL,
+  categories_mode tinyint(1) default 1,
   parent_id int(11) NOT NULL default '0',
   sort_order int(3) default NULL,
   categories_status int(1) default 1,
@@ -576,6 +577,18 @@ CREATE TABLE toc_gift_certificates_redeem_history (
   PRIMARY KEY  (gift_certificates_redeem_history_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS toc_google_base_items;
+CREATE TABLE toc_google_base_items (
+  google_base_id int(11) not null auto_increment,
+  items_name varchar(11) not null,
+  items_target_country varchar(20) not null,
+  items_edit_link varchar(255) not null,  
+  items_expires date not null,
+  impressions int(11) default 0,
+  clicks int(11) default 0,
+
+  PRIMARY KEY(google_base_id)  
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS toc_guest_books;
 CREATE TABLE toc_guest_books (
@@ -1750,6 +1763,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Zone', 'STORE_ZONE', '', 'The zone my store is located in', '1', '7', 'osC_Address::getZoneName', 'osc_cfg_set_zones_pulldown_menu', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Send Extra Order Emails To', 'SEND_EXTRA_ORDER_EMAILS_TO', '', 'Send extra order emails to the following email addresses, in this format: Name 1 &lt;email@address1&gt;, Name 2 &lt;email@address2&gt;', '1', '11', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow Guest To Tell A Friend', 'ALLOW_GUEST_TO_TELL_A_FRIEND', '-1', 'Allow guests to tell a friend about a product', '1', '15', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow Guest To Checkout', 'ALLOW_GUEST_TO_CHECKOUT', '1', 'Allow guests to checkout', 1, 15, 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Store Address and Phone', 'STORE_NAME_ADDRESS', 'Store Name\nAddress\nCountry\nPhone', 'This is the Store Name, Address and Phone used on printable documents and displayed online', '1', '18', 'osc_cfg_set_textarea_field', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Tax Decimal Places', 'TAX_DECIMAL_PLACES', '0', 'Pad the tax value this amount of decimal places', '1', '20', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Prices with Tax', 'DISPLAY_PRICE_WITH_TAX', '1', 'Display prices with tax included (true) or add the tax at the end (false)', '1', '21', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
@@ -1807,12 +1821,14 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Manufaturer Name','PRODUCT_LIST_MANUFACTURER', '0', 'Do you want to display the Product Manufacturer Name?', '8', '2', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product SKU', 'PRODUCT_LIST_SKU', '0', 'Do you want to display the Product SKU?', '8', '3', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Name', 'PRODUCT_LIST_NAME', '2', 'Do you want to display the Product Name?', '8', '4', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Price', 'PRODUCT_LIST_PRICE', '3', 'Do you want to display the Product Price', '8', '5', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Reviews', 'PRODUCT_LIST_REVIEWS', '3', 'Do you want to display the Product Reviews?', '8', '4', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Price', 'PRODUCT_LIST_PRICE', '4', 'Do you want to display the Product Price', '8', '5', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Quantity', 'PRODUCT_LIST_QUANTITY', '0', 'Do you want to display the Product Quantity?', '8', '6', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Product Weight', 'PRODUCT_LIST_WEIGHT', '0', 'Do you want to display the Product Weight?', '8', '7', now());
-INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Buy Now column', 'PRODUCT_LIST_BUY_NOW', '4', 'Do you want to display the Buy Now column?', '8', '8', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Display Buy Now column', 'PRODUCT_LIST_BUY_NOW', '5', 'Do you want to display the Buy Now column?', '8', '8', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Category/Manufacturer Filter', 'PRODUCT_LIST_FILTER', '1', 'Do you want to display the Category/Manufacturer Filter?', '8', '9', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Location of Prev/Next Navigation Bar (1-top, 2-bottom, 3-both)', 'PREV_NEXT_BAR_LOCATION', '2', 'Sets the location of the Prev/Next Navigation Bar (1-top, 2-bottom, 3-both)', '8', '10', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Social BookMarks', 'PRODUCT_LIST_SOCIAL_BOOKMARKS', '1', 'Do you want to display the social bookmarks on the product listing page?', 8, 10, 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Check stock level', 'STOCK_CHECK', '1', 'Check to see if sufficent stock is available', '9', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Subtract stock', 'STOCK_LIMITED', '1', 'Subtract product in stock by product orders', '9', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
@@ -1824,6 +1840,7 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Quantity', 'PRODUCT_INFO_QUANTITY', '1', 'Do you want to display the Product Quantity?', '10', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Minimum Order Quantity','PRODUCT_INFO_MOQ', '-1', 'Do you want to display the Product Minimum Order Quantity?', '10', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Order Increment', 'PRODUCT_INFO_ORDER_INCREMENT', '-1', 'Do you want to display the Order Increment?', '10', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Display Product Variant As A List', 'PRODUCT_INFO_VARIANTS_LIST', '-1', 'Do you want to display the Variants as a List?', '10', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow gift certificate return', 'ALLOW_GIFT_CERTIFICATE_RETURN', '-1', 'Do you want to allow customer return gift certificates?', '11', '3', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Allow downloadable return', 'ALLOW_DOWNLOADABLE_RETURN', '-1', 'Do you want to allow customer return downloadable products?', '11', '4', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
@@ -1855,6 +1872,12 @@ INSERT INTO toc_configuration (configuration_title, configuration_key, configura
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Activate Captcha',  'ACTIVATE_CAPTCHA', '1', 'active captcha for contact us page and guest book', '19', '1', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('Disallow more than one vote from the same IP address', 'DISALLOW_MORE_THAN_ONE_VOTE', '1', 'Disallow more than one vote from the same IP address', '19', '2', 'osc_cfg_use_get_boolean_value', 'osc_cfg_set_boolean_value(array(1, -1))', now());
 
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Account Password', 'GOOGLE_BASE_ACCOUNT_PASSWORD', '', 'The Login Account Password Of the Google Base Service', '20', '1', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Account Login', 'GOOGLE_BASE_ACCOUNT_NAME', '', 'The Login Account Name Of the Google Base Service', '20', '2', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) VALUES ('Account Id', 'GOOGLE_BASE_ACCOUNT_ID', '', 'The Account ID Displaying on the left corner of the google base dashboard, copy it.', '20', '3', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Account Type', 'GOOGLE_BASE_ACCOUNT_TYPE', 'Hosted or Google', 'Use HOSTED_OR_GOOGLE if you\'re not sure which type of account you want authorization for. If the user information matches both a hosted and a Google account, only the hosted account is authorized.', '20', '4', 'osc_cfg_set_boolean_value(array(\'Hosted or Google\', \'Google\', \'hosted\'))', now());
+INSERT INTO toc_configuration (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) VALUES ('Target Country', 'GOOGLE_BASE_TARGET_COUNTRY', 'United States', 'Select the default target country of your feed.', '20', '5', 'osc_cfg_set_boolean_value(array(\'United States\', \'United Kingdom\', \'Germany\'))', now());
+
 INSERT INTO toc_configuration_group VALUES ('1', 'My Store', 'General information about my store', '1', '1');
 INSERT INTO toc_configuration_group VALUES ('2', 'Minimum Values', 'The minimum values for functions / data', '2', '1');
 INSERT INTO toc_configuration_group VALUES ('3', 'Maximum Values', 'The maximum values for functions / data', '3', '1');
@@ -1871,6 +1894,7 @@ INSERT INTO toc_configuration_group VALUES ('16', 'Regulations', 'Regulation opt
 INSERT INTO toc_configuration_group VALUES ('17', 'Credit Cards', 'Credit card options', '17', '1');
 INSERT INTO toc_configuration_group VALUES ('18', 'Program Locations', 'Locations to certain programs on the server.', '18', '1');
 INSERT INTO toc_configuration_group VALUES ('19', 'Content Management System', 'Content Management System Configuration', '19', '1');
+INSERT INTO toc_configuration_group VALUES ('20', 'Google Base', 'Google Base Configuration', 20, 1);
 
 INSERT INTO toc_countries VALUES (1,'Afghanistan','AF','AFG','');
 
