@@ -186,13 +186,17 @@
         }
         
         $price = $osC_Product->getPrice($variants_array, $Qproducts->value('customers_basket_quantity'));
-
-        if ($osC_Services->isStarted('specials')) {
-          global $osC_Specials;
-
-          if ($new_price = $osC_Specials->getPrice(osc_get_product_id($Qproducts->value('products_id')), $variants_array)) {
-            $price = $new_price;
+        
+        if ($osC_Product->hasSpecial()) {
+          $special_price = $osC_Specials->getPrice($osC_Product->getID());
+          
+          if ($osC_Product->hasVariants()) {
+            $special_percentage = $special_price / $osC_Product->getData('price');
+            
+            $special_price = $price * $special_percentage;
           }
+          
+          $price = $special_price;
         }
 
         $gc_data = null;
@@ -314,7 +318,7 @@
     }
     
     function add($products_id_string, $variants = null, $quantity = null, $gift_certificates_data = null, $customization_qty = null, $action = 'add') {
-      global $osC_Database, $osC_Services, $osC_Language, $osC_Customer, $osC_Image, $toC_Wishlist, $toC_Customization_Fields;
+      global $osC_Database, $osC_Services, $osC_Language, $osC_Customer, $osC_Image, $toC_Wishlist, $toC_Customization_Fields, $osC_Specials;
       
       $products_id = osc_get_product_id($products_id_string);
       $osC_Product = new osC_Product($products_id);
@@ -401,15 +405,19 @@
           } else {
             $price = $osC_Product->getPrice($variants, $quantity);
             
-            if ($osC_Services->isStarted('specials')) {
-              global $osC_Specials;
-  
-              if ($new_price = $osC_Specials->getPrice($products_id, $variants)) {
-                $price = $new_price;
+            if ($osC_Product->hasSpecial()) {
+              $special_price = $osC_Specials->getPrice($osC_Product->getID());
+              
+              if ($osC_Product->hasVariants()) {
+                $special_percentage = $special_price / $osC_Product->getData('price');
+                
+                $special_price = $price * $special_percentage;
               }
-            }       
+              
+              $price = $special_price;
+            } 
           }
-            
+          
           $this->_contents[$products_id_string]['quantity'] = $quantity;
           $this->_contents[$products_id_string]['price'] = $price;
           $this->_contents[$products_id_string]['final_price'] = $price;
@@ -481,13 +489,17 @@
           } else {
             $price = $osC_Product->getPrice($variants, $quantity);
             
-            if ($osC_Services->isStarted('specials')) {
-              global $osC_Specials;
-  
-              if ($new_price = $osC_Specials->getPrice($products_id, $variants)) {
-                $price = $new_price;
+            if ($osC_Product->hasSpecial()) {
+              $special_price = $osC_Specials->getPrice($osC_Product->getID());
+              
+              if ($osC_Product->hasVariants()) {
+                $special_percentage = $special_price / $osC_Product->getData('price');
+                
+                $special_price = $price * $special_percentage;
               }
-            }          
+              
+              $price = $special_price;
+            }      
           }
 
           $this->_contents[$products_id_string] = array('id' => $products_id_string,
