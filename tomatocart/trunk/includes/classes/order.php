@@ -158,11 +158,32 @@
       if (!class_exists(osC_Account)) {
         require_once('includes/classes/account.php');                    
       }
-      
-      if (!$osC_Customer->isLoggedOn()) {
-        osC_Order::createCustomer();
-      } else {
+//      
+//      if (!$osC_Customer->isLoggedOn()) {
+//        osC_Order::createCustomer();
+//      } else {
         //insert billing address
+//        $billing_address = $osC_ShoppingCart->getBillingAddress();
+//        
+//        if (isset($billing_address['id']) && ($billing_address['id'] == '-1')) {
+//          osC_Account::createNewAddress($osC_Customer->getID(), $billing_address);
+//        }
+//        
+//        //insert shipping address
+//        if (!isset($billing_address['ship_to_this_address']) || (isset($billing_address['ship_to_this_address']) && empty($billing_address['ship_to_this_address']))) {
+//          $shipping_address = $osC_ShoppingCart->getShippingAddress();
+//          
+//          if (isset($shipping_address['id']) && ($shipping_address['id'] == '-1')) {
+//            osC_Account::createNewAddress($osC_Customer->getID(), $shipping_address);
+//          }
+//        }
+//      }
+
+      
+
+      if ($osC_Customer->isLoggedOn()) {
+      
+      //insert billing address
         $billing_address = $osC_ShoppingCart->getBillingAddress();
         
         if (isset($billing_address['id']) && ($billing_address['id'] == '-1')) {
@@ -177,12 +198,20 @@
             osC_Account::createNewAddress($osC_Customer->getID(), $shipping_address);
           }
         }
+        
+        $customer_id = $osC_Customer->getID();
+        $customer_name = $osC_Customer->getName();
+        $customer_email_address = $osC_Customer->getEmailAddress();
+      }else {
+        $customer_id = 0;
+        $customer_name = null;
+        $customer_email_address = null;
       }
                      
       $Qorder = $osC_Database->query('insert into :table_orders (customers_id, customers_name, customers_company, customers_street_address, customers_suburb, customers_city, customers_postcode, customers_state, customers_comment, customers_state_code, customers_country, customers_country_iso2, customers_country_iso3, customers_telephone, customers_email_address, customers_address_format, customers_ip_address, delivery_name, delivery_company, delivery_street_address, delivery_suburb, delivery_city, delivery_postcode, delivery_state, delivery_zone_id, delivery_state_code, delivery_country_id, delivery_country, delivery_country_iso2, delivery_country_iso3, delivery_address_format, delivery_telephone, billing_name, billing_company, billing_street_address, billing_suburb, billing_city, billing_postcode, billing_state, billing_zone_id, billing_state_code, billing_country_id, billing_country, billing_country_iso2, billing_country_iso3, billing_address_format, billing_telephone, payment_method, payment_module, uses_store_credit, store_credit_amount, date_purchased, orders_status, currency, currency_value, gift_wrapping, wrapping_message) values (:customers_id, :customers_name, :customers_company, :customers_street_address, :customers_suburb, :customers_city, :customers_postcode, :customers_state, :customers_comment, :customers_state_code, :customers_country, :customers_country_iso2, :customers_country_iso3, :customers_telephone, :customers_email_address, :customers_address_format, :customers_ip_address, :delivery_name, :delivery_company, :delivery_street_address, :delivery_suburb, :delivery_city, :delivery_postcode, :delivery_state, :delivery_zone_id, :delivery_state_code, :delivery_country_id, :delivery_country, :delivery_country_iso2, :delivery_country_iso3, :delivery_address_format, :delivery_telephone, :billing_name, :billing_company, :billing_street_address, :billing_suburb, :billing_city, :billing_postcode, :billing_state, :billing_zone_id, :billing_state_code, :billing_country_id, :billing_country, :billing_country_iso2, :billing_country_iso3, :billing_address_format, :billing_telephone, :payment_method, :payment_module, :uses_store_credit, :store_credit_amount, now(), :orders_status, :currency, :currency_value, :gift_wrapping, :wrapping_message)');
       $Qorder->bindTable(':table_orders', TABLE_ORDERS);
-      $Qorder->bindInt(':customers_id', $osC_Customer->getID());
-      $Qorder->bindValue(':customers_name', $osC_Customer->getName());
+      $Qorder->bindInt(':customers_id', $customer_id);
+      $Qorder->bindValue(':customers_name', $customer_name);
       $Qorder->bindValue(':customers_company', '' /*$order->customer['company']*/);
       $Qorder->bindValue(':customers_street_address', '' /*$order->customer['street_address']*/);
       $Qorder->bindValue(':customers_suburb', '' /*$order->customer['suburb']*/);
@@ -194,7 +223,7 @@
       $Qorder->bindValue(':customers_country_iso2', '');
       $Qorder->bindValue(':customers_country_iso3', '');
       $Qorder->bindValue(':customers_telephone', '' /*$order->customer['telephone']*/);
-      $Qorder->bindValue(':customers_email_address', $osC_Customer->getEmailAddress());
+      $Qorder->bindValue(':customers_email_address', $customer_email_address);
       $Qorder->bindValue(':customers_comment', $_SESSION['comments']);
       $Qorder->bindValue(':customers_address_format', '');
       $Qorder->bindValue(':customers_ip_address', osc_get_ip_address());
@@ -376,7 +405,7 @@
         }    
       }
     
-      if ($osC_ShoppingCart->isUseStoreCredit()) {
+      if ($osC_Customer->isLoggedOn() && $osC_ShoppingCart->isUseStoreCredit()) {
         $Qhistory = $osC_Database->query('insert into :table_customers_credits_history (customers_id, action_type, date_added, amount, comments) values (:customers_id, :action_type, now(), :amount, :comments)');
         $Qhistory->bindTable(':table_customers_credits_history', TABLE_CUSTOMERS_CREDITS_HISTORY);
         $Qhistory->bindInt(':customers_id', $osC_Customer->getID());
@@ -406,7 +435,7 @@
         $Qcoupon = $osC_Database->query('insert into :table_coupons_redeem_history (coupons_id, customers_id, orders_id, redeem_amount, redeem_date, redeem_ip_address) values (:coupons_id, :customers_id, :orders_id, :redeem_amount, now(), :redeem_ip_address)');
         $Qcoupon->bindTable(':table_coupons_redeem_history', TABLE_COUPONS_REDEEM_HISTORY);
         $Qcoupon->bindInt(':coupons_id', $toC_Coupon->getID());
-        $Qcoupon->bindInt(':customers_id', $osC_Customer->getID());
+        $Qcoupon->bindInt(':customers_id', $customer_id);
         $Qcoupon->bindInt(':orders_id', $insert_id);
         $Qcoupon->bindValue(':redeem_amount', $osC_ShoppingCart->getCouponAmount());
         $Qcoupon->bindValue(':redeem_ip_address', osc_get_ip_address());
@@ -425,7 +454,7 @@
           $Qinsert = $osC_Database->query('insert into :table_gift_certificates_redeem_history (gift_certificates_id, customers_id, orders_id, redeem_date, redeem_amount, redeem_ip_address) values (:gift_certificates_id, :customers_id, :orders_id, now(), :redeem_amount, :redeem_ip_address)');
           $Qinsert->bindTable(':table_gift_certificates_redeem_history', TABLE_GIFT_CERTIFICATES_REDEEM_HISTORY);
           $Qinsert->bindInt(':gift_certificates_id', $Qcertificate->valueInt(gift_certificates_id));
-          $Qinsert->bindInt(':customers_id', $osC_Customer->getID());
+          $Qinsert->bindInt(':customers_id', $customer_id);
           $Qinsert->bindInt(':orders_id', $insert_id);
           $Qinsert->bindValue(':redeem_amount', $amount);
           $Qinsert->bindValue(':redeem_ip_address', osc_get_ip_address());
