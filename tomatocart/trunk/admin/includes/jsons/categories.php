@@ -195,6 +195,7 @@
                     'sort_order' => $_REQUEST['sort_order'],
                     'image' => $_FILES['image'],  
                     'categories_status'  => $_REQUEST['categories_status'],
+                    'categories_mode' => $_REQUEST['categories_mode'],
                     'name' => $_REQUEST['categories_name'],
                     'url' => $formatted_urls,
                     'page_title' => $_REQUEST['page_title'],
