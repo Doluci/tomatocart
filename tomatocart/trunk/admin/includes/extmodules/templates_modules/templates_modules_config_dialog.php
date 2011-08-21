@@ -111,6 +111,32 @@ Ext.extend(Toc.templates_modules.TemplatesModulesConfigDialog, Ext.Window, {
             });
                    
             this.moduleForm.add(combo);
+          }else if (field.type == 'textarea') {
+              this.moduleForm.add(
+                new Ext.Panel({
+                  headerAsText: true,
+                  title: field.title,
+                  items: {
+                    xtype: 'textarea',
+                    name: field.name,
+                    value: field.value,
+                    height: 110,
+                    width: 333
+                  },
+                  style: 'padding-left: 30px;padding-top: 10px;'
+                })
+              );
+          }else if (field.type == 'panel') {
+            this.moduleForm.add(
+              new Ext.Panel({
+                headerAsText: true,
+                title: field.title,
+                name: field.name,
+                html: field.value,
+                height: 200,
+                style: 'padding-left: 30px;padding-top: 10px;'
+              })
+            );
           }
         },this);
         
