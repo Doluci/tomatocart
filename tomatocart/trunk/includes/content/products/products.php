@@ -24,7 +24,7 @@
 /* Class constructor */
 
     function osC_Products_Products() {
-      global $osC_Database, $osC_Services, $osC_Session, $osC_Language, $breadcrumb, $cPath, $cPath_array, $osC_Manufacturer, $osC_Product;
+      global $osC_Database, $osC_Services, $osC_Session, $osC_Language, $breadcrumb, $cPath, $cPath_array, $osC_Manufacturer, $osC_Product, $osC_Category;
 
       if (empty($_GET) === false) {
         $id = false;
@@ -64,6 +64,8 @@
           }
           
           osC_Services_category_path::process($osC_Product->getCategoryID());
+          
+          $osC_Category = new osC_Category($osC_Product->getCategoryID());
 
           if (isset($_GET['manufacturers']) && (empty($_GET['manufacturers']) === false)) {
             require_once('includes/classes/manufacturer.php');
