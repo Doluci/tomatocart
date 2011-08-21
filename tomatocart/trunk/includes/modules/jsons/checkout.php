@@ -115,14 +115,6 @@
             }
           }
         }
-
-        if ( (isset($_REQUEST['billing_password']) === false) || (isset($_REQUEST['billing_password']) && (strlen(trim($_REQUEST['billing_password'])) < ACCOUNT_PASSWORD)) ) {
-          $errors[] = sprintf($osC_Language->get('field_customer_password_error'), ACCOUNT_PASSWORD);
-        } elseif ( (isset($_REQUEST['billing_confirm_password']) === false) || (isset($_REQUEST['billing_confirm_password']) && (trim($_REQUEST['billing_password']) != trim($_REQUEST['billing_confirm_password']))) ) {
-          $errors[] = $osC_Language->get('field_customer_password_mismatch_with_confirmation');
-        } else {
-          $data['password'] = $_REQUEST['billing_password'];
-        }
       }
       
       if ((!$osC_Customer->isLoggedOn()) || ($osC_Customer->isLoggedOn() && isset($_REQUEST['create_billing_address']) && ($_REQUEST['create_billing_address'] == 1))) {
