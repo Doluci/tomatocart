@@ -57,6 +57,7 @@
   define('TABLE_GIFT_CERTIFICATES', DB_TABLE_PREFIX . 'gift_certificates');
   define('TABLE_GUEST_BOOKS', DB_TABLE_PREFIX . 'guest_books');
   define('TABLE_GIFT_CERTIFICATES_REDEEM_HISTORY', DB_TABLE_PREFIX . 'gift_certificates_redeem_history');
+  define('TABLE_GOOGLE_BASE_ITEMS', DB_TABLE_PREFIX . 'google_base_items');
   define('TABLE_GOOGLE_ORDERS', DB_TABLE_PREFIX . 'google_orders');
   define('TABLE_LANGUAGES', DB_TABLE_PREFIX . 'languages');
   define('TABLE_LANGUAGES_DEFINITIONS', DB_TABLE_PREFIX . 'languages_definitions');
