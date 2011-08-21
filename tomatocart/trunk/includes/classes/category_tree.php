@@ -53,7 +53,7 @@
         } 
         
         if ($is_cache_loaded === false) {
-          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, cd.categories_name, cd.categories_url, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id');
+          $Qcategories = $osC_Database->query('select c.categories_id, c.parent_id, c.categories_image, c.categories_mode, cd.categories_name, cd.categories_url, cd.categories_page_title, cd.categories_meta_keywords, cd.categories_meta_description from :table_categories c, :table_categories_description cd where c.categories_id = cd.categories_id and cd.language_id = :language_id');
           $Qcategories->bindTable(':table_categories', TABLE_CATEGORIES);
           $Qcategories->bindTable(':table_categories_description', TABLE_CATEGORIES_DESCRIPTION);
           $Qcategories->bindInt(':language_id', $osC_Language->getID());
@@ -69,9 +69,9 @@
           $this->data = array();
 
           while ($Qcategories->next()) {
-            $this->data[$Qcategories->valueInt('parent_id')][$Qcategories->valueInt('categories_id')] = array('name' => $Qcategories->value('categories_name'), 'url' => $Qcategories->value('categories_url'), 'page_title' => $Qcategories->value('categories_page_title'), 'meta_keywords' => $Qcategories->value('categories_meta_keywords'), 'meta_description' => $Qcategories->value('categories_meta_description'), 'image' => $Qcategories->value('categories_image'), 'count' => 0);
+            $this->data[$Qcategories->valueInt('parent_id')][$Qcategories->valueInt('categories_id')] = array('categories_mode' => $Qcategories->valueInt('categories_mode'), 'name' => $Qcategories->value('categories_name'), 'url' => $Qcategories->value('categories_url'), 'page_title' => $Qcategories->value('categories_page_title'), 'meta_keywords' => $Qcategories->value('categories_meta_keywords'), 'meta_description' => $Qcategories->value('categories_meta_description'), 'image' => $Qcategories->value('categories_image'), 'count' => 0);
           }
-
+          
           $Qcategories->freeResult();
 
           if ($this->show_category_product_count === true) {
@@ -271,6 +271,7 @@
           if ($id == $category_id) {
             return array('id' => $id,
                          'name' => $info['name'],
+                         'mode' => $info['categories_mode'],
                          'page_title' => $info['page_title'],
                          'meta_keywords' => $info['meta_keywords'],
                          'meta_description' => $info['meta_description'],
