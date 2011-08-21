@@ -66,6 +66,9 @@ button_update = Update
 button_update_currency_exchange_rates = Update Currency Exchange Rates
 button_upload = Upload
 
+access_google_base_title = Google Base
+access_google_base_manage_items_title = Manage Items
+
 icon_banner_preview = Preview
 icon_checkbox_ticked =
 icon_checkbox_crossed =
@@ -143,6 +146,7 @@ configuration_credit_cards_title = Credit Cards
 configuration_program_locations_title = Program Locations
 configuration_store_front_title = Store Front
 configuration_content_management_system_title = Content Management System
+configuration_google_base_title = Google Base
 
 init_system = Initializing System ...
 
