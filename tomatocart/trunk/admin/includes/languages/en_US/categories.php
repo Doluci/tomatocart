@@ -34,8 +34,12 @@ field_url = Friendly URL:
 field_image = Image:
 field_sort_order = Sort Order:
 field_status = Status:
+field_options = Options:
 status_enabled = Enabled
 status_disabled = Disabled
+available_for_order = availabe for order
+show_price = show price
+online_only = online only 
 
 field_page_title = Page Title:
 field_meta_keywords = Keywords:
