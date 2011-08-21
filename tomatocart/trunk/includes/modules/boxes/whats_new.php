@@ -48,12 +48,6 @@
           
           $osC_Product = new osC_Product($Qnew->valueInt('products_id'));
           
-          $products_price = $osC_Currencies->displayPrice($Qnew->valueDecimal('products_price'), $Qnew->valueInt('products_tax_class_id'));
-
-          if ($osC_Services->isStarted('specials') && $osC_Specials->isActive($Qnew->valueInt('products_id'))) {
-            $products_price = '<s>' . $products_price . '</s>&nbsp;<span class="productSpecialPrice">' . $osC_Currencies->displayPrice($osC_Specials->getPrice($Qnew->valueInt('products_id')), $Qnew->valueInt('products_tax_class_id')) . '</span>';
-          }
-
           $data['products_price'] = $osC_Product->getPriceFormated(true);
         }
 
