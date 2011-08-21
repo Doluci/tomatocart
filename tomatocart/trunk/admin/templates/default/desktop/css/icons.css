@@ -82,6 +82,10 @@
 	background-image: url(../../images/icons/16x16/products_attributes.png) !important;
 }
 
+.icon-google_base-subgroup, .icon-google_base_manage_items-win {
+  background-image: url(../../images/icons/16x16/google_base.png) !important;
+}
+
 .icon-specials-win {
 	background-image: url(../../images/icons/16x16/specials.png) !important;
 }
