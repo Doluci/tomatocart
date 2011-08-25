@@ -26,7 +26,7 @@
 /* Class constructor */
 
     function osC_Info_Contact() {
-      global $osC_Services, $osC_Language, $breadcrumb;
+      global $osC_Services, $osC_Language, $breadcrumb;      
 
       $this->_page_title = $osC_Language->get('info_contact_heading');
 
@@ -35,6 +35,7 @@
       }
 
       if ($_GET[$this->_module] == 'process') {
+        
         $this->_process();
       }
       
@@ -85,8 +86,8 @@
       }
       
       if ( ACTIVATE_CAPTCHA == '1' ) {
-        if (isset($_POST['concat_code']) && !empty($_POST['concat_code'])) {
-          $concat_code = osc_sanitize_string($_POST['concat_code']);
+        if (isset($_POST['concat_code']) && !empty($_POST['concat_code']) && !empty($_SESSION['verify_code'])) {
+          $concat_code = osc_sanitize_string($_POST['concat_code']);        
           
           if ( !strcasecmp($concat_code, $_SESSION['verify_code']) == 0 ) {
             $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
@@ -95,8 +96,9 @@
           $messageStack->add('contact', $osC_Language->get('field_concat_captcha_check_error'));
         }  
       }
-      
-      if ( $messageStack->size('contact') === 0 ) {
+     
+      if ( $messageStack->size('contact') === 0 ) {       
+        
         osc_email(STORE_OWNER, $department_email, $osC_Language->get('contact_email_subject'), $enquiry . '<br /><br /><br />' . $osC_Language->get('contact_telephone_title') . $telephone, $name, $email_address);
 
         osc_redirect(osc_href_link(FILENAME_INFO, 'contact=success', 'AUTO', true, false));    
