@@ -28,23 +28,25 @@
 
     function osC_Info_Guestbook() {
       global $osC_Language, $osC_Services, $breadcrumb;
+      
+      if (isset($_GET['captcha'])) {
+        $this->_generateImage();
+        
+        exit;
+      }
 
       $this->_page_title = $osC_Language->get('guestbook_heading');
     
       if ($osC_Services->isStarted('breadcrumb')) {
         $breadcrumb->add($osC_Language->get('breadcrumb_guestbook'), osc_href_link(FILENAME_INFO, $this->_module));
-      }      
-      
-      if (isset($_REQUEST['new'])) {
+      }
+
+      if (isset($_GET['new'])) {
         $this->_page_contents = 'guestbook_new.php';
-      } else if (isset($_REQUEST['save'])) {
+      } else if ( isset($_GET['save']) && ( isset($_SESSION['verify_code']) && !empty($_SESSION['verify_code']) ) ) {
         $this->_page_contents = 'guestbook_new.php';
         
         $this->_process();
-      }
-      
-      if (isset($_REQUEST['captcha'])) {
-        $this->_generateImage();
       }
     }
     
