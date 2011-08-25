@@ -31,8 +31,6 @@
       
       if (isset($_GET['captcha'])) {
         $this->_generateImage();
-        
-        exit;
       }
 
       $this->_page_title = $osC_Language->get('guestbook_heading');
